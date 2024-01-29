@@ -20,29 +20,22 @@ struct StartView : View {
         ZStack {
             Color.black.edgesIgnoringSafeArea(.all)
             Group {
-                
                 if shouldShowAlert {
                     Text("")
-                    .alert("Unable to Start Game", isPresented: $shouldShowAlert) {
+                        .alert("Unable to Start Game", isPresented: $shouldShowAlert) {
                             Button("OK", role: .cancel) {
-                                    game_code = nil
-                                    currentView = "HomeView"
-                                }
-                            } message: {
-                                Text(alert_message)
+                                game_code = nil
+                                currentView = "HomeView"
                             }
+                        } message: {
+                            Text(alert_message)
+                        }
                 } else if game_code != nil {
-                    VStack {
-                        Text("Game Code:")
-                            .padding()
-                            .foregroundStyle(.white)
-                            .font(Font.custom("Galvji", size: 20))
-
-                        Text(game_code)
-                            .padding()
-                            .foregroundStyle(.white)
-                            .font(Font.custom("Galvji", size: 30))
-                    }
+                    Text(game_code ?? "STUPID")
+                        .foregroundStyle(.white)
+                        .padding()
+                        .font(Font.custom("Galvji", size: 30))
+                        .foregroundStyle(.white)
                 }   else {
                     ProgressView {
                         Text("Connecting to Server")
@@ -59,31 +52,31 @@ struct StartView : View {
         }
         .task {
             await restController.start_new_game { result in
-                    switch result {
-                        case .success(let g):
-                            game_code = g?.code
-                            print("Started a new game \(game_code)")
-                        case .failure(let error):
-                            switch error {
-                                case .serviceUnavailable:
-                                    alert_message = "Failed to connect to server \n Please check your internet connection"
-                                default:
-                                    alert_message = "Something went wrong \n Please try again later"
-                            }
-                            shouldShowAlert = true
-                            print(error.localizedDescription)
-                    }
+                switch result {
+                    case .success(let g):
+                    game_code = g.code
+                        print("Started a new game \(game_code)")
+                    case .failure(let error):
+                        switch error {
+                            case .serviceUnavailable:
+                                alert_message = "Failed to connect to server \n Please check your internet connection"
+                            default:
+                                alert_message = "Something went wrong \n Please try again later"
+                        }
+                        shouldShowAlert = true
+                        print(error.localizedDescription)
                 }
+            }
         }
     }
 }
 
 #Preview {
-    struct PreviewWrapper: View {
-        @State var rc: RestController = RestController(host: "127.0.0.1", port:8001)
-        var body: some View {
-            StartView(currentView: .constant("HomeView"), restController: $rc)
-        }
-    }
-    return PreviewWrapper()
+   struct PreviewWrapper: View {
+       @State var rc: RestController = RestController(host: "127.0.0.1", port:8001)
+       var body: some View {
+           StartView(currentView: .constant("HomeView"), restController: $rc)
+       }
+   }
+   return PreviewWrapper()
 }

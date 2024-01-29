@@ -19,8 +19,7 @@
 		57C3AC3C2B668F970058AE5F /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC3B2B668F970058AE5F /* StartView.swift */; };
 		57C3AC3E2B6697EE0058AE5F /* WebStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC3D2B6697EE0058AE5F /* WebStructs.swift */; };
 		57C3AC482B68340C0058AE5F /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC472B68340C0058AE5F /* Errors.swift */; };
-		57C3AC4A2B6845D70058AE5F /* RestController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC492B6845D70058AE5F /* RestController.swift */; };
-		57C3AC4C2B6862FF0058AE5F /* NRC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC4B2B6862FF0058AE5F /* NRC.swift */; };
+		57C3AC4E2B6864DB0058AE5F /* RestController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC4D2B6864DB0058AE5F /* RestController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,8 +56,7 @@
 		57C3AC3B2B668F970058AE5F /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		57C3AC3D2B6697EE0058AE5F /* WebStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebStructs.swift; sourceTree = "<group>"; };
 		57C3AC472B68340C0058AE5F /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
-		57C3AC492B6845D70058AE5F /* RestController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestController.swift; sourceTree = "<group>"; };
-		57C3AC4B2B6862FF0058AE5F /* NRC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NRC.swift; sourceTree = "<group>"; };
+		57C3AC4D2B6864DB0058AE5F /* RestController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,8 +117,7 @@
 				57C3AC3B2B668F970058AE5F /* StartView.swift */,
 				57C3AC3D2B6697EE0058AE5F /* WebStructs.swift */,
 				57C3AC472B68340C0058AE5F /* Errors.swift */,
-				57C3AC492B6845D70058AE5F /* RestController.swift */,
-				57C3AC4B2B6862FF0058AE5F /* NRC.swift */,
+				57C3AC4D2B6864DB0058AE5F /* RestController.swift */,
 			);
 			path = DUDL;
 			sourceTree = "<group>";
@@ -291,8 +288,7 @@
 				57C3AC052B65B2FB0058AE5F /* DUDLApp.swift in Sources */,
 				57C3AC3C2B668F970058AE5F /* StartView.swift in Sources */,
 				57C3AC482B68340C0058AE5F /* Errors.swift in Sources */,
-				57C3AC4A2B6845D70058AE5F /* RestController.swift in Sources */,
-				57C3AC4C2B6862FF0058AE5F /* NRC.swift in Sources */,
+				57C3AC4E2B6864DB0058AE5F /* RestController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
