@@ -10,57 +10,12 @@
 import Foundation
 import SwiftUI
 
-
-func start_game(host: String = "127.0.0.1",
-                port: Int = 8001,
-                maxRetryCount: Int = 10,
-                retryDelay: TimeInterval = 3,
-                completionHandler: @escaping (Result<Game, HTTPError>) -> Void
-) async {
-    
-    var status_code: Int = 0
-    
-    let url_str = "http://\(host):\(port)"
-    let url = URL(string: url_str)
-    
-    for _ in 0..<maxRetryCount {
-        print("Querying " + url_str + " ...")
-        do {
-            let (data, response) = try await URLSession.shared.data(from: url!)
-            
-            if let httpResponse = response as? HTTPURLResponse {
-                status_code = httpResponse.statusCode
-            }
-            
-            let decoded_data = try JSONDecoder().decode(Game.self, from: data)
-            
-            completionHandler(.success(decoded_data))
-            
-        } catch {
-            let oneSecondInNanoseconds = TimeInterval(1_000_000_000)
-            let delay = UInt64(oneSecondInNanoseconds * retryDelay)
-            try! await Task<Never, Never>.sleep(nanoseconds: delay)
-            continue  // try again
-        }
-    }
-    
-    switch status_code {
-        case 200..<300:
-            completionHandler(.failure(.invalidResponse))
-        case 300..<500:
-            completionHandler(.failure(.invalidRequest))
-        case 500...:
-            completionHandler(.failure(.serviceUnavailable))
-        default:
-            completionHandler(.failure(.unknown))
-    }
-}
-
 struct StartView : View {
-    @State var game: Game?
+    @State var game_code: String?
     @State private var shouldShowAlert: Bool = false
     @State private var alert_message: String = ""
     @Binding var currentView: String
+    @Binding var restController: RestController
     var body: some View {
         ZStack {
             Color.black.edgesIgnoringSafeArea(.all)
@@ -70,18 +25,24 @@ struct StartView : View {
                     Text("")
                     .alert("Unable to Start Game", isPresented: $shouldShowAlert) {
                             Button("OK", role: .cancel) {
-                                    game = nil
+                                    game_code = nil
                                     currentView = "HomeView"
                                 }
                             } message: {
                                 Text(alert_message)
                             }
-                } else if let game_id = game?.id {
-                    Text(game_id)
-                        .foregroundStyle(.white)
-                        .padding()
-                        .font(Font.custom("Galvji", size: 30))
-                        .foregroundStyle(.white)
+                } else if game_code != nil {
+                    VStack {
+                        Text("Game Code:")
+                            .padding()
+                            .foregroundStyle(.white)
+                            .font(Font.custom("Galvji", size: 20))
+
+                        Text(game_code)
+                            .padding()
+                            .foregroundStyle(.white)
+                            .font(Font.custom("Galvji", size: 30))
+                    }
                 }   else {
                     ProgressView {
                         Text("Connecting to Server")
@@ -97,11 +58,11 @@ struct StartView : View {
             }
         }
         .task {
-                await start_game() { result in
+            await restController.start_new_game { result in
                     switch result {
                         case .success(let g):
-                            game = g
-                            print("Started a new game \(String(describing: game?.id))")
+                            game_code = g?.code
+                            print("Started a new game \(game_code)")
                         case .failure(let error):
                             switch error {
                                 case .serviceUnavailable:
@@ -118,5 +79,11 @@ struct StartView : View {
 }
 
 #Preview {
-    StartView(game: nil, currentView: .constant("HomeView"))
+    struct PreviewWrapper: View {
+        @State var rc: RestController = RestController(host: "127.0.0.1", port:8001)
+        var body: some View {
+            StartView(currentView: .constant("HomeView"), restController: $rc)
+        }
+    }
+    return PreviewWrapper()
 }

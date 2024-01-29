@@ -7,14 +7,16 @@
 
 import Foundation
 
+struct NewGameCodeRequest: Codable {
+    let requester_id: String
+}
 
-struct Game: Decodable {
-    let id: String
-    let players: [Player]
+struct NewGameCodeResponse: Decodable {
+    let code: String
 }
         
 struct Player: Decodable {
     let id: String
-    let name: String
+    let nickname: String
     let turn_index: Int
 }

@@ -11,6 +11,7 @@ enum HTTPError: Error {
     case invalidRequest
     case invalidResponse
     case serviceUnavailable
+    case unidentifiedUser
     case unknown
     // TODO: add more
 }
