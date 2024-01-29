@@ -41,94 +41,109 @@ struct RestController {
                 return completionHandler(.failure(.unidentifiedUser))
             }
             
-            return await post_async(endpoint: "start-new-game", uploadData: uploadData, completionHandler: completionHandler)
-        }
-        
-        func get_async(endpoint: String, completionHandler: @escaping (Result<NewGameCodeResponse, HTTPError>) -> Void) async {
-            return await self._perform_request(endpoint: endpoint, type: .GET, uploadData: nil, completionHandler: completionHandler)
-        }
-        
-        func post_async(endpoint: String, uploadData: Data, completionHandler: @escaping (Result<NewGameCodeResponse, HTTPError>) -> Void) async {
-            return await self._perform_request(endpoint: endpoint, type: .POST, uploadData: uploadData, completionHandler: completionHandler)
-        }
-    
-        func _perform_request(endpoint: String, type: RequestType, uploadData: Data?, completionHandler: @escaping (Result<NewGameCodeResponse, HTTPError>) -> Void) async {
-                
-                var status_code: Int = 0
-                
-                let url_str = "http://\(self._host):\(self._port)/\(endpoint)"
-                let url = URL(string: url_str)
-                
-                for _ in 0..<self._maxRetryCount {
-                    do {
-                        switch type {
-                            case .POST:
-                                print("POST-ing to \(url_str) ...")
-                                var request = URLRequest(url: url!)
-                                request.httpMethod = "POST"
-                                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        await post_async(endpoint: "start-new-game", uploadData: uploadData) { post_result in
+            do {
+                switch post_result {
+                    case .success(let post_data):
+                        let decoded_result = try JSONDecoder().decode(NewGameCodeResponse.self, from: post_data)
                         
-                                guard uploadData != nil else {
-                                    completionHandler(.failure(.invalidRequest))
-                                    return
-                                }
-                                
-                                let (responseData, response) = try await URLSession.shared.upload(
-                                    for: request,
-                                    from: uploadData!
-                                )
-                                
-                                if let httpResponse = response as? HTTPURLResponse {
-                                    status_code = httpResponse.statusCode
-                                }
-                            
-                                let decoded_result = try JSONDecoder().decode(NewGameCodeResponse.self, from: responseData)
-                                
-                                completionHandler(.success(decoded_result))
-                                return
-                                
-                            case .GET:
-                                print("GET-ing from \(url_str) ...")
-                                let (responseData, response) = try await URLSession.shared.data(from: url!)
-                                
-                                guard let httpResponse = response as? HTTPURLResponse else {
-                                    completionHandler(.failure(.invalidResponse))
-                                    return
-                                }
-                            
-                                status_code = httpResponse.statusCode
-                                
-                                let decoded_result = try JSONDecoder().decode(NewGameCodeResponse.self, from: responseData)
-                                
-                                completionHandler(.success(decoded_result))
-                                return
-                            default:
-                                print("Unable to handle \"\(url_str)\" request ...")
+                        completionHandler(.success(decoded_result))
+                        return
+                        
+                    case .failure(let http_error):
+                        completionHandler(.failure(http_error))
+                }
+            }
+            catch {
+                completionHandler(.failure(.decodingError))
+            }
+            
+        }
+    }
+        
+    func get_async(endpoint: String, completionHandler: @escaping (Result<Data, HTTPError>) -> Void) async {
+        return await self._perform_request(endpoint: endpoint, type: .GET, uploadData: nil, completionHandler: completionHandler)
+    }
+    
+    func post_async(endpoint: String, uploadData: Data, completionHandler: @escaping (Result<Data, HTTPError>) -> Void) async {
+        return await self._perform_request(endpoint: endpoint, type: .POST, uploadData: uploadData, completionHandler: completionHandler)
+    }
+
+    func _perform_request(endpoint: String, type: RequestType, uploadData: Data?, completionHandler: @escaping (Result<Data, HTTPError>) -> Void) async {
+            
+            var status_code: Int = 0
+            
+            let url_str = "http://\(self._host):\(self._port)/\(endpoint)"
+            let url = URL(string: url_str)
+            
+            for _ in 0..<self._maxRetryCount {
+                do {
+                    switch type {
+                        case .POST:
+                            print("POST-ing to \(url_str) ...")
+                            var request = URLRequest(url: url!)
+                            request.httpMethod = "POST"
+                            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                    
+                            guard uploadData != nil else {
                                 completionHandler(.failure(.invalidRequest))
                                 return
-                        }
+                            }
+                            
+                            let (responseData, response) = try await URLSession.shared.upload(
+                                for: request,
+                                from: uploadData!
+                            )
+                            
+                            if let httpResponse = response as? HTTPURLResponse {
+                                status_code = httpResponse.statusCode
+                            }
+                            
+                            completionHandler(.success(responseData))
+                            return
+                            
+                        case .GET:
+                            print("GET-ing from \(url_str) ...")
+                            let (responseData, response) = try await URLSession.shared.data(from: url!)
+                            
+                            guard let httpResponse = response as? HTTPURLResponse else {
+                                completionHandler(.failure(.invalidResponse))
+                                return
+                            }
                         
-                    } catch {
-                        let timeout = UInt64(oneSecondInNanoseconds * self._retryTimeout)
-                        try! await Task<Never, Never>.sleep(nanoseconds: timeout)
-                        continue  // try again
+                            status_code = httpResponse.statusCode
+                            
+                            /*let decoded_result = try JSONDecoder().decode(NewGameCodeResponse.self, from: responseData)*/
+                            
+                            completionHandler(.success(responseData))
+                            return
+                        default:
+                            print("Unable to handle \"\(url_str)\" request ...")
+                            completionHandler(.failure(.invalidRequest))
+                            return
                     }
+                    
+                } catch {
+                    let timeout = UInt64(oneSecondInNanoseconds * self._retryTimeout)
+                    try! await Task<Never, Never>.sleep(nanoseconds: timeout)
+                    continue  // try again
                 }
-                
-                switch status_code {
-                    case 0:
-                        completionHandler(.failure(.unidentifiedUser))
-                    case 200..<300:
-                        completionHandler(.failure(.invalidResponse))
-                    case 300..<500:
-                        completionHandler(.failure(.invalidRequest))
-                    case 500...:
-                        completionHandler(.failure(.serviceUnavailable))
-                    default:
-                        completionHandler(.failure(.unknown))
-                }
-                return
             }
-    
-    
+            
+            switch status_code {
+                case 0:
+                    completionHandler(.failure(.unidentifiedUser))
+                case 200..<300:
+                    completionHandler(.failure(.invalidResponse))
+                case 300..<500:
+                    completionHandler(.failure(.invalidRequest))
+                case 500...:
+                    completionHandler(.failure(.serviceUnavailable))
+                default:
+                    completionHandler(.failure(.unknown))
+            }
+            return
+        }
+
+
 }

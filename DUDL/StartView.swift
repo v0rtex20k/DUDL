@@ -55,7 +55,7 @@ struct StartView : View {
                 switch result {
                     case .success(let g):
                     game_code = g.code
-                        print("Started a new game \(game_code)")
+                        print("Started a new game \(game_code!)")
                     case .failure(let error):
                         switch error {
                             case .serviceUnavailable:
