@@ -1,0 +1,2 @@
+[console_scripts]
+start-dudl = dudl.web.dudl:start_server
