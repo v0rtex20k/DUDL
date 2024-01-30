@@ -7,16 +7,32 @@
 
 import Foundation
 
-struct NewGameCodeResponse: Decodable {
-    let code: String
-}
-        
-struct Player: Decodable {
-    let id: String
-    let nickname: String
-    let turn_index: Int
+// MARK: Starting a New Game
+
+struct NewGameRequest: Encodable {
+    let playerId: String
 }
 
-struct NewGameCodeRequest: Encodable {
-    let id: String
+struct NewGameResponse: Decodable {
+    let gameCode: String
+}
+
+
+// MARK: Joining an Existing Game
+        
+struct JoinGameRequest: Encodable {
+    let gameCode: String
+    let playerId: String
+}
+
+struct JoinGameResponse: Decodable {
+    let playerId: String
+}
+
+// MARK: Player Info
+
+struct Player: Decodable {
+    let player_id: String
+    let nickname: String
+    let turnIndex: Int
 }

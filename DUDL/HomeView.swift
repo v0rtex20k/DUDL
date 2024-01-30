@@ -51,19 +51,28 @@ struct HomeView: View {
                         Button("Join"){
                             self.currentView = "JoinView"
                         }
-                            .padding()
-                            .font(Font.custom("Galvji", size: 18))
-                            .foregroundStyle(.white)
-                            .background(
-                                RoundedRectangle(cornerRadius: 10).stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
-                                    .foregroundStyle(.white)
-                                    .frame(width: geo.size.width / 4,
-                                                  height: geo.size.height / 15)
-                            )
+                        .padding()
+                        .font(Font.custom("Galvji", size: 18))
+                        .foregroundStyle(.white)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10).stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                                .foregroundStyle(.white)
+                                .frame(width: geo.size.width / 4,
+                                              height: geo.size.height / 15)
+                        )
                         Spacer()
                     }
                     Spacer()
                     Spacer()
+                    HStack{
+                        Button("Settings", systemImage: "gearshape.2"){
+                            self.currentView = "SettingsView"
+                        }
+                        .padding()
+                        .font(Font.custom("Galvji", size: 12))
+                        .foregroundStyle(.white)
+
+                    }
                 }
             }
         }

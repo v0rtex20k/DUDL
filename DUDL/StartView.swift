@@ -10,10 +10,25 @@
 import Foundation
 import SwiftUI
 
+struct TextWrapper: Identifiable {
+    let id = UUID()
+    let text: String
+}
+
+struct ActivityViewController: UIViewControllerRepresentable {
+    let textWrapper: TextWrapper
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: [textWrapper.text], applicationActivities: nil)
+    }
+    
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {
+    }
+}
+
 struct StartView : View {
-    @State var game_code: String = ""
+    @State private var gameCode: String = ""
     @State private var shouldShowAlert: Bool = false
-    @State private var alert_message: String = ""
+    @State private var alertMessage: String = ""
     @Binding var currentView: String
     @Binding var restController: RestController
     var body: some View {
@@ -24,56 +39,57 @@ struct StartView : View {
                     Text("")
                         .alert("Unable to Start Game", isPresented: $shouldShowAlert) {
                             Button("OK", role: .cancel) {
-                                game_code = ""
+                                gameCode = ""
                                 currentView = "HomeView"
                             }
                         } message: {
-                            Text(alert_message)
+                            Text(alertMessage)
                         }
-                } else if !game_code.isEmpty {
+                } else if !gameCode.isEmpty {
                     VStack{
-                        Text(game_code)
-                            .padding()
-                            .foregroundStyle(.white)
-                            .font(Font.custom("Galvji", size: 25))
-                            .onTapGesture {
-                                UIPasteboard.general.string = game_code
-                                currentView = "HomeView"
-                            }
-                        ShareLink(item: "Let's DÜDL: \(game_code)") {
-                            Label("Share", systemImage:  "arrow.up.circle")
+                        ShareLink(item: "Let's DÜDL: \(gameCode)") {
+                            Text(gameCode)
+                                .foregroundStyle(.white)
+                                .font(Font.custom("Galvji", size: 25))
                         }
                         .padding()
                         .foregroundStyle(.white)
                         .font(Font.custom("Galvji", size: 15))
-                        
-                    }
+                        }
+
                 }   else {
-                    ProgressView {
-                        Text("Connecting to Server")
-                            .foregroundStyle(.white)
-                            .padding()
-                            .font(Font.custom("Galvji", size: 20))
-                            .foregroundStyle(.white)
-                    }
-                    .progressViewStyle(.circular)
-                    .tint(.white)
+                        ProgressView {
+                            Text("Connecting to Server")
+                                .foregroundStyle(.white)
+                                .padding()
+                                .font(Font.custom("Galvji", size: 20))
+                                .foregroundStyle(.white)
+                        }
+                        .progressViewStyle(.circular)
+                        .tint(.white)
                     
                 }
             }
         }
+        .onTapGesture(count: 2) {
+            UIPasteboard.general.string = gameCode
+            currentView = "HomeView"
+            let impact = UIImpactFeedbackGenerator(style: .heavy)
+            impact.impactOccurred()
+        }
+
         .task {
-            await restController.start_new_game { result in
+            await restController.startNewGame { result in
                 switch result {
                     case .success(let g):
-                    game_code = g.code
-                    print("Started a new game \(game_code)")
+                    gameCode = g.gameCode
+                    print("Started a new game \(gameCode)")
                     case .failure(let error):
                         switch error {
                             case .serviceUnavailable:
-                                alert_message = "Failed to connect to server \n Please check your internet connection"
+                                alertMessage = "Failed to connect to server \n Please check your internet connection"
                             default:
-                                alert_message = "Something went wrong \n Please try again later"
+                                alertMessage = "Something went wrong \n Please try again later"
                         }
                         shouldShowAlert = true
                         print(error.localizedDescription)

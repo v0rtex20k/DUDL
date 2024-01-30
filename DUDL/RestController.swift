@@ -32,22 +32,47 @@ struct RestController {
         self._requestTimeout = requestTimeout
     }
     
-    func start_new_game(completionHandler: @escaping (Result<NewGameCodeResponse, HTTPError>) -> Void) async {
-            let rid: String = await UIDevice.current.identifierForVendor!.uuidString
-            if rid.isEmpty {
-                return completionHandler(.failure(.unidentifiedUser))
-            }
-            let new_game_request = NewGameCodeRequest(id: rid)
-            guard let uploadData = try? JSONEncoder().encode(new_game_request) else {
-                print("Cannot start a game w/ null Requester Id")
-                return completionHandler(.failure(.unidentifiedUser))
-            }
+    mutating func update_host(host: String) {
+        if !host.isEmpty {
+            self._host = host
+        }
+    }
+    
+    func encodeNewGameRequest() async -> Optional<Data> {
+        let pid: String = await UIDevice.current.identifierForVendor!.uuidString
+        if pid.isEmpty {
+            return nil
+        }
+        let req = NewGameRequest(playerId: pid)
+        guard let uploadData = try? JSONEncoder().encode(req) else {
+            return nil
+        }
+        return uploadData
+    }
+    
+    func encodeJoinGameRequest(code: String) async -> Optional<Data> {
+        let pid: String = await UIDevice.current.identifierForVendor!.uuidString
+        if pid.isEmpty {
+            return nil
+        }
+        let req = JoinGameRequest(gameCode: code, playerId: pid)
+        guard let uploadData = try? JSONEncoder().encode(req) else {
+            return nil
+        }
+        return uploadData
+    }
+    
+    func startNewGame(completionHandler: @escaping (Result<NewGameResponse, HTTPError>) -> Void) async {
+        guard let uploadData = await self.encodeNewGameRequest() else {
+            completionHandler(.failure(.unidentifiedUser))
+            return
+        }
             
-        return await post_async(endpoint: "start-new-game", uploadData: uploadData) { post_result in
+        return await postAsync(endpoint: "start-game", uploadData: uploadData) { post_result in
             do {
                 switch post_result {
                     case .success(let post_data):
-                        let decoded_result = try JSONDecoder().decode(NewGameCodeResponse.self, from: post_data)
+                        let decoded_result = try JSONDecoder().decode(NewGameResponse.self, from: post_data)
                         
                         completionHandler(.success(decoded_result))
                         return
@@ -57,21 +82,56 @@ struct RestController {
                 }
             }
             catch {
+                print("Failed to decode NewGameResponse")
                 completionHandler(.failure(.decodingError))
             }
             
         }
     }
+    
+    func joinExistingGame(_ code: String, completionHandler: @escaping (Result<JoinGameResponse, HTTPError>) -> Void) async {
+        guard let uploadData = await self.encodeJoinGameRequest(code: code) else {
+            completionHandler(.failure(.unidentifiedUser))
+            return
+        }
         
-    func get_async(endpoint: String, completionHandler: @escaping (Result<Data, HTTPError>) -> Void) async {
-        return await self._perform_request(endpoint: endpoint, type: .GET, uploadData: nil, completionHandler: completionHandler)
+        return await postAsync(endpoint: "join-game", uploadData: uploadData) { post_result in
+            do {
+                switch post_result {
+                    case .success(let post_data):
+                        let decoded_result = try JSONDecoder().decode(JoinGameResponse.self, from: post_data)
+                        
+                        completionHandler(.success(decoded_result))
+                        return
+                        
+                    case .failure(let http_error):
+                        completionHandler(.failure(http_error))
+                }
+            }
+            catch {
+                
+                print("Failed to decode JoinGameResponse")
+                do {
+                    try print(String(decoding: post_result.get(), as: UTF8.self))
+                } catch {
+                    print("nope ;)")
+                }
+                completionHandler(.failure(.decodingError))
+            }
+            
+        }
+        
+    }
+        
+    func getAsync(endpoint: String, completionHandler: @escaping (Result<Data, HTTPError>) -> Void) async {
+        return await self._performRequest(endpoint: endpoint, type: .GET, uploadData: nil, completionHandler: completionHandler)
     }
     
-    func post_async(endpoint: String, uploadData: Data, completionHandler: @escaping (Result<Data, HTTPError>) -> Void) async {
-        return await self._perform_request(endpoint: endpoint, type: .POST, uploadData: uploadData, completionHandler: completionHandler)
+    func postAsync(endpoint: String, uploadData: Data, completionHandler: @escaping (Result<Data, HTTPError>) -> Void) async {
+        return await self._performRequest(endpoint: endpoint, type: .POST, uploadData: uploadData, completionHandler: completionHandler)
     }
 
-    func _perform_request(endpoint: String, type: RequestType, uploadData: Data?, completionHandler: @escaping (Result<Data, HTTPError>) -> Void) async {
+    func _performRequest(endpoint: String, type: RequestType, uploadData: Data?, completionHandler: @escaping (Result<Data, HTTPError>) -> Void) async {
             
             var status_code: Int = 0
             
