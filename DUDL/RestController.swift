@@ -12,7 +12,8 @@ struct RestController {
     var _host: String
     var _port: Int
     var _maxRetryCount: Int
-    var _retryTimeout: TimeInterval
+    var _retryDelay: TimeInterval
+    var _requestTimeout: TimeInterval
     
     let oneSecondInNanoseconds = TimeInterval(1_000_000_000)
     
@@ -23,11 +24,12 @@ struct RestController {
         // add more as needed
     }
     
-    init(host: String = "127.0.0.1", port: Int = 8001, maxRetryCount: Int = 10, retryTimeout: TimeInterval = 3) {
+    init(host: String = "127.0.0.1", port: Int = 8001, maxRetryCount: Int = 1, retryDelay: TimeInterval = 5, requestTimeout: TimeInterval = 10) {
         self._host = host
         self._port = port
         self._maxRetryCount = maxRetryCount
-        self._retryTimeout = retryTimeout
+        self._retryDelay = retryDelay
+        self._requestTimeout = requestTimeout
     }
     
     func start_new_game(completionHandler: @escaping (Result<NewGameCodeResponse, HTTPError>) -> Void) async {
@@ -41,7 +43,7 @@ struct RestController {
                 return completionHandler(.failure(.unidentifiedUser))
             }
             
-        await post_async(endpoint: "start-new-game", uploadData: uploadData) { post_result in
+        return await post_async(endpoint: "start-new-game", uploadData: uploadData) { post_result in
             do {
                 switch post_result {
                     case .success(let post_data):
@@ -81,7 +83,9 @@ struct RestController {
                     switch type {
                         case .POST:
                             print("POST-ing to \(url_str) ...")
-                            var request = URLRequest(url: url!)
+                        var request = URLRequest(url: url!,
+                                                 cachePolicy: .useProtocolCachePolicy,
+                                                 timeoutInterval: self._requestTimeout)
                             request.httpMethod = "POST"
                             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                     
@@ -113,8 +117,6 @@ struct RestController {
                         
                             status_code = httpResponse.statusCode
                             
-                            /*let decoded_result = try JSONDecoder().decode(NewGameCodeResponse.self, from: responseData)*/
-                            
                             completionHandler(.success(responseData))
                             return
                         default:
@@ -124,7 +126,7 @@ struct RestController {
                     }
                     
                 } catch {
-                    let timeout = UInt64(oneSecondInNanoseconds * self._retryTimeout)
+                    let timeout = UInt64(oneSecondInNanoseconds * self._retryDelay)
                     try! await Task<Never, Never>.sleep(nanoseconds: timeout)
                     continue  // try again
                 }

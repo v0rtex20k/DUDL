@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct DUDLApp: App {
     @State var currentView: String = "ContentView"
-    @State var restController: RestController = RestController(host: "127.0.0.1", port: 8001)
+    @State var restController: RestController = RestController(host: "192.168.1.5", port: 8001)
     var body: some Scene {
         WindowGroup {
             switch self.currentView {

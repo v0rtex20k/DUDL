@@ -31,11 +31,16 @@ struct StartView : View {
                             Text(alert_message)
                         }
                 } else if game_code != nil {
-                    Text(game_code ?? "STUPID")
+                    Text(game_code ?? "unknown")
                         .foregroundStyle(.white)
                         .padding()
                         .font(Font.custom("Galvji", size: 30))
                         .foregroundStyle(.white)
+                        .onTapGesture {
+                            // NOTE: remove this eventually
+                            game_code = nil
+                            currentView = "HomeView"
+                        }
                 }   else {
                     ProgressView {
                         Text("Connecting to Server")
