@@ -89,7 +89,7 @@ def auto_register_blueprints(api: Api, blueprint_dir: str = "dudl.web.blueprints
 def build_app(runtime_env: Dict[str, Any]):
     app = Flask(__name__)
 
-    env : str = runtime_env.get("ENV", "dudl.web.env.ProductionEnvironment")
+    env : str = runtime_env.get("ENV", "dudl.web.env.DevelopmentEnvironment")
     try:
         app.config.from_object(env)
     except ModuleNotFoundError as e:
