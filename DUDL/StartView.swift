@@ -11,7 +11,7 @@ import Foundation
 import SwiftUI
 
 struct StartView : View {
-    @State var game_code: String?
+    @State var game_code: String = ""
     @State private var shouldShowAlert: Bool = false
     @State private var alert_message: String = ""
     @Binding var currentView: String
@@ -24,23 +24,30 @@ struct StartView : View {
                     Text("")
                         .alert("Unable to Start Game", isPresented: $shouldShowAlert) {
                             Button("OK", role: .cancel) {
-                                game_code = nil
+                                game_code = ""
                                 currentView = "HomeView"
                             }
                         } message: {
                             Text(alert_message)
                         }
-                } else if game_code != nil {
-                    Text(game_code ?? "unknown")
-                        .foregroundStyle(.white)
-                        .padding()
-                        .font(Font.custom("Galvji", size: 30))
-                        .foregroundStyle(.white)
-                        .onTapGesture {
-                            // NOTE: remove this eventually
-                            game_code = nil
-                            currentView = "HomeView"
+                } else if !game_code.isEmpty {
+                    VStack{
+                        Text(game_code)
+                            .padding()
+                            .foregroundStyle(.white)
+                            .font(Font.custom("Galvji", size: 25))
+                            .onTapGesture {
+                                UIPasteboard.general.string = game_code
+                                currentView = "HomeView"
+                            }
+                        ShareLink(item: "Let's DÜDL: \(game_code)") {
+                            Label("Share", systemImage:  "arrow.up.circle")
                         }
+                        .padding()
+                        .foregroundStyle(.white)
+                        .font(Font.custom("Galvji", size: 15))
+                        
+                    }
                 }   else {
                     ProgressView {
                         Text("Connecting to Server")
@@ -60,7 +67,7 @@ struct StartView : View {
                 switch result {
                     case .success(let g):
                     game_code = g.code
-                        print("Started a new game \(game_code!)")
+                    print("Started a new game \(game_code)")
                     case .failure(let error):
                         switch error {
                             case .serviceUnavailable:
