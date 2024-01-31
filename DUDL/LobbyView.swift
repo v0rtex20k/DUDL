@@ -76,8 +76,7 @@ struct LobbyView : View {
                 .background(Color.black)
             }
             .onTapGesture(count: 2) {
-                currentView = "HomeView"
-                // NOTE: remove player from the game
+                currentView = "PlayerProfileView"
                 let impact = UIImpactFeedbackGenerator(style: .heavy)
                 impact.impactOccurred()
             }

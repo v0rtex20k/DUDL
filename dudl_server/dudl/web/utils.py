@@ -1,4 +1,5 @@
 import signal
+from logging import ERROR
 from typing import Callable
 
 from flask import abort, current_app, logging
@@ -22,6 +23,6 @@ def register_signals(signal_handler_func: Callable):
             continue
 
 
-def log_and_abort(status_code: int, desc: str, log_lvl: int = logging.ERROR):
+def log_and_abort(status_code: int, desc: str, log_lvl: int = ERROR):
     current_app.logger.log(level=log_lvl, msg=desc)
     abort(status_code, description=desc)

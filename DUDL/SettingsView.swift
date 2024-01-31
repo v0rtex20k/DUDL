@@ -62,10 +62,14 @@ struct SettingsView : View {
                     .font(Font.custom("Galvji", size: 20))
                     Spacer()
                 }
-            }.onTapGesture(count: 2) {
+            }
+            .onTapGesture(count: 2) {
                 currentView = "HomeView"
                 let impactMed = UIImpactFeedbackGenerator(style: .medium)
                 impactMed.impactOccurred()
+            }
+            .onTapGesture(count: 1) {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
             }
         }
     }

@@ -36,32 +36,32 @@ struct JoinView : View {
                                 .textInputAutocapitalization(.never)
                                 .disableAutocorrection(true)
                                 .onSubmit {
-                                if isValidGameCode(gameCode) {
-                                    print("Attempting to join Game  \"\(gameCode)\"...")
-                                    Task {
-                                        await restController.joinExistingGame(gameCode) { result in
-                                            wasSubmitted = true
-                                            switch result {
-                                            case .success(let jgr):
-                                                currentView = "LobbyView"
-                                                print("Joined Game \(jgr.playerId)")
-                                            case .failure(let error):
-                                                switch error {
-                                                    case .serviceUnavailable:
-                                                        alertMessage = "Failed to connect to server \n Please check your internet connection"
-                                                    default:
-                                                        alertMessage = "Something went wrong \n Please try again later"
+                                    if isValidGameCode(gameCode) {
+                                        print("Attempting to join Game  \"\(gameCode)\"...")
+                                        Task {
+                                            await restController.joinExistingGame(gameCode) { result in
+                                                wasSubmitted = true
+                                                switch result {
+                                                case .success(let jgr):
+                                                    currentView = "PlayerProfileView"
+                                                    print("Joined Game \(jgr.playerId)")
+                                                case .failure(let error):
+                                                    switch error {
+                                                        case .serviceUnavailable:
+                                                            alertMessage = "Failed to connect to server \n Please check your internet connection"
+                                                        default:
+                                                            alertMessage = "Something went wrong \n Please try again later"
+                                                    }
+                                                    shouldShowAlert = true
+                                                    print(error.localizedDescription)
                                                 }
-                                                shouldShowAlert = true
-                                                print(error.localizedDescription)
                                             }
+                                            
                                         }
-                                        
-                                    }
 
-                                } else {
-                                    print("Ignoring invalid game code \(gameCode)")
-                                }
+                                    } else {
+                                        print("Ignoring invalid game code \(gameCode)")
+                                    }
                             }
                             .foregroundStyle(.black)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -93,6 +93,9 @@ struct JoinView : View {
                     }
                 }
             }
+        }
+        .onTapGesture(count: 1) {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
         }
         .onTapGesture(count: 2) {
             UIPasteboard.general.string = gameCode

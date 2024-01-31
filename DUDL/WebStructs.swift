@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 // MARK: Starting a New Game
 
@@ -29,10 +30,22 @@ struct JoinGameResponse: Decodable {
     let playerId: String
 }
 
-// MARK: Player Info
+// MARK: Updating Player Profile
 
-struct Player: Decodable {
-    let player_id: String
+struct RGBA : Encodable {
+    let r: Float
+    let g: Float
+    let b: Float
+    let a: Float
+}
+
+struct UpdatePlayerProfileRequest: Encodable {
+    // NOTE: server must enforce that players can only join one game at a time
+    let playerId: String
     let nickname: String
-    let turnIndex: Int
+    let rgba: RGBA
+}
+
+struct UpdatePlayerProfileResponse: Decodable {
+    let playerId: String
 }

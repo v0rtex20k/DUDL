@@ -52,10 +52,11 @@ struct StartView : View {
                                 .foregroundStyle(.white)
                                 .font(Font.custom("Galvji", size: 25))
                         }
-                        .padding()
-                        .foregroundStyle(.white)
-                        .font(Font.custom("Galvji", size: 15))
-                        }
+                        Text("Tap the code to share")
+                            .padding()
+                            .foregroundStyle(.white)
+                            .font(Font.custom("Galvji", size: 8))
+                    }
 
                 }   else {
                         ProgressView {

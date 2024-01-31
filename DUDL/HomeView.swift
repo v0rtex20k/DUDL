@@ -45,7 +45,7 @@ struct HomeView: View {
                                 RoundedRectangle(cornerRadius: 10).stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
                                     .foregroundStyle(.white)
                                     .frame(width: geo.size.width / 4,
-                                                  height: geo.size.height / 15)
+                                                  height: geo.size.height / 12)
                             )
                         Spacer()
                         Button("Join"){
@@ -58,7 +58,7 @@ struct HomeView: View {
                             RoundedRectangle(cornerRadius: 10).stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
                                 .foregroundStyle(.white)
                                 .frame(width: geo.size.width / 4,
-                                              height: geo.size.height / 15)
+                                              height: geo.size.height / 12)
                         )
                         Spacer()
                     }

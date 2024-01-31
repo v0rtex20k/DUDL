@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 struct RestController {
     var _host: String
@@ -38,6 +39,8 @@ struct RestController {
         }
     }
     
+    // MARK: Encodings
+    
     func encodeNewGameRequest() async -> Optional<Data> {
         let pid: String = await UIDevice.current.identifierForVendor!.uuidString
         if pid.isEmpty {
@@ -61,6 +64,21 @@ struct RestController {
         }
         return uploadData
     }
+    
+    func encodeUpdatePlayerProfileRequest(rgba: RGBA, nickname: String) async -> Optional<Data> {
+        let pid: String = await UIDevice.current.identifierForVendor!.uuidString
+        if pid.isEmpty {
+            return nil
+        }
+        
+        let req = UpdatePlayerProfileRequest(playerId: pid, nickname: nickname, rgba: rgba)
+        guard let uploadData = try? JSONEncoder().encode(req) else {
+            return nil
+        }
+        return uploadData
+    }
+    
+    // MARK: Use Cases
     
     func startNewGame(completionHandler: @escaping (Result<NewGameResponse, HTTPError>) -> Void) async {
         guard let uploadData = await self.encodeNewGameRequest() else {
@@ -111,11 +129,45 @@ struct RestController {
             catch {
                 
                 print("Failed to decode JoinGameResponse")
-                do {
-                    try print(String(decoding: post_result.get(), as: UTF8.self))
-                } catch {
-                    print("nope ;)")
+//                do {
+//                    try print(String(decoding: post_result.get(), as: UTF8.self))
+//                } catch {
+//                    print("nope ;)")
+//                }
+                completionHandler(.failure(.decodingError))
+            }
+            
+        }
+        
+    }
+    
+    func updatePlayerProfile(rgba: RGBA, nickname: String,completionHandler: @escaping (Result<UpdatePlayerProfileResponse, HTTPError>) -> Void) async {
+        guard let uploadData = await self.encodeUpdatePlayerProfileRequest(rgba: rgba, nickname: nickname) else {
+            completionHandler(.failure(.unidentifiedUser))
+            return
+        }
+        
+        return await postAsync(endpoint: "update-player-profile", uploadData: uploadData) { post_result in
+            do {
+                switch post_result {
+                    case .success(let post_data):
+                        let decoded_result = try JSONDecoder().decode(UpdatePlayerProfileResponse.self, from: post_data)
+                        
+                        completionHandler(.success(decoded_result))
+                        return
+                        
+                    case .failure(let http_error):
+                        completionHandler(.failure(http_error))
                 }
+            }
+            catch {
+                
+                print("Failed to decode UpdatePlayerProfileResponse")
+//                do {
+//                    try print(String(decoding: post_result.get(), as: UTF8.self))
+//                } catch {
+//                    print("nope ;)")
+//                }
                 completionHandler(.failure(.decodingError))
             }
             
@@ -123,6 +175,9 @@ struct RestController {
         
     }
         
+        
+    // MARK: Core Functionality
+
     func getAsync(endpoint: String, completionHandler: @escaping (Result<Data, HTTPError>) -> Void) async {
         return await self._performRequest(endpoint: endpoint, type: .GET, uploadData: nil, completionHandler: completionHandler)
     }
