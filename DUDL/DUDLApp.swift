@@ -14,14 +14,16 @@ struct DUDLApp: App {
     @State var restController: RestController = RestController(host: "192.168.1.14", port: 8001)
     var body: some Scene {
         WindowGroup {
-            switch self.currentView {
-                case "HomeView": HomeView(currentView: $currentView)
-                case "SettingsView": SettingsView(currentView: $currentView, restController: $restController)
-                case "StartView": StartView(currentView: $currentView, restController: $restController)
-                case "JoinView": JoinView(currentView: $currentView, restController: $restController)
-                case "LobbyView": LobbyView(currentView: $currentView, restController: $restController)
-                default: HomeView(currentView: $currentView)
-            }
+            PlayerRegistrationView(currentView: $currentView, restController: $restController)
+//            switch self.currentView {
+//                case "HomeView": HomeView(currentView: $currentView)
+//                case "SettingsView": SettingsView(currentView: $currentView, restController: $restController)
+//                case "StartView": StartView(currentView: $currentView, restController: $restController)
+//                case "JoinView": JoinView(currentView: $currentView, restController: $restController)
+//                case "LobbyView": LobbyView(currentView: $currentView, restController: $restController)
+//                case "PlayerRegistrationView" : PlayerRegistrationView(currentView: $currentView, restController: $restController)
+//                default: HomeView(currentView: $currentView)
+//            }
         }
     }
 }

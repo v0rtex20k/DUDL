@@ -9,11 +9,10 @@ import Foundation
 import SwiftUI
 
 // 1. POST get-players/{game-code}
-// 2. Display all players, allow king to reorder them, updating their turn_indices in the process
+// 2. Display all players, allow king to reorder them for fun
 // 3. Allow players to edit nicknames by clicking on THEIR icon
 // 4. Allow the king to triple-tap other icons to remove them
 // 5. King starts the game
-
 
 
 struct LobbyView : View {
@@ -23,16 +22,14 @@ struct LobbyView : View {
     @State private var colors: [Color] = [.red, .blue, .purple,
         .yellow, .black, .indigo, .cyan, .brown, .mint, .orange]
     @State private var draggingItem: Color?
-    @State private var zoomOut: Bool = false
+    @State private var zoomIn: Bool = false
     var body: some View {
         NavigationStack {
             ScrollView(.vertical) {
-                let columns = Array(repeating: GridItem(spacing: 10), count: zoomOut ? 3 : 2)
+                let columns = Array(repeating: GridItem(spacing: 10), count: zoomIn ? 2 : 3)
                 LazyVGrid(columns: columns, spacing: 10, content: {
                     ForEach(colors, id: \.self) { color in
-                        GeometryReader {
-                            let size = $0.size
-                            
+                        GeometryReader { geo in
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(color.gradient)
                                 /// Drag
@@ -40,7 +37,7 @@ struct LobbyView : View {
                                     /// Custom Preview View
                                     RoundedRectangle(cornerRadius: 10)
                                         .fill(.ultraThinMaterial)
-                                        .frame(width: size.width, height: size.height)
+                                        .frame(width: geo.size.width, height: geo.size.height)
                                         .onAppear {
                                             draggingItem = color
                                         }
@@ -61,6 +58,9 @@ struct LobbyView : View {
                                         }
                                     }
                                 }
+                                .onTapGesture {
+                                    
+                                }
                                 .onTapGesture(count: 3) {
                                     print("delete \(color) player!")
                                     // NOTE: remove player from the game
@@ -69,7 +69,7 @@ struct LobbyView : View {
                                 }
 
                         }
-                        .frame(height: zoomOut ? 100 : 180)
+                        .frame(height: zoomIn ? 200 : 100)
                     }
                 })
                 .padding(15)
@@ -86,10 +86,10 @@ struct LobbyView : View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         withAnimation(.bouncy) {
-                            zoomOut.toggle()
+                            zoomIn.toggle()
                         }
                     } label: {
-                        Image(systemName: zoomOut ? "plus.magnifyingglass" : "minus.magnifyingglass")
+                        Image(systemName: zoomIn ? "minus.magnifyingglass" : "plus.magnifyingglass")
                             .font(.headline)
                             .foregroundStyle(.white)
                     }

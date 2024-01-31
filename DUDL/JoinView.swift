@@ -96,7 +96,7 @@ struct JoinView : View {
         }
         .onTapGesture(count: 2) {
             UIPasteboard.general.string = gameCode
-            currentView = "HomeView"
+            currentView = "PlayerRegistrationView"
             let impact = UIImpactFeedbackGenerator(style: .heavy)
             impact.impactOccurred()
         }
