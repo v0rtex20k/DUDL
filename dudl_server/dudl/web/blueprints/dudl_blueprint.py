@@ -24,7 +24,7 @@ class NewGame(MethodView):
         collection.add_game(game_code=game_code, player_id=player_id)
         collection.add_player_to_game(game_code=game_code, player_id=player_id)
 
-        current_app.logger.debug(f"Generating New GameCode \"{game_code}\" for Player {player_id} ...")
+        current_app.logger.debug(f"Generating new GameCode \"{game_code}\" for Player {player_id} ...")
 
         return dict(gameCode=game_code), status.HTTP_200_OK
     
@@ -32,11 +32,12 @@ class NewGame(MethodView):
 class JoinGame(MethodView):
     def post(self):
         """ Join an existing DUDL Game """
+        print("Someone's tryna join ... ")
         game_code: str = abort_if_missing(request, "gameCode")
         player_id: str = abort_if_missing(request, "playerId")
 
+        current_app.logger.debug(f"Attempting to add Player {player_id} to Game {game_code}...")
         collection.add_player_to_game(game_code=game_code, player_id=player_id)
-
         current_app.logger.debug(f"Adding Player {player_id} to Game {game_code}...")
 
         return dict(playerId=player_id), status.HTTP_200_OK

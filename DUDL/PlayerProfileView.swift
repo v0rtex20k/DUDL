@@ -32,7 +32,7 @@ struct PlayerProfileView : View {
     
     func updateProfile() async {
         let c = bgColor.resolve(in: env)
-        print("Attempting to update Player Profile \"\(nickname)\", \(c.description) ...")
+        print("Attempting to Update Player Profile \"\(nickname)\" in \(gameCode) : \(c.description) ...")
         await restController.updatePlayerProfile(code: gameCode, nickname: nickname, rgba: RGBA(r: c.red, g: c.green, b: c.blue, a: c.opacity)) { result in
             wasSubmitted = true
             switch result {
@@ -58,20 +58,20 @@ struct PlayerProfileView : View {
             ZStack {
                 Color.black.edgesIgnoringSafeArea(.all)
                 VStack {
-                    Spacer()
+                    Spacer(minLength: minDim * 0.4)
                     Group {
                         if !wasSubmitted {
                             TextField("Username", text: $nickname)
                                 .multilineTextAlignment(.center)
                                 .padding()
-                                .frame(width: 300, height: 200)
+                                .allowsTightening(true)
                                 .font(Font.custom("Galvji", size: 16))
                                 .foregroundColor(.gray)
                                 .background(
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 5)
                                             .fill(Color.white.gradient)
-                                            .frame(width: minDim * 0.6, height: 45, alignment: .center)
+                                            .frame(width: minDim * 0.7, height: 45, alignment: .center)
                                             .shadow(radius: 3)
                                             .zIndex(1)
                                         RoundedRectangle(cornerRadius: 10)
@@ -86,25 +86,29 @@ struct PlayerProfileView : View {
                                 .disableAutocorrection(true)
                                 .onReceive(Just(nickname)) { _ in
                                     limitText(maxLen)
-                                }.padding(25)
+                                }
                             Spacer()
                             HStack {
                                 Spacer()
                                 SquareColorPickerView(colorValue: $bgColor)
                                     .padding()
                                 Button("", systemImage: "checkmark.seal"){
-                                    Task.detached {
-                                        await updateProfile()
+                                    if !nickname.isEmpty{
+                                        Task.detached {
+                                            await updateProfile()
+                                        }
                                     }
                                 }
                                 .padding()
                                 .foregroundStyle(.white)
                                 Spacer()
                             }
+                            Spacer()
                         } else if shouldShowAlert {
                             Text("")
                                 .alert("Unable to Update Player Profile", isPresented: $shouldShowAlert) {
                                     Button("OK", role: .cancel) {
+                                        gameCode.removeAll()
                                         currentView = "HomeView"
                                     }
                                 } message: {
@@ -133,6 +137,9 @@ struct PlayerProfileView : View {
                 currentView = "HomeView"
                 let impact = UIImpactFeedbackGenerator(style: .heavy)
                 impact.impactOccurred()
+            }
+            .onTapGesture(count: 1) {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
             }
         }.ignoresSafeArea(.keyboard)
     }

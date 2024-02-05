@@ -35,10 +35,10 @@ class GameCollection:
     def add_player_to_game(self, game_code: str, player_id: str):
         try:
             if any(g.has_player(player_id) for g in self.games.values()):
-                raise NameError(f"Duplicate PlayerId: {player_id}]")
+                raise NameError
             self.games[game_code].add_player_to_game(player_id)
         except NameError:
-            raise
+            log_and_abort(status.HTTP_400_BAD_REQUEST, f"Duplicate PlayerId: {player_id}")
         except:
             log_and_abort(status.HTTP_404_NOT_FOUND, f"Game \"{game_code}\" does not exist!")
     

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		57369D172B70ACA200918CF5 /* PlayerProfileGridItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57369D162B70ACA200918CF5 /* PlayerProfileGridItemView.swift */; };
 		57C3AC052B65B2FB0058AE5F /* DUDLApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC042B65B2FB0058AE5F /* DUDLApp.swift */; };
 		57C3AC092B65B2FC0058AE5F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 57C3AC082B65B2FC0058AE5F /* Assets.xcassets */; };
 		57C3AC0C2B65B2FC0058AE5F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 57C3AC0B2B65B2FC0058AE5F /* Preview Assets.xcassets */; };
@@ -46,6 +47,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		57369D162B70ACA200918CF5 /* PlayerProfileGridItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerProfileGridItemView.swift; sourceTree = "<group>"; };
 		57C3AC012B65B2FB0058AE5F /* DUDL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DUDL.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		57C3AC042B65B2FB0058AE5F /* DUDLApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DUDLApp.swift; sourceTree = "<group>"; };
 		57C3AC082B65B2FC0058AE5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 				57C3AC552B69E57F0058AE5F /* PlayerProfileView.swift */,
 				57CE50E92B69F2030071E806 /* SquareColorPickerView.swift */,
 				57CE50EB2B6EA0230071E806 /* NewLobbyView.swift */,
+				57369D162B70ACA200918CF5 /* PlayerProfileGridItemView.swift */,
 			);
 			path = DUDL;
 			sourceTree = "<group>";
@@ -310,6 +313,7 @@
 				57C3AC312B65BF180058AE5F /* Scribble.swift in Sources */,
 				57C3AC052B65B2FB0058AE5F /* DUDLApp.swift in Sources */,
 				57C3AC3C2B668F970058AE5F /* StartView.swift in Sources */,
+				57369D172B70ACA200918CF5 /* PlayerProfileGridItemView.swift in Sources */,
 				57C3AC482B68340C0058AE5F /* Errors.swift in Sources */,
 				57C3AC542B68BE620058AE5F /* JoinView.swift in Sources */,
 				57C3AC4E2B6864DB0058AE5F /* RestController.swift in Sources */,

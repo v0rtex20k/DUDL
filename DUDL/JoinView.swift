@@ -9,7 +9,6 @@ import Foundation
 import SwiftUI
 import Combine
 
-
 func isValidGameCode(_ code: String) -> Bool {
     guard !code.isEmpty else {
         return false
@@ -27,13 +26,14 @@ func isValidGameCode(_ code: String) -> Bool {
 
 
 struct JoinView : View {
-    @State private var gameCode: String = ""
+    @FocusState var isFocused: Bool
     @State private var alertMessage: String = ""
     @State private var wasSubmitted: Bool = false
     @State private var shouldShowAlert: Bool = false
     
     private let maxLen = 100 // just to prevent some type of crazy long string
     
+    @Binding var gameCode: String
     @Binding var currentView: String
     @Binding var restController: RestController
     
@@ -76,14 +76,16 @@ struct JoinView : View {
                                 .foregroundStyle(.white)
                                 .font(Font.custom("Galvji", size: 16))
                             TextField("game-code", text: $gameCode)
+                                .focused($isFocused)
                                 .textInputAutocapitalization(.never)
                                 .disableAutocorrection(true)
                                 .onReceive(Just(gameCode)) { _ in
                                     limitText()
+                                    isFocused = true
                                 }
                                 .onSubmit {
-                                    if isValidGameCode(gameCode) {
-                                        print("Attempting to join Game  \"\(gameCode)\"...")
+                                    if !isFocused && isValidGameCode(gameCode) {
+                                        print("Attempting to join Game \"\(gameCode)\"...")
                                         wasSubmitted = true
                                         Task.detached {
                                             await joinGame()
@@ -92,17 +94,17 @@ struct JoinView : View {
                                     } else {
                                         print("Ignoring invalid game code \(gameCode)")
                                     }
-                            }
-                            .foregroundStyle(.black)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .multilineTextAlignment(.center)
-                            .frame(width: geo.size.width * 0.80)
-                            .font(Font.custom("Galvji", size: 20))
+                                }
+                                .foregroundStyle(.black)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .multilineTextAlignment(.center)
+                                .frame(width: geo.size.width * 0.80)
+                                .font(Font.custom("Galvji", size: 20))
                         } else if shouldShowAlert {
                             Text("")
                                 .alert("Unable to Join Game", isPresented: $shouldShowAlert) {
                                     Button("OK", role: .cancel) {
-                                        gameCode = ""
+                                        gameCode.removeAll()
                                         currentView = "HomeView"
                                     }
                                 } message: {
@@ -138,6 +140,7 @@ struct JoinView : View {
         .ignoresSafeArea(.keyboard)
         .onAppear {
             currentView = "JoinView"
+            isFocused = true
         }
     }
 }
@@ -146,7 +149,7 @@ struct JoinView : View {
    struct PreviewWrapper: View {
        @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
        var body: some View {
-           JoinView(currentView: .constant("JoinView"), restController: $rc)
+           JoinView(gameCode: .constant("happy-hippo"), currentView: .constant("JoinView"), restController: $rc)
        }
    }
    return PreviewWrapper()
