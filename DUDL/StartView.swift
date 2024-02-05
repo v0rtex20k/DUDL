@@ -93,9 +93,6 @@ struct StartView : View {
                 }
             }
         }
-        .onAppear {
-            currentView = "StartView"
-        }
         .onTapGesture(count: 2) {
             UIPasteboard.general.string = gameCode
             currentView = "HomeView"

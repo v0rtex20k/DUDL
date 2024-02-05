@@ -75,9 +75,6 @@ struct LobbyView : View {
                 .padding(15)
                 .background(Color.black)
             }
-            .onAppear {
-                currentView = "NewLobbyView"
-            }
             .onTapGesture(count: 2) {
                 currentView = "PlayerProfileView"
                 let impact = UIImpactFeedbackGenerator(style: .heavy)

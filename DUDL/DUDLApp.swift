@@ -19,13 +19,7 @@ struct DUDLApp: App {
                 case "HomeView": HomeView(currentView: $currentView)
                 case "SettingsView": SettingsView(currentView: $currentView, restController: $restController)
                 case "StartView": StartView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
-                case "JoinView":
-                    if isValidGameCode(gameCode) {
-                        PlayerProfileView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
-                    } else {
-                        JoinView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
-                        
-                    }
+                case "JoinView": JoinView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
                 case "LobbyView": NewLobbyView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
                 case "PlayerProfileView" : PlayerProfileView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
                 default: HomeView(currentView: $currentView)

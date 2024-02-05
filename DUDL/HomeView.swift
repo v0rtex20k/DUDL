@@ -24,8 +24,10 @@ struct HomeView: View {
                         .font(.caption)
                         .foregroundStyle(.white)
                         .onAppear {
-                            withAnimation(.easeIn(duration: 4).delay(0.5).repeatForever(autoreverses:true)){
-                                shouldDraw.toggle()
+                            Task.detached {
+                                withAnimation(.easeIn(duration: 4).delay(0.5).repeatForever(autoreverses:true)){
+                                    shouldDraw.toggle()
+                                }
                             }
                         }
                     Text("DÜDL")
@@ -75,8 +77,6 @@ struct HomeView: View {
                     }
                 }
             }
-        }.onAppear {
-            currentView = "HomeView"
         }
     }
 }

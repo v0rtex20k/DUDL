@@ -26,7 +26,6 @@ func isValidGameCode(_ code: String) -> Bool {
 
 
 struct JoinView : View {
-    @FocusState var isFocused: Bool
     @State private var alertMessage: String = ""
     @State private var wasSubmitted: Bool = false
     @State private var shouldShowAlert: Bool = false
@@ -76,15 +75,14 @@ struct JoinView : View {
                                 .foregroundStyle(.white)
                                 .font(Font.custom("Galvji", size: 16))
                             TextField("game-code", text: $gameCode)
-                                .focused($isFocused)
                                 .textInputAutocapitalization(.never)
                                 .disableAutocorrection(true)
                                 .onReceive(Just(gameCode)) { _ in
                                     limitText()
-                                    isFocused = true
+                                    print("Limited text to: \(gameCode)")
                                 }
                                 .onSubmit {
-                                    if !isFocused && isValidGameCode(gameCode) {
+                                    if isValidGameCode(gameCode) {
                                         print("Attempting to join Game \"\(gameCode)\"...")
                                         wasSubmitted = true
                                         Task.detached {
@@ -129,6 +127,7 @@ struct JoinView : View {
             }
             .contentShape(Rectangle())
             .onTapGesture(count: 2) {
+                gameCode.removeAll()
                 currentView = "HomeView"
                 let impact = UIImpactFeedbackGenerator(style: .heavy)
                 impact.impactOccurred()
@@ -138,10 +137,6 @@ struct JoinView : View {
             }
         }
         .ignoresSafeArea(.keyboard)
-        .onAppear {
-            currentView = "JoinView"
-            isFocused = true
-        }
     }
 }
 

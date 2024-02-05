@@ -66,9 +66,6 @@ struct SettingsView : View {
             }
             .ignoresSafeArea(.keyboard)
             .contentShape(Rectangle())
-            .onAppear {
-                currentView = "SettingsView"
-            }
             .onTapGesture(count: 2) {
                 currentView = "HomeView"
                 let impactMed = UIImpactFeedbackGenerator(style: .medium)

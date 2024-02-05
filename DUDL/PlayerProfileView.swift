@@ -130,10 +130,8 @@ struct PlayerProfileView : View {
                     Spacer()
                 }
             }
-            .onAppear {
-                currentView = "PlayerProfileView"
-            }
             .onTapGesture(count: 2) {
+                gameCode.removeAll()
                 currentView = "HomeView"
                 let impact = UIImpactFeedbackGenerator(style: .heavy)
                 impact.impactOccurred()
