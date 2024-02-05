@@ -13,16 +13,16 @@ func isValidIP(_ s: String) -> Bool {
         return false
     }
     
-    let pattern_2 = "(25[0-5]|2[0-4]\\d|1\\d{2}|\\d{1,2})\\.(25[0-5]|2[0-4]\\d|1\\d{2}|\\d{1,2})\\.(25[0-5]|2[0-4]\\d|1\\d{2}|\\d{1,2})\\.(25[0-5]|2[0-4]\\d|1\\d{2}|\\d{1,2})"
-    let regexText_2 = NSPredicate(format: "SELF MATCHES %@", pattern_2)
-    let result_2 = regexText_2.evaluate(with: s)
-    return result_2
+    let pattern = "(25[0-5]|2[0-4]\\d|1\\d{2}|\\d{1,2})\\.(25[0-5]|2[0-4]\\d|1\\d{2}|\\d{1,2})\\.(25[0-5]|2[0-4]\\d|1\\d{2}|\\d{1,2})\\.(25[0-5]|2[0-4]\\d|1\\d{2}|\\d{1,2})"
+    let pred = NSPredicate(format: "SELF MATCHES %@", pattern)
+    return pred.evaluate(with: s)
+    
 }
 
 enum HostUpdateStatus {
     case unchanged
-    case updatedFailed
-    case updatedSuceeded
+    case updateFailed
+    case updateSuceeded
 }
 
 struct SettingsView : View {
@@ -45,23 +45,29 @@ struct SettingsView : View {
                                 if isValidIP(host) {
                                     print("Updated RC.host to \(host)")
                                     restController.update_host(host: host)
-                                    status = .updatedSuceeded
+                                    status = .updateSuceeded
                                     Task {
-                                        try! await Task.sleep(nanoseconds: 3_000_000_000)
+                                        try? await Task.sleep(nanoseconds: 3_000_000_000)
                                         status = .unchanged
                                     }
                                 } else {
-                                    status = .updatedFailed
+                                    status = .updateFailed
                                     print("Ignoring invalid host \(host)")
                                 }
                     }
-                        .foregroundStyle(status == .updatedSuceeded ? .green : (status == .updatedFailed ? .red : .black))
+                        .foregroundStyle(status == .updateSuceeded ? .green : (status == .updateFailed ? .red : .black))
+                        .multilineTextAlignment(.center)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .multilineTextAlignment(.center)
                     .frame(width: geo.size.width * 0.80)
                     .font(Font.custom("Galvji", size: 20))
                     Spacer()
+                    Spacer()
                 }
+            }
+            .ignoresSafeArea(.keyboard)
+            .contentShape(Rectangle())
+            .onAppear {
+                currentView = "SettingsView"
             }
             .onTapGesture(count: 2) {
                 currentView = "HomeView"
@@ -77,7 +83,7 @@ struct SettingsView : View {
 
 #Preview {
    struct PreviewWrapper: View {
-       @State var rc: RestController = RestController(host: "127.0.0.1", port:8001)
+       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
        var body: some View {
            SettingsView(currentView: .constant("SettingsView"), restController: $rc)
        }

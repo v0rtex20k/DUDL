@@ -26,11 +26,32 @@ struct ActivityViewController: UIViewControllerRepresentable {
 }
 
 struct StartView : View {
-    @State private var gameCode: String = ""
     @State private var shouldShowAlert: Bool = false
     @State private var alertMessage: String = ""
+    
+    @Binding var gameCode: String
     @Binding var currentView: String
     @Binding var restController: RestController
+    
+    func startGame() async {
+        await restController.startNewGame { result in
+            switch result {
+                case .success(let g):
+                gameCode = g.gameCode
+                print("Started a new game \(gameCode)")
+                case .failure(let error):
+                    switch error {
+                        case .serviceUnavailable:
+                            alertMessage = "Failed to connect to server \n Please check your internet connection"
+                        default:
+                            alertMessage = "Something went wrong \n Please try again later"
+                    }
+                    shouldShowAlert = true
+                    print(error.localizedDescription)
+            }
+        }
+    }
+    
     var body: some View {
         ZStack {
             Color.black.edgesIgnoringSafeArea(.all)
@@ -39,7 +60,7 @@ struct StartView : View {
                     Text("")
                         .alert("Unable to Start Game", isPresented: $shouldShowAlert) {
                             Button("OK", role: .cancel) {
-                                gameCode = ""
+                                gameCode.removeAll()
                                 currentView = "HomeView"
                             }
                         } message: {
@@ -72,6 +93,9 @@ struct StartView : View {
                 }
             }
         }
+        .onAppear {
+            currentView = "StartView"
+        }
         .onTapGesture(count: 2) {
             UIPasteboard.general.string = gameCode
             currentView = "HomeView"
@@ -80,31 +104,16 @@ struct StartView : View {
         }
 
         .task {
-            await restController.startNewGame { result in
-                switch result {
-                    case .success(let g):
-                    gameCode = g.gameCode
-                    print("Started a new game \(gameCode)")
-                    case .failure(let error):
-                        switch error {
-                            case .serviceUnavailable:
-                                alertMessage = "Failed to connect to server \n Please check your internet connection"
-                            default:
-                                alertMessage = "Something went wrong \n Please try again later"
-                        }
-                        shouldShowAlert = true
-                        print(error.localizedDescription)
-                }
-            }
+            await startGame()
         }
     }
 }
 
 #Preview {
    struct PreviewWrapper: View {
-       @State var rc: RestController = RestController(host: "127.0.0.1", port:8001)
+       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
        var body: some View {
-           StartView(currentView: .constant("HomeView"), restController: $rc)
+           StartView(gameCode: .constant("happy-lizard"), currentView: .constant("HomeView"), restController: $rc)
        }
    }
    return PreviewWrapper()

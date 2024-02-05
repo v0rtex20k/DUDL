@@ -75,6 +75,8 @@ struct HomeView: View {
                     }
                 }
             }
+        }.onAppear {
+            currentView = "HomeView"
         }
     }
 }

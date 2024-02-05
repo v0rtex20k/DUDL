@@ -75,6 +75,9 @@ struct LobbyView : View {
                 .padding(15)
                 .background(Color.black)
             }
+            .onAppear {
+                currentView = "NewLobbyView"
+            }
             .onTapGesture(count: 2) {
                 currentView = "PlayerProfileView"
                 let impact = UIImpactFeedbackGenerator(style: .heavy)
@@ -101,7 +104,7 @@ struct LobbyView : View {
 
 #Preview {
    struct PreviewWrapper: View {
-       @State var rc: RestController = RestController(host: "127.0.0.1", port:8001)
+       @State var rc: RestController = RestController(host: "192.168.1.15", port:8001)
        var body: some View {
            LobbyView(currentView: .constant("LobbyView"), restController: $rc)
        }

@@ -25,6 +25,7 @@
 		57C3AC542B68BE620058AE5F /* JoinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC532B68BE620058AE5F /* JoinView.swift */; };
 		57C3AC562B69E57F0058AE5F /* PlayerProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC552B69E57F0058AE5F /* PlayerProfileView.swift */; };
 		57CE50EA2B69F2030071E806 /* SquareColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57CE50E92B69F2030071E806 /* SquareColorPickerView.swift */; };
+		57CE50EC2B6EA0230071E806 /* NewLobbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57CE50EB2B6EA0230071E806 /* NewLobbyView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +68,7 @@
 		57C3AC532B68BE620058AE5F /* JoinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinView.swift; sourceTree = "<group>"; };
 		57C3AC552B69E57F0058AE5F /* PlayerProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerProfileView.swift; sourceTree = "<group>"; };
 		57CE50E92B69F2030071E806 /* SquareColorPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SquareColorPickerView.swift; sourceTree = "<group>"; };
+		57CE50EB2B6EA0230071E806 /* NewLobbyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewLobbyView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +135,7 @@
 				57C3AC532B68BE620058AE5F /* JoinView.swift */,
 				57C3AC552B69E57F0058AE5F /* PlayerProfileView.swift */,
 				57CE50E92B69F2030071E806 /* SquareColorPickerView.swift */,
+				57CE50EB2B6EA0230071E806 /* NewLobbyView.swift */,
 			);
 			path = DUDL;
 			sourceTree = "<group>";
@@ -303,6 +306,7 @@
 				57CE50EA2B69F2030071E806 /* SquareColorPickerView.swift in Sources */,
 				57C3AC522B68BD7A0058AE5F /* LobbyView.swift in Sources */,
 				57C3AC3A2B668F4F0058AE5F /* HomeView.swift in Sources */,
+				57CE50EC2B6EA0230071E806 /* NewLobbyView.swift in Sources */,
 				57C3AC312B65BF180058AE5F /* Scribble.swift in Sources */,
 				57C3AC052B65B2FB0058AE5F /* DUDLApp.swift in Sources */,
 				57C3AC3C2B668F970058AE5F /* StartView.swift in Sources */,

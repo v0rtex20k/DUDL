@@ -1,8 +1,9 @@
 import signal
 from logging import ERROR
-from typing import Callable
+from typing import Any, Callable, NoReturn, Union
 
-from flask import abort, current_app, logging
+from flask import Request, abort, current_app, logging
+from flask_api import status
 
 
 def shut_down_immediately():
@@ -26,3 +27,9 @@ def register_signals(signal_handler_func: Callable):
 def log_and_abort(status_code: int, desc: str, log_lvl: int = ERROR):
     current_app.logger.log(level=log_lvl, msg=desc)
     abort(status_code, description=desc)
+
+def abort_if_missing(request: Request, attr: str, status_code: int = status.HTTP_400_BAD_REQUEST) -> Union[NoReturn, Any]:
+    if not request or (val := request.get_json().get(attr)) is None:
+        log_and_abort(status_code, f"Missing {attr} in Request!")
+    
+    return val

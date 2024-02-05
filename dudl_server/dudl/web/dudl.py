@@ -10,7 +10,7 @@ from flask.logging import create_logger
 from flasgger import Swagger
 from typing import Any, Callable, Dict
 from flask_smorest import Blueprint, Api
-from dudl.web.blueprints import dudl_blueprint
+from pymongo import MongoClient
 from dudl.web.env import load_runtime_environment
 
 def setup_logging(default_level=logging.INFO, env_key="LOG_CFG"):
@@ -113,6 +113,10 @@ def build_app(runtime_env: Dict[str, Any]):
     app.creation_time = time.time()
 
     return app
+
+# TODO: make this work
+# def build_database():
+#     client = MongoClient()
 
 
 def start_server():

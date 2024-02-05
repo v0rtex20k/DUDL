@@ -25,7 +25,7 @@ struct RestController {
         // add more as needed
     }
     
-    init(host: String = "127.0.0.1", port: Int = 8001, maxRetryCount: Int = 1, retryDelay: TimeInterval = 5, requestTimeout: TimeInterval = 10) {
+    init(host: String = "192.168.1.7", port: Int = 8001, maxRetryCount: Int = 1, retryDelay: TimeInterval = 5, requestTimeout: TimeInterval = 10) {
         self._host = host
         self._port = port
         self._maxRetryCount = maxRetryCount
@@ -65,18 +65,32 @@ struct RestController {
         return uploadData
     }
     
-    func encodeUpdatePlayerProfileRequest(rgba: RGBA, nickname: String) async -> Optional<Data> {
+    func encodeUpdatePlayerProfileRequest(code: String, rgba: RGBA, nickname: String) async -> Optional<Data> {
         let pid: String = await UIDevice.current.identifierForVendor!.uuidString
         if pid.isEmpty {
             return nil
         }
         
-        let req = UpdatePlayerProfileRequest(playerId: pid, nickname: nickname, rgba: rgba)
+        let req = PlayerProfile(gameCode: code, playerId: pid, nickname: nickname, rgba: rgba)
         guard let uploadData = try? JSONEncoder().encode(req) else {
             return nil
         }
         return uploadData
     }
+    
+    func encodeAllPlayerProfilesRequest(code: String) async -> Optional<Data> {
+        let pid: String = await UIDevice.current.identifierForVendor!.uuidString
+        if pid.isEmpty {
+            return nil
+        }
+        let req = AllPlayerProfilesRequest(gameCode: code)
+        guard let uploadData = try? JSONEncoder().encode(req) else {
+            return nil
+        }
+        return uploadData
+    }
+    
+    
     
     // MARK: Use Cases
     
@@ -141,8 +155,8 @@ struct RestController {
         
     }
     
-    func updatePlayerProfile(rgba: RGBA, nickname: String,completionHandler: @escaping (Result<UpdatePlayerProfileResponse, HTTPError>) -> Void) async {
-        guard let uploadData = await self.encodeUpdatePlayerProfileRequest(rgba: rgba, nickname: nickname) else {
+    func updatePlayerProfile(code: String, rgba: RGBA, nickname: String,completionHandler: @escaping (Result<UpdatePlayerProfileResponse, HTTPError>) -> Void) async {
+        guard let uploadData = await self.encodeUpdatePlayerProfileRequest(code: code, rgba: rgba, nickname: nickname) else {
             completionHandler(.failure(.unidentifiedUser))
             return
         }
@@ -174,7 +188,40 @@ struct RestController {
         }
         
     }
+    
+    func allPlayerProfiles(code: String, completionHandler: @escaping (Result<[PlayerProfile], HTTPError>) -> Void) async {
+        guard let uploadData = await self.encodeAllPlayerProfilesRequest(code: code) else {
+            completionHandler(.failure(.unidentifiedUser))
+            return
+        }
         
+        return await postAsync(endpoint: "get-all-active-player-profiles", uploadData: uploadData) { post_result in
+            do {
+                switch post_result {
+                    case .success(let post_data):
+                        let decoded_result = try JSONDecoder().decode([PlayerProfile].self, from: post_data)
+                        
+                        completionHandler(.success(decoded_result))
+                        return
+                        
+                    case .failure(let http_error):
+                        completionHandler(.failure(http_error))
+                }
+            }
+            catch {
+                
+                print("Failed to decode list of PlayerProfiles")
+//                do {
+//                    try print(String(decoding: post_result.get(), as: UTF8.self))
+//                } catch {
+//                    print("nope ;)")
+//                }
+                completionHandler(.failure(.decodingError))
+            }
+            
+        }
+    }
+    
         
     // MARK: Core Functionality
 
@@ -242,7 +289,7 @@ struct RestController {
                     
                 } catch {
                     let timeout = UInt64(oneSecondInNanoseconds * self._retryDelay)
-                    try! await Task<Never, Never>.sleep(nanoseconds: timeout)
+                    try? await Task<Never, Never>.sleep(nanoseconds: timeout)
                     continue  // try again
                 }
             }
