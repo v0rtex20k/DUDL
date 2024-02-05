@@ -33,8 +33,7 @@ struct PlayerProfileView : View {
     func updateProfile() async {
         let c = bgColor.resolve(in: env)
         print("Attempting to update Player Profile \"\(nickname)\", \(c.description) ...")
-        await restController.updatePlayerProfile(code: gameCode, rgba: RGBA(r: c.red, g: c.green, b: c.blue, a: c.opacity),
-                                                 nickname: nickname) { result in
+        await restController.updatePlayerProfile(code: gameCode, nickname: nickname, rgba: RGBA(r: c.red, g: c.green, b: c.blue, a: c.opacity)) { result in
             wasSubmitted = true
             switch result {
             case .success(let uppr):

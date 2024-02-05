@@ -55,13 +55,22 @@ struct RGBA : Encodable, Decodable, Equatable, Hashable {
 struct PlayerProfile: Encodable, Decodable, Equatable, Hashable {
     // NOTE: server must enforce that players can only join one game at a time,
     // keyed by the gameCode they previously entered
-    let gameCode: String
+    let gameCode: String?
     let playerId: String
     let nickname: String
     let rgba: RGBA
     
+    init(gameCode: String, playerId: String, nickname: String, rgba: RGBA) {
+        self.gameCode = gameCode
+        self.playerId = playerId
+        self.nickname = nickname
+        self.rgba = rgba
+    }
+    
     static func == (lhs: PlayerProfile, rhs: PlayerProfile) -> Bool {
-        return lhs.playerId == rhs.playerId &&  lhs.nickname == rhs.nickname && lhs.rgba == rhs.rgba
+        return  lhs.playerId == rhs.playerId &&
+                lhs.nickname == rhs.nickname &&
+                lhs.rgba == rhs.rgba
     }
     
     func hash(into hasher: inout Hasher) {

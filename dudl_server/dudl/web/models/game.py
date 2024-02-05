@@ -21,24 +21,21 @@ class Game:
         self.player_profiles: Dict[str, PlayerProfile] = {}
         self.data: Dict[str, Any] = {}
 
+    def has_player(self, player_id: str):
+        return player_id in self.player_profiles
+
     def update_player_profile(self, player_id: str, nickname: str, rgba: Dict[str, Any]):
-        try:
-            if player_id in self.player_profiles:
-                creator = self.player_profiles[player_id]
-                self.player_profiles[player_id] = PlayerProfile(
-                    player_id=player_id, nickname=nickname, rgba=rgba, creator=creator
-                )
-            else:
-                raise AttributeError(f"Duplicate Player \"{player_id}\"")
-        except:
-            log_and_abort(status.HTTP_404_NOT_FOUND, f"Refusing to update PlayerProfile for \"{player_id}\"")
+        # try:
+        if player_id in self.player_profiles:
+            self.player_profiles[player_id] = PlayerProfile(
+                player_id=player_id, nickname=nickname, rgba=rgba
+            )
+        else:
+            raise AttributeError(f"Duplicate Player \"{player_id}\"")
+        # except:
+        #     log_and_abort(status.HTTP_404_NOT_FOUND, f"Refusing to update PlayerProfile for \"{player_id}\"")
 
-        self.player_profiles.add(PlayerProfile(
-            player_id=player_id, nickname=nickname, rgba=rgba
-        ))
-
-    def add_player_to_game(self, player_id: str, creator: bool=False):
-        self.player_profiles[player_id] = creator
-
+    def add_player_to_game(self, player_id: str):
+        self.player_profiles[player_id] = None
 
     # TODO: flesh data out

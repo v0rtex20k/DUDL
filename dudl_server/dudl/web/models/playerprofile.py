@@ -7,14 +7,17 @@ class PlayerProfileSchema(Schema):
     rgba = fields.Dict(keys=fields.Str(), values=fields.Float())
 
 class PlayerProfile:
-    def __init__(self, player_id: str, nickname: str, rgba: Dict[str, float], creator: bool = False) -> None:
+    def __init__(self, player_id: str, nickname: str, rgba: Dict[str, float]) -> None:
         self.player_id = player_id
         self.nickname = nickname
-        self.creator = creator
         self.rgba = rgba
-
-    def is_creator(self):
-        return self.creator
+    
+    def as_dict(self):
+        return {
+            "playerId": self.player_id,
+            "nickname": self.nickname,
+            "rgba": self.rgba
+        }
 
     def __repr__(self) -> str:
-        return f" ({self.player_id}: <{self.nickname}, {list(self.rgba.values)}>) "
+        return f" ({self.player_id}: <{self.nickname}, {list(self.rgba.values())}>) "

@@ -14,17 +14,31 @@ class GameCollection:
         self.games: Dict[str, Game] = {}
     
 
-    def add_game(self, game_code: str):
+    def add_game(self, game_code: str, player_id: str):
         if game_code in self.games:
             # can't add the same game twice
             raise AttributeError(f"Game \"{game_code}\" already exists!")
+
+        empty_games = []
+
+        for code, game in self.games.items():
+            if player_id in game.player_profiles:
+                game.player_profiles.pop(player_id)
+                if not game.player_profiles:
+                    # in case the game is now empty, drop it
+                    empty_games.append(code)
+
+        [self.games.pop(code) for code in empty_games]
         
         self.games[game_code] = Game(code=game_code)
 
-
-    def add_player_to_game(self, game_code: str, player_id: str, creator: bool=False):
+    def add_player_to_game(self, game_code: str, player_id: str):
         try:
-            self.games[game_code].add_player_to_game(player_id, creator)
+            if any(g.has_player(player_id) for g in self.games.values()):
+                raise NameError(f"Duplicate PlayerId: {player_id}]")
+            self.games[game_code].add_player_to_game(player_id)
+        except NameError:
+            raise
         except:
             log_and_abort(status.HTTP_404_NOT_FOUND, f"Game \"{game_code}\" does not exist!")
     

@@ -127,7 +127,6 @@ struct JoinView : View {
             }
             .contentShape(Rectangle())
             .onTapGesture(count: 2) {
-                print("TAPPING")
                 currentView = "HomeView"
                 let impact = UIImpactFeedbackGenerator(style: .heavy)
                 impact.impactOccurred()

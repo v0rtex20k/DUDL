@@ -9,6 +9,16 @@ import Foundation
 import UIKit
 import SwiftUI
 
+struct FailableDecodable<Base : Decodable> : Decodable {
+
+    let base: Base?
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        self.base = try? container.decode(Base.self)
+    }
+}
+
 struct RestController {
     var _host: String
     var _port: Int
@@ -65,7 +75,7 @@ struct RestController {
         return uploadData
     }
     
-    func encodeUpdatePlayerProfileRequest(code: String, rgba: RGBA, nickname: String) async -> Optional<Data> {
+    func encodeUpdatePlayerProfileRequest(code: String, nickname: String, rgba: RGBA) async -> Optional<Data> {
         let pid: String = await UIDevice.current.identifierForVendor!.uuidString
         if pid.isEmpty {
             return nil
@@ -155,8 +165,8 @@ struct RestController {
         
     }
     
-    func updatePlayerProfile(code: String, rgba: RGBA, nickname: String,completionHandler: @escaping (Result<UpdatePlayerProfileResponse, HTTPError>) -> Void) async {
-        guard let uploadData = await self.encodeUpdatePlayerProfileRequest(code: code, rgba: rgba, nickname: nickname) else {
+    func updatePlayerProfile(code: String, nickname: String, rgba: RGBA, completionHandler: @escaping (Result<UpdatePlayerProfileResponse, HTTPError>) -> Void) async {
+        guard let uploadData = await self.encodeUpdatePlayerProfileRequest(code: code, nickname: nickname, rgba: rgba) else {
             completionHandler(.failure(.unidentifiedUser))
             return
         }
@@ -199,8 +209,17 @@ struct RestController {
             do {
                 switch post_result {
                     case .success(let post_data):
-                        let decoded_result = try JSONDecoder().decode([PlayerProfile].self, from: post_data)
+                    
+                        dump(post_data)
+                    
+                        let decoded_result = try JSONDecoder()
+                                                    .decode([FailableDecodable<PlayerProfile>].self, from: post_data)
+                                                    .compactMap { $0.base }
                         
+                        if decoded_result.isEmpty {
+                            completionHandler(.failure(.decodingError))
+                        }
+                    
                         completionHandler(.success(decoded_result))
                         return
                         

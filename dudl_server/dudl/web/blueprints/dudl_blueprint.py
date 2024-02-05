@@ -21,8 +21,8 @@ class NewGame(MethodView):
         player_id: str = abort_if_missing(request, "playerId")
 
         game_code = randomname.get_name()
-        collection.add_game(game_code=game_code)
-        collection.add_player_to_game(game_code=game_code, player_id=player_id, creator=True)
+        collection.add_game(game_code=game_code, player_id=player_id)
+        collection.add_player_to_game(game_code=game_code, player_id=player_id)
 
         current_app.logger.debug(f"Generating New GameCode \"{game_code}\" for Player {player_id} ...")
 
@@ -51,7 +51,7 @@ class UpdatePlayerProfile(MethodView):
         nickname: str  = abort_if_missing(request, "nickname")
         rgba: Dict[str, float]  = abort_if_missing(request, "rgba")
 
-        collection.update_player_profile_in_game(game_code=game_code, player_id=player_id)
+        collection.update_player_profile_in_game(game_code=game_code, player_id=player_id, nickname=nickname, rgba=rgba)
 
         current_app.logger.debug(f"Updated Player {player_id} (aka {nickname})'s Profile ({rgba}) ...")
 
@@ -64,6 +64,6 @@ class GetAllActivePlayerProfiles(MethodView):
         game_code: str = abort_if_missing(request, "gameCode")
 
         profiles = collection.get_all_active_players_profiles_in_game(game_code=game_code)
-        current_app.logger.debug(f"Returning all active players in Game <{game_code}>: {profiles}")
+        current_app.logger.debug(f"Returning all active players in Game \"{game_code}\": {profiles}")
 
-        return profiles, status.HTTP_200_OK
+        return [p.as_dict() for p in profiles], status.HTTP_200_OK

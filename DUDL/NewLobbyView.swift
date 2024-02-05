@@ -25,8 +25,8 @@ struct NewLobbyView : View {
         await restController.allPlayerProfiles(code: gameCode) { result in
             switch result {
                 case .success(let ps):
-                players = ps
-                print("Active Players: \(dump(players))")
+                    players = ps
+                    print("Active Players: \(dump(players))")
                 case .failure(let error):
                     switch error {
                         case .serviceUnavailable:
@@ -59,11 +59,13 @@ struct NewLobbyView : View {
                     }
                 }).background(Color.black)
             }
+            .background(Color.black)
             .task {
                 await loadAllPlayerProfiles()
             }
             .refreshable {
                 Task.detached {
+                    print("Loading All Player Profiles ...")
                     await loadAllPlayerProfiles()
                 }
             }
