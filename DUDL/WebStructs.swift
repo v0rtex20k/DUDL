@@ -88,4 +88,13 @@ struct AllPlayerProfilesRequest: Encodable {
     let gameCode: String
 }
 
+// MARK: Eject a player from a game
 
+struct EjectPlayerRequest: Encodable {
+    let gameCode: String
+    let playerId: String
+}
+
+struct EjectPlayerResponse: Decodable {
+    let playerId: String
+}

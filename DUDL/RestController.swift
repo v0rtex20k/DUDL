@@ -89,11 +89,15 @@ struct RestController {
     }
     
     func encodeAllPlayerProfilesRequest(code: String) async -> Optional<Data> {
-        let pid: String = await UIDevice.current.identifierForVendor!.uuidString
-        if pid.isEmpty {
+        let req = AllPlayerProfilesRequest(gameCode: code)
+        guard let uploadData = try? JSONEncoder().encode(req) else {
             return nil
         }
-        let req = AllPlayerProfilesRequest(gameCode: code)
+        return uploadData
+    }
+    
+    func encodeEjectPlayerRequest(code: String, playerId: String) async -> Optional<Data> {
+        let req = EjectPlayerRequest(gameCode: code, playerId: playerId)
         guard let uploadData = try? JSONEncoder().encode(req) else {
             return nil
         }
@@ -206,6 +210,48 @@ struct RestController {
         }
         
         return await postAsync(endpoint: "get-all-active-player-profiles", uploadData: uploadData) { post_result in
+            do {
+                switch post_result {
+                    case .success(let post_data):
+                    
+                        dump(post_data)
+                    
+                        let decoded_result = try JSONDecoder()
+                                                    .decode([FailableDecodable<PlayerProfile>].self, from: post_data)
+                                                    .compactMap { $0.base }
+                        
+                        if decoded_result.isEmpty {
+                            completionHandler(.failure(.decodingError))
+                        }
+                    
+                        completionHandler(.success(decoded_result))
+                        return
+                        
+                    case .failure(let http_error):
+                        completionHandler(.failure(http_error))
+                }
+            }
+            catch {
+                
+                print("Failed to decode list of PlayerProfiles")
+//                do {
+//                    try print(String(decoding: post_result.get(), as: UTF8.self))
+//                } catch {
+//                    print("nope ;)")
+//                }
+                completionHandler(.failure(.decodingError))
+            }
+            
+        }
+    }
+    
+    func ejectPlayer(code: String, playerId: String, completionHandler: @escaping (Result<[PlayerProfile], HTTPError>) -> Void) async {
+        guard let uploadData = await self.encodeEjectPlayerRequest(code: code, playerId: playerId) else {
+            completionHandler(.failure(.unidentifiedUser))
+            return
+        }
+        
+        return await postAsync(endpoint: "eject-player", uploadData: uploadData) { post_result in
             do {
                 switch post_result {
                     case .success(let post_data):

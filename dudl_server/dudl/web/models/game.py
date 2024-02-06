@@ -1,5 +1,5 @@
 from flask_api import status
-from typing import Any, Dict, Set
+from typing import Any, Dict, Optional, Set
 from marshmallow import Schema, ValidationError, fields, validates
 
 from dudl.web.utils import log_and_abort
@@ -21,21 +21,25 @@ class Game:
         self.player_profiles: Dict[str, PlayerProfile] = {}
         self.data: Dict[str, Any] = {}
 
-    def has_player(self, player_id: str):
-        return player_id in self.player_profiles
+    def get_player_profile(self, player_id: str)-> Optional[PlayerProfile]:
+        return self.player_profiles.get(player_id)
 
     def update_player_profile(self, player_id: str, nickname: str, rgba: Dict[str, Any]):
-        # try:
-        if player_id in self.player_profiles:
-            self.player_profiles[player_id] = PlayerProfile(
-                player_id=player_id, nickname=nickname, rgba=rgba
-            )
-        else:
-            raise AttributeError(f"Duplicate Player \"{player_id}\"")
-        # except:
-        #     log_and_abort(status.HTTP_404_NOT_FOUND, f"Refusing to update PlayerProfile for \"{player_id}\"")
+        try:
+            if player_id in self.player_profiles:
+                creator = self.player_profiles[player_id]
+                self.player_profiles[player_id] = PlayerProfile(
+                    player_id=player_id, nickname=nickname, rgba=rgba, creator=creator
+                )
+            else:
+                raise AttributeError
+        except AttributeError:
+            log_and_abort(status.HTTP_409_CONFLICT, f"Duplicate Player \"{player_id}\"")
+        except:
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"Refusing to update PlayerProfile for \"{player_id}\"")
 
-    def add_player_to_game(self, player_id: str):
-        self.player_profiles[player_id] = None
+    def add_player_to_game(self, player_id: str, creator: bool):
+        self.player_profiles[player_id] = creator
+
 
     # TODO: flesh data out

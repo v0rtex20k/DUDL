@@ -13,7 +13,7 @@ from flask_smorest import Blueprint, Api
 from pymongo import MongoClient
 from dudl.web.env import load_runtime_environment
 
-def setup_logging(default_level=logging.INFO, env_key="LOG_CFG"):
+def setup_logging(default_level=logging.INFO):
     logging.basicConfig(level=default_level)
 
     log_formatter = logging.Formatter("[%(asctime)s] %(levelname)s [%(filename)s::%(funcName)s:%(lineno)d] %(message)s",

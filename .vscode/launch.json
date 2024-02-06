@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "DUDL",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "internalConsole",
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}/dudl_server",
+            "env": {"PYTHONPATH": "/Users/victor/Desktop/DUDL/dudl_server/venv/bin/python"},
+            "args": ["--logLevel", "DEBUG"]
+        }
+    ],
+    "compounds": []
+}

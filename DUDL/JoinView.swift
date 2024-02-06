@@ -79,7 +79,6 @@ struct JoinView : View {
                                 .disableAutocorrection(true)
                                 .onReceive(Just(gameCode)) { _ in
                                     limitText()
-                                    print("Limited text to: \(gameCode)")
                                 }
                                 .onSubmit {
                                     if isValidGameCode(gameCode) {
@@ -88,9 +87,14 @@ struct JoinView : View {
                                         Task.detached {
                                             await joinGame()
                                         }
-
                                     } else {
                                         print("Ignoring invalid game code \(gameCode)")
+                                    }
+                                }
+                                .task {
+                                    if isValidGameCode(gameCode) {
+                                        print("Attempting to auto-join Game \"\(gameCode)\"...")
+                                        await joinGame()
                                     }
                                 }
                                 .foregroundStyle(.black)

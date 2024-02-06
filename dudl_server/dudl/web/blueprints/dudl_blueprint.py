@@ -16,36 +16,35 @@ dudl_blueprint = Blueprint("dudl", __name__, url_prefix='/', description="DUDL R
 
 @dudl_blueprint.route('/start-game')
 class NewGame(MethodView):
-    def post(self):
+    def post(self)-> Tuple[Dict[str, str], int]:
         """ Create a new DUDL Game """
         player_id: str = abort_if_missing(request, "playerId")
 
         game_code = randomname.get_name()
-        collection.add_game(game_code=game_code, player_id=player_id)
-        collection.add_player_to_game(game_code=game_code, player_id=player_id)
-
         current_app.logger.debug(f"Generating new GameCode \"{game_code}\" for Player {player_id} ...")
+        collection.add_game(game_code=game_code, player_id=player_id)
+        collection.add_player_to_game(game_code=game_code, player_id=player_id, creator=True)
+
 
         return dict(gameCode=game_code), status.HTTP_200_OK
     
 @dudl_blueprint.route('/join-game')
 class JoinGame(MethodView):
-    def post(self):
+    def post(self)-> Tuple[Dict[str, str], int]:
         """ Join an existing DUDL Game """
-        print("Someone's tryna join ... ")
         game_code: str = abort_if_missing(request, "gameCode")
         player_id: str = abort_if_missing(request, "playerId")
 
         current_app.logger.debug(f"Attempting to add Player {player_id} to Game {game_code}...")
-        collection.add_player_to_game(game_code=game_code, player_id=player_id)
-        current_app.logger.debug(f"Adding Player {player_id} to Game {game_code}...")
+        collection.add_player_to_game(game_code=game_code, player_id=player_id, creator=False)
+        current_app.logger.debug(f"Added Player {player_id} to Game {game_code}...")
 
         return dict(playerId=player_id), status.HTTP_200_OK
 
 
 @dudl_blueprint.route('update-player-profile')
 class UpdatePlayerProfile(MethodView):
-    def post(self):
+    def post(self)-> Tuple[Dict[str, str], int]:
         """ Update PlayerProfile for a player within an existing DUDL Game """
         game_code: str = abort_if_missing(request, "gameCode")
         player_id: str = abort_if_missing(request, "playerId")
@@ -65,6 +64,18 @@ class GetAllActivePlayerProfiles(MethodView):
         game_code: str = abort_if_missing(request, "gameCode")
 
         profiles = collection.get_all_active_players_profiles_in_game(game_code=game_code)
+        current_app.logger.debug(f"Returning all active players in Game \"{game_code}\": {profiles}")
+
+        return [p.as_dict() for p in profiles], status.HTTP_200_OK
+    
+@dudl_blueprint.route('eject-player')
+class EjectPlayer(MethodView):
+    def post(self)-> Tuple[PlayerProfile, int]:
+        """ DUDL is up and running """
+        game_code: str = abort_if_missing(request, "gameCode")
+        player_id: str = abort_if_missing(request, "playerId")
+
+        profiles = collection.remove_player_from_all_games(player_id=player_id)
         current_app.logger.debug(f"Returning all active players in Game \"{game_code}\": {profiles}")
 
         return [p.as_dict() for p in profiles], status.HTTP_200_OK

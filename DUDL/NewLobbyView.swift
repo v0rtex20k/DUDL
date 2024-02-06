@@ -18,19 +18,34 @@ struct NewLobbyView : View {
     @State private var alertMessage: String = ""
     
     @State private var playerProfiles: [PlayerProfile] = []
-//        PlayerProfile(gameCode: "tangy-cut", playerId: "366E8D01-F323-4BD1-BD67-5D4E50FC4620", nickname: "Abcdefghijklmnopqrst", rgba: RGBA(r: 0.99999994, g: 0.41568625, b: 0, a: 1)),
-//        PlayerProfile(gameCode: "tangy-cut", playerId: "366E8D01-F323-4BD1-BD67-5D4E50FC4621", nickname: "Booty", rgba: RGBA(r: 0.999994, g: 0.61568625, b: 1, a: 1)),
-//        PlayerProfile(gameCode: "tangy-cut", playerId: "366E8D01-F323-4BD1-BD67-5D4E50FC4622", nickname: "Randy", rgba: RGBA(r: 0.1999994, g: 0.61568625, b: 0.5, a: 1)),
-//        
-//    ]
     @State private var draggingItem: Color?
     
     func loadAllPlayerProfiles() async {
         await restController.allPlayerProfiles(code: gameCode) { result in
+            playerProfiles.removeAll()
             switch result {
                 case .success(let ps):
                     playerProfiles = ps
                     print("Active Players: \(dump(playerProfiles))")
+                case .failure(let error):
+                    switch error {
+                        case .serviceUnavailable:
+                            alertMessage = "Failed to connect to server \n Please check your internet connection"
+                        default:
+                            alertMessage = "Something went wrong \n Please try again later"
+                    }
+                    shouldShowAlert = true
+                    print(error.localizedDescription)
+            }
+        }
+    }
+    
+    func eject(_ pid: String) async {
+        await restController.ejectPlayer(code: gameCode, playerId: pid) { result in
+            switch result {
+                case .success(let ps):
+                    playerProfiles = ps
+                    print("Removed \(pid) --> Remaining Players: \(dump(playerProfiles))")
                 case .failure(let error):
                     switch error {
                         case .serviceUnavailable:
@@ -49,10 +64,29 @@ struct NewLobbyView : View {
         NavigationStack {
             GeometryReader { geo in
                 ScrollView(.vertical) {
-                    let columns = Array(repeating: GridItem(spacing: 0), count: 1)
-                    LazyVGrid(columns: columns, alignment: .center, content: {
+                    LazyVStack(alignment: .center, content: {
                         ForEach(playerProfiles, id: \.playerId) { profile in
                             PlayerProfileGridItemView(size: geo.size, playerProfile: profile)
+                                .contextMenu {
+                                        let selfSelect: Bool = false
+//                                    let pid: String = await UIDevice.current.identifierForVendor!.uuidString
+//                                    let selfSelect: Bool = profile.playerId == pid
+                                    Button(role: .destructive) {
+                                        Task.detached {
+                                            await eject(profile.playerId)
+                                        }
+                                        let impact = UIImpactFeedbackGenerator(style: .medium)
+                                        impact.impactOccurred()
+                                        
+//                                        if selfSelect {
+//                                            gameCode.removeAll()
+//                                            currentView = "HomeView"
+//                                        }
+                                        
+                                    } label: {
+                                        Label(selfSelect ? "Leave" : "Delete", systemImage: selfSelect ? "arrow.turn.up.left" : "trash")
+                                    }
+                                }
                         }
                         .padding(50)
                     })

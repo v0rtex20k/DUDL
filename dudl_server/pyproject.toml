@@ -37,7 +37,7 @@ dev = [
 ]
 
 [project.scripts]
-start-dudl="dudl.web.dudl:start_server"
+start-dudl="dudl.web.dudl_app:start_server"
 
 # [tool.coverage.run]
 # omit = []

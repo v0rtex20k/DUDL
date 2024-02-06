@@ -11,7 +11,7 @@ import SwiftUI
 struct DUDLApp: App {
     @State var gameCode: String = ""
     @State var currentView: String = "HomeView"
-    @State var restController: RestController = RestController(host: "127.0.0.1", // "192.168.1.15", 
+    @State var restController: RestController = RestController(host:  "192.168.1.7",
                                                                port: 8001)
     var body: some Scene {
         WindowGroup {
