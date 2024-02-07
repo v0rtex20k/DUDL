@@ -41,12 +41,12 @@ struct PlayerProfileGridItemView : View {
     }
 }
 
-#Preview {
-   struct PreviewWrapper: View {
-       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
-       var body: some View {
-           NewLobbyView(gameCode: .constant("tangy-cut"), currentView: .constant("NewLobbyView"), restController: $rc)
-       }
-   }
-   return PreviewWrapper()
-}
+//#Preview {
+//   struct PreviewWrapper: View {
+//       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
+//       var body: some View {
+//           LobbyView(gameCode: .constant("tangy-cut"), currentView: .constant("LobbyView"), restController: $rc)
+//       }
+//   }
+//   return PreviewWrapper()
+//}

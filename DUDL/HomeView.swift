@@ -10,7 +10,7 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var shouldDraw = false
-    @Binding var currentView: String
+    @Binding var currentView: ViewFinder
     var body: some View {
         GeometryReader { geo in
             ZStack {
@@ -38,7 +38,7 @@ struct HomeView: View {
                     HStack {
                         Spacer()
                         Button("Start"){
-                            self.currentView = "StartView"
+                            self.currentView = .start
                         }
                             .padding()
                             .foregroundStyle(.white)
@@ -51,7 +51,7 @@ struct HomeView: View {
                             )
                         Spacer()
                         Button("Join"){
-                            self.currentView = "JoinView"
+                            self.currentView = .join
                         }
                         .padding()
                         .font(Font.custom("Galvji", size: 18))
@@ -68,7 +68,7 @@ struct HomeView: View {
                     Spacer()
                     HStack{
                         Button("Settings", systemImage: "gearshape.2"){
-                            self.currentView = "SettingsView"
+                            self.currentView = .settings
                         }
                         .padding()
                         .font(Font.custom("Galvji", size: 12))
@@ -81,7 +81,7 @@ struct HomeView: View {
     }
 }
 
-#Preview {
-    HomeView(currentView: .constant("HomeView"))
-}
+//#Preview {
+//    HomeView(currentView: .home)
+//}
 

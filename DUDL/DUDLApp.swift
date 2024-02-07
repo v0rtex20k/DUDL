@@ -7,22 +7,32 @@
 
 import SwiftUI
 
+
+enum ViewFinder {
+    case home
+    case settings
+    case start
+    case join
+    case lobby
+    case playerProfile
+}
+
+
 @main
 struct DUDLApp: App {
     @State var gameCode: String = ""
-    @State var currentView: String = "HomeView"
-    @State var restController: RestController = RestController(host:  "192.168.1.7",
+    @State var currentView: ViewFinder = .home
+    @State var restController: RestController = RestController(host:  "192.168.1.15",
                                                                port: 8001)
     var body: some Scene {
         WindowGroup {
             switch self.currentView {
-                case "HomeView": HomeView(currentView: $currentView)
-                case "SettingsView": SettingsView(currentView: $currentView, restController: $restController)
-                case "StartView": StartView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
-                case "JoinView": JoinView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
-                case "LobbyView": NewLobbyView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
-                case "PlayerProfileView" : PlayerProfileView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
-                default: HomeView(currentView: $currentView)
+                case .home: HomeView(currentView: $currentView)
+                case .settings: SettingsView(currentView: $currentView, restController: $restController)
+                case .start: StartView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
+                case .join: JoinView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
+                case .lobby: LobbyView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
+                case .playerProfile : PlayerProfileView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
             }
         }
     }

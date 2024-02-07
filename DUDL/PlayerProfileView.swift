@@ -11,7 +11,7 @@ import SwiftUI
 
 struct PlayerProfileView : View {
     @Binding var gameCode: String
-    @Binding var currentView: String
+    @Binding var currentView: ViewFinder
     @Binding var restController: RestController
     
     private let maxLen = 20
@@ -37,7 +37,7 @@ struct PlayerProfileView : View {
             wasSubmitted = true
             switch result {
             case .success(let uppr):
-                currentView = "LobbyView"
+                currentView = .lobby
                 print("Updated \(uppr.playerId)'s Profile")
             case .failure(let error):
                 switch error {
@@ -109,7 +109,7 @@ struct PlayerProfileView : View {
                                 .alert("Unable to Update Player Profile", isPresented: $shouldShowAlert) {
                                     Button("OK", role: .cancel) {
                                         gameCode.removeAll()
-                                        currentView = "HomeView"
+                                        currentView = .home
                                     }
                                 } message: {
                                     Text(alertMessage)
@@ -132,7 +132,7 @@ struct PlayerProfileView : View {
             }
             .onTapGesture(count: 2) {
                 gameCode.removeAll()
-                currentView = "HomeView"
+                currentView = .home
                 let impact = UIImpactFeedbackGenerator(style: .heavy)
                 impact.impactOccurred()
             }
@@ -143,13 +143,13 @@ struct PlayerProfileView : View {
     }
 }
 
-#Preview {
-   struct PreviewWrapper: View {
-       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
-       var body: some View {
-           PlayerProfileView(gameCode: .constant("happy-hippo"), currentView: .constant("PlayerProfileView"), restController: $rc)
-       }
-   }
-   return PreviewWrapper()
-}
+//#Preview {
+//   struct PreviewWrapper: View {
+//       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
+//       var body: some View {
+//           PlayerProfileView(gameCode: .constant("happy-hippo"), currentView: .constant("PlayerProfileView"), restController: $rc)
+//       }
+//   }
+//   return PreviewWrapper()
+//}
 

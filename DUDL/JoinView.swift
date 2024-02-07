@@ -33,7 +33,7 @@ struct JoinView : View {
     private let maxLen = 100 // just to prevent some type of crazy long string
     
     @Binding var gameCode: String
-    @Binding var currentView: String
+    @Binding var currentView: ViewFinder
     @Binding var restController: RestController
     
     func limitText() {
@@ -46,7 +46,7 @@ struct JoinView : View {
         await restController.joinExistingGame(gameCode) { result in
             switch result {
             case .success(let jgr):
-                currentView = "PlayerProfileView"
+                currentView = .playerProfile
                 print("Joined Game \(jgr.playerId)")
             case .failure(let error):
                 switch error {
@@ -107,7 +107,7 @@ struct JoinView : View {
                                 .alert("Unable to Join Game", isPresented: $shouldShowAlert) {
                                     Button("OK", role: .cancel) {
                                         gameCode.removeAll()
-                                        currentView = "HomeView"
+                                        currentView = .home
                                     }
                                 } message: {
                                     Text(alertMessage)
@@ -132,7 +132,7 @@ struct JoinView : View {
             .contentShape(Rectangle())
             .onTapGesture(count: 2) {
                 gameCode.removeAll()
-                currentView = "HomeView"
+                currentView = .home
                 let impact = UIImpactFeedbackGenerator(style: .heavy)
                 impact.impactOccurred()
             }
@@ -143,13 +143,13 @@ struct JoinView : View {
         .ignoresSafeArea(.keyboard)
     }
 }
-
-#Preview {
-   struct PreviewWrapper: View {
-       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
-       var body: some View {
-           JoinView(gameCode: .constant("happy-hippo"), currentView: .constant("JoinView"), restController: $rc)
-       }
-   }
-   return PreviewWrapper()
-}
+//
+//#Preview {
+//   struct PreviewWrapper: View {
+//       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
+//       var body: some View {
+//           JoinView(gameCode: .constant("happy-hippo"), currentView: .constant("JoinView"), restController: $rc)
+//       }
+//   }
+//   return PreviewWrapper()
+//}

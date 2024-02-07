@@ -28,12 +28,11 @@ enum HostUpdateStatus {
 struct SettingsView : View {
     @State var host: String = ""
     @State var status: HostUpdateStatus = .unchanged
-    @Binding var currentView: String
+    @Binding var currentView: ViewFinder
     @Binding var restController: RestController
     var body: some View {
         GeometryReader { geo in
-            ZStack {
-                Color.black.edgesIgnoringSafeArea(.all)
+            BlackDraggableZStack(currentView: $currentView, dragToView: .home, content: {
                 VStack {
                     Spacer()
                     Text("Host IP Address")
@@ -42,48 +41,40 @@ struct SettingsView : View {
                     TextField(restController._host, text: $host)
                         .disableAutocorrection(true)
                         .onSubmit {
-                                if isValidIP(host) {
-                                    print("Updated RC.host to \(host)")
-                                    restController.update_host(host: host)
-                                    status = .updateSuceeded
-                                    Task {
-                                        try? await Task.sleep(nanoseconds: 3_000_000_000)
-                                        status = .unchanged
-                                    }
-                                } else {
-                                    status = .updateFailed
-                                    print("Ignoring invalid host \(host)")
+                            if isValidIP(host) {
+                                print("Updated RC.host to \(host)")
+                                restController.update_host(host: host)
+                                status = .updateSuceeded
+                                Task {
+                                    // aka 3 seconds
+                                    try? await Task.sleep(nanoseconds: 3_000_000_000)
+                                    status = .unchanged
                                 }
-                    }
+                            } else {
+                                status = .updateFailed
+                                print("Ignoring invalid host \(host)")
+                            }
+                        }
                         .foregroundStyle(status == .updateSuceeded ? .green : (status == .updateFailed ? .red : .black))
                         .multilineTextAlignment(.center)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .frame(width: geo.size.width * 0.80)
-                    .font(Font.custom("Galvji", size: 20))
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .frame(width: geo.size.width * 0.80)
+                        .font(Font.custom("Galvji", size: 20))
                     Spacer()
                     Spacer()
                 }
-            }
+            })
             .ignoresSafeArea(.keyboard)
-            .contentShape(Rectangle())
-            .onTapGesture(count: 2) {
-                currentView = "HomeView"
-                let impactMed = UIImpactFeedbackGenerator(style: .medium)
-                impactMed.impactOccurred()
-            }
-            .onTapGesture(count: 1) {
-                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
-            }
         }
     }
 }
 
-#Preview {
-   struct PreviewWrapper: View {
-       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
-       var body: some View {
-           SettingsView(currentView: .constant("SettingsView"), restController: $rc)
-       }
-   }
-   return PreviewWrapper()
-}
+//#Preview {
+//   struct PreviewWrapper: View {
+//       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
+//       var body: some View {
+//           SettingsView(currentView: .settings, restController: $rc)
+//       }
+//   }
+//   return PreviewWrapper()
+//}
