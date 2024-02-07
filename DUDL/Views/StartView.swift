@@ -50,7 +50,7 @@ struct StartView : View {
             RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent, content: { code in
                     VStack{
                         ShareLink(item: "Let's DÜDL: \(gameCode)") {
-                            Text(code)
+                            Text(code.wrappedValue)
                                 .foregroundStyle(.white)
                                 .font(Font.custom("Galvji", size: 25))
                         }

@@ -23,6 +23,7 @@ struct BlackDraggableZStack<Content: View>: BDZSContainerView {
             Color.black.edgesIgnoringSafeArea(.all)
             content()
         }
+        .ignoresSafeArea(.keyboard)
         .gesture(DragGesture(minimumDistance: 20, coordinateSpace: .global)
             .onEnded { value in
                 let h = value.translation.width

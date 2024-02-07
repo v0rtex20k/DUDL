@@ -123,15 +123,13 @@
 		57C3AC032B65B2FB0058AE5F /* DUDL */ = {
 			isa = PBXGroup;
 			children = (
+				57D287412B733FB800FE2280 /* Views */,
 				57D2873E2B73311900FE2280 /* Utilities */,
 				57C3AC372B668B950058AE5F /* Info.plist */,
 				57C3AC342B668AF60058AE5F /* Galvji.ttc */,
 				57C3AC042B65B2FB0058AE5F /* DUDLApp.swift */,
-				57C3AC392B668F4F0058AE5F /* HomeView.swift */,
 				57C3AC082B65B2FC0058AE5F /* Assets.xcassets */,
 				57C3AC0A2B65B2FC0058AE5F /* Preview Content */,
-				57C3AC3B2B668F970058AE5F /* StartView.swift */,
-				57C3AC4F2B68B54E0058AE5F /* SettingsView.swift */,
 				57C3AC532B68BE620058AE5F /* JoinView.swift */,
 				57C3AC552B69E57F0058AE5F /* PlayerProfileView.swift */,
 				57CE50EB2B6EA0230071E806 /* LobbyView.swift */,
@@ -177,6 +175,16 @@
 				57D2873F2B73318100FE2280 /* RestfulGroup.swift */,
 			);
 			path = Utilities;
+			sourceTree = "<group>";
+		};
+		57D287412B733FB800FE2280 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				57C3AC392B668F4F0058AE5F /* HomeView.swift */,
+				57C3AC4F2B68B54E0058AE5F /* SettingsView.swift */,
+				57C3AC3B2B668F970058AE5F /* StartView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

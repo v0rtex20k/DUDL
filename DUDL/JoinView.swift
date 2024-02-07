@@ -27,8 +27,9 @@ func isValidGameCode(_ code: String) -> Bool {
 
 struct JoinView : View {
     @State private var alertMessage: String = ""
-    @State private var wasSubmitted: Bool = false
     @State private var shouldShowAlert: Bool = false
+    @State private var shouldShowContent: Bool = true
+    let alertTitle = "Unable to Join Game"
     
     private let maxLen = 100 // just to prevent some type of crazy long string
     
@@ -42,18 +43,31 @@ struct JoinView : View {
         }
     }
     
+    func joinWrapper(_ code: String) {
+        if isValidGameCode(code) {
+            print("Attempting to join Game \"\(code)\"...")
+            shouldShowContent = false
+            Task.detached {
+                await joinGame()
+            }
+        } else {
+            print("Ignoring invalid game code \(code)")
+        }
+    }
+    
     func joinGame() async {
         await restController.joinExistingGame(gameCode) { result in
             switch result {
             case .success(let jgr):
                 currentView = .playerProfile
+                shouldShowContent = false
                 print("Joined Game \(jgr.playerId)")
             case .failure(let error):
                 switch error {
-                    case .serviceUnavailable:
-                        alertMessage = "Failed to connect to server \n Please check your internet connection"
-                    default:
-                        alertMessage = "Something went wrong \n Please try again later"
+                case .serviceUnavailable:
+                    alertMessage = "Failed to connect to server \n Please check your internet connection"
+                default:
+                    alertMessage = "Something went wrong \n Please try again later"
                 }
                 shouldShowAlert = true
                 print(error.localizedDescription)
@@ -64,85 +78,39 @@ struct JoinView : View {
     
     var body: some View {
         GeometryReader { geo in
-            ZStack {
-                Color.black.edgesIgnoringSafeArea(.all)
+            BlackDraggableZStack(currentView: $currentView, dragToView: .home, content: {
                 VStack {
                     Spacer()
-                    Group {
-                        if !wasSubmitted {
+                    RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent, content: {code in
+                        VStack {
                             Text("Game Code")
                                 .padding()
                                 .foregroundStyle(.white)
                                 .font(Font.custom("Galvji", size: 16))
-                            TextField("game-code", text: $gameCode)
+                            TextField("game-code", text: code)
                                 .textInputAutocapitalization(.never)
                                 .disableAutocorrection(true)
-                                .onReceive(Just(gameCode)) { _ in
+                                .onReceive(Just(code)) { _ in
                                     limitText()
                                 }
-                                .onSubmit {
-                                    if isValidGameCode(gameCode) {
-                                        print("Attempting to join Game \"\(gameCode)\"...")
-                                        wasSubmitted = true
-                                        Task.detached {
-                                            await joinGame()
-                                        }
-                                    } else {
-                                        print("Ignoring invalid game code \(gameCode)")
-                                    }
-                                }
-                                .task {
-                                    if isValidGameCode(gameCode) {
-                                        print("Attempting to auto-join Game \"\(gameCode)\"...")
-                                        await joinGame()
-                                    }
-                                }
+                                .onSubmit{ joinWrapper(code.wrappedValue) }
+                                .onAppear{ joinWrapper(code.wrappedValue) }
                                 .foregroundStyle(.black)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .multilineTextAlignment(.center)
                                 .frame(width: geo.size.width * 0.80)
                                 .font(Font.custom("Galvji", size: 20))
-                        } else if shouldShowAlert {
-                            Text("")
-                                .alert("Unable to Join Game", isPresented: $shouldShowAlert) {
-                                    Button("OK", role: .cancel) {
-                                        gameCode.removeAll()
-                                        currentView = .home
-                                    }
-                                } message: {
-                                    Text(alertMessage)
-                                }
-                        } else {
-                            ProgressView {
-                                Text("Connecting to Server")
-                                    .foregroundStyle(.white)
-                                    .padding()
-                                    .font(Font.custom("Galvji", size: 20))
-                                    .foregroundStyle(.white)
-                            }
-                            .progressViewStyle(.circular)
-                            .tint(.white)
                         }
-                    }
-                Spacer()
-                Spacer()
-                Spacer()
+                    })
+                    Spacer()
+                    Spacer()
+                    Spacer()
                 }
-            }
-            .contentShape(Rectangle())
-            .onTapGesture(count: 2) {
-                gameCode.removeAll()
-                currentView = .home
-                let impact = UIImpactFeedbackGenerator(style: .heavy)
-                impact.impactOccurred()
-            }
-            .onTapGesture(count: 1) {
-                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
-            }
+            })
         }
-        .ignoresSafeArea(.keyboard)
     }
 }
+
 //
 //#Preview {
 //   struct PreviewWrapper: View {
