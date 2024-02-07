@@ -39,6 +39,7 @@ struct SettingsView : View {
                         .foregroundStyle(.white)
                         .font(Font.custom("Galvji", size: 16))
                     TextField(restController._host, text: $host)
+                        .keyboardType(.numberPad)
                         .disableAutocorrection(true)
                         .onSubmit {
                             if isValidIP(host) {

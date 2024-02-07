@@ -10,7 +10,7 @@ import SwiftUI
 
 protocol RGContainerView: View {
     associatedtype Content
-    init(currentView: Binding<ViewFinder>, gameCode: Binding<String>, shouldShowAlert: Binding<Bool>, alertTitle: String, alertMessage: String, shouldShowContent: Binding<Bool>, content: @escaping (Binding<String>) -> Content)
+    @inlinable init(currentView: Binding<ViewFinder>, gameCode: Binding<String>, shouldShowAlert: Binding<Bool>, alertTitle: String, alertMessage: String, shouldShowContent: Binding<Bool>, @ViewBuilder content: @escaping (Binding<String>) -> Content)
 }
 
 struct RestfulGroup<Content: View>: RGContainerView {

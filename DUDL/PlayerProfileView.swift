@@ -15,12 +15,14 @@ struct PlayerProfileView : View {
     @Binding var restController: RestController
     
     private let maxLen = 20
+    private let alertTitle = "Unable to create Player Profile"
     
     @State var nickname: String = ""
     @State private var bgColor = Color.blue
     @State private var alertMessage: String = ""
     @State private var wasSubmitted: Bool = false
     @State private var shouldShowAlert: Bool = false
+    @State private var shouldShowContent: Bool = true
     
     @Environment(\.self) var env
     
@@ -32,35 +34,36 @@ struct PlayerProfileView : View {
     
     func updateProfile() async {
         let c = bgColor.resolve(in: env)
+        shouldShowContent = false
         print("Attempting to Update Player Profile \"\(nickname)\" in \(gameCode) : \(c.description) ...")
         await restController.updatePlayerProfile(code: gameCode, nickname: nickname, rgba: RGBA(r: c.red, g: c.green, b: c.blue, a: c.opacity)) { result in
             wasSubmitted = true
             switch result {
-            case .success(let uppr):
-                currentView = .lobby
-                print("Updated \(uppr.playerId)'s Profile")
-            case .failure(let error):
-                switch error {
-                case .serviceUnavailable:
-                    alertMessage = "Failed to connect to server \n Please check your internet connection"
-                default:
-                    alertMessage = "Something went wrong \n Please try again later"
-                }
-                shouldShowAlert = true
-                print(error.localizedDescription)
+                case .success(let uppr):
+                    currentView = .lobby
+                    print("Updated \(uppr.playerId)'s Profile")
+                case .failure(let error):
+                    switch error {
+                        case .serviceUnavailable:
+                            alertMessage = "Failed to connect to server \n Please check your internet connection"
+                        default:
+                            alertMessage = "Something went wrong \n Please try again later"
+                    }
+                    shouldShowAlert = true
+                    print(error.localizedDescription)
             }
         }
     }
     
+    
     var body: some View {
         GeometryReader { geo in
             let minDim = min(geo.size.width, geo.size.height)
-            ZStack {
-                Color.black.edgesIgnoringSafeArea(.all)
+            BlackDraggableZStack(currentView: $currentView, dragToView: .home) {
                 VStack {
-                    Spacer(minLength: minDim * 0.4)
-                    Group {
-                        if !wasSubmitted {
+                    RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent) { code in
+                        VStack {
+                            Spacer(minLength: minDim * 0.4)
                             TextField("Username", text: $nickname)
                                 .multilineTextAlignment(.center)
                                 .padding()
@@ -101,45 +104,18 @@ struct PlayerProfileView : View {
                                 }
                                 .padding()
                                 .foregroundStyle(.white)
+                                .overlay(RoundedRectangle(cornerRadius: 5.0).stroke(Color.white, style: StrokeStyle(lineWidth: 3)))
+                                .padding(10)
+                                
                                 Spacer()
                             }
                             Spacer()
-                        } else if shouldShowAlert {
-                            Text("")
-                                .alert("Unable to Update Player Profile", isPresented: $shouldShowAlert) {
-                                    Button("OK", role: .cancel) {
-                                        gameCode.removeAll()
-                                        currentView = .home
-                                    }
-                                } message: {
-                                    Text(alertMessage)
-                                }
-                        } else {
-                            ProgressView {
-                                Text("Connecting to Server")
-                                    .foregroundStyle(.white)
-                                    .padding()
-                                    .font(Font.custom("Galvji", size: 20))
-                                    .foregroundStyle(.white)
-                            }
-                            .progressViewStyle(.circular)
-                            .tint(.white)
                         }
-                        
                     }
-                    Spacer()
                 }
+                
             }
-            .onTapGesture(count: 2) {
-                gameCode.removeAll()
-                currentView = .home
-                let impact = UIImpactFeedbackGenerator(style: .heavy)
-                impact.impactOccurred()
-            }
-            .onTapGesture(count: 1) {
-                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
-            }
-        }.ignoresSafeArea(.keyboard)
+        }
     }
 }
 

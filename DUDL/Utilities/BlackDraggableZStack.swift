@@ -10,7 +10,7 @@ import SwiftUI
 
 protocol BDZSContainerView: View {
     associatedtype Content
-    init(currentView: Binding<ViewFinder>, dragToView: ViewFinder, content: @escaping () -> Content)
+    @inlinable init(currentView: Binding<ViewFinder>, dragToView: ViewFinder, @ViewBuilder content: @escaping () -> Content)
 }
 
 struct BlackDraggableZStack<Content: View>: BDZSContainerView {

@@ -67,7 +67,7 @@ class GetAllActivePlayerProfiles(MethodView):
         current_app.logger.debug(f"Returning all active players in Game \"{game_code}\": {profiles}")
 
         return [p.as_dict() for p in profiles], status.HTTP_200_OK
-    
+
 @dudl_blueprint.route('eject-player')
 class EjectPlayer(MethodView):
     def post(self)-> Tuple[PlayerProfile, int]:

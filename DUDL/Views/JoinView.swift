@@ -78,10 +78,10 @@ struct JoinView : View {
     
     var body: some View {
         GeometryReader { geo in
-            BlackDraggableZStack(currentView: $currentView, dragToView: .home, content: {
+            BlackDraggableZStack(currentView: $currentView, dragToView: .home) {
                 VStack {
                     Spacer()
-                    RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent, content: {code in
+                    RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent) {code in
                         VStack {
                             Text("Game Code")
                                 .padding()
@@ -101,12 +101,12 @@ struct JoinView : View {
                                 .frame(width: geo.size.width * 0.80)
                                 .font(Font.custom("Galvji", size: 20))
                         }
-                    })
+                    }
                     Spacer()
                     Spacer()
                     Spacer()
                 }
-            })
+            }
         }
     }
 }
