@@ -21,9 +21,9 @@ class NewGame(MethodView):
         player_id: str = abort_if_missing(request, "playerId")
 
         game_code = randomname.get_name()
-        current_app.logger.debug(f"Generating new GameCode \"{game_code}\" for Player {player_id} ...")
-        collection.add_game(game_code=game_code, player_id=player_id)
-        collection.add_player_to_game(game_code=game_code, player_id=player_id, creator=True)
+        current_app.logger.debug(f"Generating new GameCode \"{game_code}\" for Player #{player_id} ...")
+        collection.add_game(game_code=game_code, host_id=player_id)
+        collection.add_player_to_game(game_code=game_code, player_id=player_id)
 
 
         return dict(gameCode=game_code), status.HTTP_200_OK
@@ -36,8 +36,7 @@ class JoinGame(MethodView):
         player_id: str = abort_if_missing(request, "playerId")
 
         current_app.logger.debug(f"Attempting to add Player {player_id} to Game {game_code}...")
-        collection.add_player_to_game(game_code=game_code, player_id=player_id, creator=False)
-        current_app.logger.debug(f"Added Player {player_id} to Game {game_code}...")
+        collection.add_player_to_game(game_code=game_code, player_id=player_id)
 
         return dict(playerId=player_id), status.HTTP_200_OK
 

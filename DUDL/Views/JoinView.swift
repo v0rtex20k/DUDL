@@ -31,13 +31,14 @@ struct JoinView : View {
     @State private var shouldShowContent: Bool = true
     let alertTitle = "Unable to Join Game"
     
-    private let maxLen = 100 // just to prevent some type of crazy long string
+    private let maxLen = 50 // just to prevent some type of crazy long string
     
     @Binding var gameCode: String
     @Binding var currentView: ViewFinder
     @Binding var restController: RestController
     
     func limitText() {
+        gameCode = gameCode.replacingOccurrences(of:"[^a-z-]", with: "", options: .regularExpression)
         if gameCode.count > maxLen {
             gameCode = String(gameCode.prefix(maxLen))
         }
@@ -75,17 +76,21 @@ struct JoinView : View {
         }
     }
     
+    func clearGameCode () {
+        gameCode.removeAll()
+    }
+    
     
     var body: some View {
         GeometryReader { geo in
-            BlackDraggableZStack(currentView: $currentView, dragToView: .home) {
+            BlackDraggableZStack(currentView: $currentView, dragToView: .home, onDragEndFunc: clearGameCode) {
                 VStack {
                     Spacer()
                     RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent) {code in
                         VStack {
                             Text("Game Code")
                                 .padding()
-                                .foregroundStyle(.white)
+                                .foregroundStyle(Color(primary_color))
                                 .font(Font.custom("Galvji", size: 16))
                             TextField("game-code", text: code)
                                 .textInputAutocapitalization(.never)

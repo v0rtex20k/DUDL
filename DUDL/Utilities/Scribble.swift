@@ -20,6 +20,7 @@ struct Scribble: Shape {
         path.addCurve(to: CGPoint(x: 0.95289*width - offset, y: 0.62055*height), control1: CGPoint(x: 0.57004*width - offset, y: 0.98813*height), control2: CGPoint(x: 0.8498*width - offset, y: 0.5786*height))
         path.addCurve(to: CGPoint(x: 0.87028*width - offset, y: 0.94999*height), control1: CGPoint(x: 1.05599*width - offset, y: 0.6625*height), control2: CGPoint(x: 0.80576*width - offset, y: 0.90861*height))
         path.addCurve(to: CGPoint(x: 1.02828*width - offset, y: 0.87637*height), control1: CGPoint(x: 0.91329*width - offset, y: 0.97757*height), control2: CGPoint(x: 0.96596*width - offset, y: 0.95303*height))
+        
         return path
     }
 }

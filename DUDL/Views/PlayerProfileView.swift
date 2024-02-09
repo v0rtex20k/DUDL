@@ -39,27 +39,47 @@ struct PlayerProfileView : View {
         await restController.updatePlayerProfile(code: gameCode, nickname: nickname, rgba: RGBA(r: c.red, g: c.green, b: c.blue, a: c.opacity)) { result in
             wasSubmitted = true
             switch result {
-                case .success(let uppr):
-                    currentView = .lobby
-                    print("Updated \(uppr.playerId)'s Profile")
-                case .failure(let error):
-                    switch error {
-                        case .serviceUnavailable:
-                            alertMessage = "Failed to connect to server \n Please check your internet connection"
-                        default:
-                            alertMessage = "Something went wrong \n Please try again later"
-                    }
-                    shouldShowAlert = true
-                    print(error.localizedDescription)
+            case .success(let uppr):
+                currentView = .lobby
+                print("Updated \(uppr.playerId)'s Profile")
+            case .failure(let error):
+                switch error {
+                case .serviceUnavailable:
+                    alertMessage = "Failed to connect to server \n Please check your internet connection"
+                default:
+                    alertMessage = "Something went wrong \n Please try again later"
+                }
+                shouldShowAlert = true
+                print(error.localizedDescription)
             }
         }
+    }
+    
+    func leaveGame() async {
+        await restController.ejectPlayer(code: gameCode) { result in
+            switch result {
+            case .success:
+                currentView = .lobby
+                print("Successfully left \(gameCode)")
+            case .failure(let error):
+                switch error {
+                case .serviceUnavailable:
+                    alertMessage = "Failed to connect to server \n Please check your internet connection"
+                default:
+                    alertMessage = "Something went wrong \n Please try again later"
+                }
+                print(error.localizedDescription)
+            }
+        }
+        
+        gameCode.removeAll()
     }
     
     
     var body: some View {
         GeometryReader { geo in
             let minDim = min(geo.size.width, geo.size.height)
-            BlackDraggableZStack(currentView: $currentView, dragToView: .home) {
+            BlackDraggableZStack(currentView: $currentView, dragToView: .home, onDragEndFunc: leaveGame) {
                 VStack {
                     RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent) { code in
                         VStack {
@@ -74,16 +94,16 @@ struct PlayerProfileView : View {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 5)
                                             .fill(Color.white.gradient)
-                                            .frame(width: minDim * 0.7, height: 45, alignment: .center)
+                                            .frame(width: minDim * 0.6, height: 45, alignment: .center)
                                             .shadow(radius: 3)
                                             .zIndex(1)
                                         RoundedRectangle(cornerRadius: 10)
                                             .fill(bgColor.gradient)
-                                            .frame(width: minDim * 0.8, height: minDim * 0.8, alignment: .center)
+                                            .frame(width: minDim * 0.75, height: minDim * 0.75, alignment: .center)
                                             .shadow(radius: 3)
-                                            .onTapGesture(count: 1) {
-                                                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
-                                            }
+                                         .shadow(color: Color(bgColor), radius: 20)
+                                         .shadow(color: Color(bgColor), radius: 30)
+                                         .shadow(color: Color(bgColor), radius: 40)
                                     }
                                 )
                                 .disableAutocorrection(true)
@@ -95,37 +115,38 @@ struct PlayerProfileView : View {
                                 Spacer()
                                 SquareColorPickerView(colorValue: $bgColor)
                                     .padding()
-                                Button("", systemImage: "checkmark.seal"){
+                                Button {
                                     if !nickname.isEmpty{
                                         Task.detached {
                                             await updateProfile()
                                         }
                                     }
+                                } label: {
+                                    Label("", systemImage: "hand.thumbsup.fill")
+                                        .foregroundStyle(Color(primary_color))
+                                        
                                 }
                                 .padding()
-                                .foregroundStyle(.white)
-                                .overlay(RoundedRectangle(cornerRadius: 5.0).stroke(Color.white, style: StrokeStyle(lineWidth: 3)))
-                                .padding(10)
-                                
                                 Spacer()
                             }
                             Spacer()
                         }
                     }
                 }
-                
             }
         }
     }
 }
 
-//#Preview {
-//   struct PreviewWrapper: View {
-//       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
-//       var body: some View {
-//           PlayerProfileView(gameCode: .constant("happy-hippo"), currentView: .constant("PlayerProfileView"), restController: $rc)
-//       }
-//   }
-//   return PreviewWrapper()
-//}
+
+#Preview {
+   struct PreviewWrapper: View {
+       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
+       @State var vf: ViewFinder = .playerProfile
+       var body: some View {
+           PlayerProfileView(gameCode: .constant("happy-hippo"), currentView: $vf, restController: $rc)
+       }
+   }
+   return PreviewWrapper()
+}
 

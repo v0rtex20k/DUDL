@@ -23,7 +23,7 @@ struct PlayerProfileGridItemView : View {
                 .font(Font.custom("Galvji", size: 14))
                 .background {
                     RoundedRectangle(cornerRadius: 5)
-                        .fill(Color.white.gradient)
+                        .fill(Color(primary_color).gradient)
                         .shadow(radius: 3)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 25)

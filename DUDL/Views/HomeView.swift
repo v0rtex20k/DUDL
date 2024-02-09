@@ -9,8 +9,11 @@ import SwiftUI
     
 
 struct HomeView: View {
-    @State private var shouldDraw = false
+    @State var shouldDraw = false
     @Binding var currentView: ViewFinder
+    
+    @State private var animationStateId = UUID()
+    
     var body: some View {
         GeometryReader { geo in
             ZStack {
@@ -21,19 +24,17 @@ struct HomeView: View {
                         .trim(from: shouldDraw ? 0 : 1, to: 1)
                         .stroke(style:StrokeStyle(lineWidth: 10, lineCap: .round))
                         .frame(width: geo.size.width / 2, height: geo.size.height / 3)
-                        .font(.caption)
-                        .foregroundStyle(.white)
-                        .onAppear {
-                            Task.detached {
-                                withAnimation(.easeIn(duration: 4).delay(0.5).repeatForever(autoreverses:true)){
-                                    shouldDraw.toggle()
-                                }
+                        .foregroundColor(Color(primary_color))
+                        .task {
+                            withAnimation(.easeIn(duration: 4).delay(0.5).repeatForever(autoreverses:true)){
+                                shouldDraw.toggle()
                             }
                         }
+                        .id(animationStateId)
                     Text("DÜDL")
                         .padding()
                         .font(Font.custom("Galvji-Bold", size: 25))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color(primary_color))
                     Spacer()
                     HStack {
                         Spacer()
@@ -41,11 +42,11 @@ struct HomeView: View {
                             self.currentView = .start
                         }
                             .padding()
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color(primary_color))
                             .font(Font.custom("Galvji", size: 18))
                             .background(
                                 RoundedRectangle(cornerRadius: 10).stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
-                                    .foregroundStyle(.white)
+                                    .foregroundColor(Color(primary_color))
                                     .frame(width: geo.size.width / 4,
                                                   height: geo.size.height / 12)
                             )
@@ -55,10 +56,10 @@ struct HomeView: View {
                         }
                         .padding()
                         .font(Font.custom("Galvji", size: 18))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color(primary_color))
                         .background(
                             RoundedRectangle(cornerRadius: 10).stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
-                                .foregroundStyle(.white)
+                                .foregroundColor(Color(primary_color))
                                 .frame(width: geo.size.width / 4,
                                               height: geo.size.height / 12)
                         )
@@ -72,7 +73,7 @@ struct HomeView: View {
                         }
                         .padding()
                         .font(Font.custom("Galvji", size: 12))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color(primary_color))
 
                     }
                 }
@@ -81,7 +82,10 @@ struct HomeView: View {
     }
 }
 
-//#Preview {
-//    HomeView(currentView: .home)
-//}
+#Preview {
+    ZStack{
+        @State var vf: ViewFinder = .home
+        HomeView(currentView: $vf)
+    }
+}
 

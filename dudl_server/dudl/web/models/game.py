@@ -27,9 +27,9 @@ class Game:
     def update_player_profile(self, player_id: str, nickname: str, rgba: Dict[str, Any]):
         try:
             if player_id in self.player_profiles:
-                creator = self.player_profiles[player_id]
+                is_host = self.player_profiles[player_id]
                 self.player_profiles[player_id] = PlayerProfile(
-                    player_id=player_id, nickname=nickname, rgba=rgba, creator=creator
+                    player_id=player_id, nickname=nickname, rgba=rgba, is_host=is_host
                 )
             else:
                 raise AttributeError
@@ -38,8 +38,8 @@ class Game:
         except:
             log_and_abort(status.HTTP_404_NOT_FOUND, f"Refusing to update PlayerProfile for \"{player_id}\"")
 
-    def add_player_to_game(self, player_id: str, creator: bool):
-        self.player_profiles[player_id] = creator
+    def add_player(self, player_id: str, is_host: bool):
+        self.player_profiles[player_id] = is_host
 
 
     # TODO: flesh data out

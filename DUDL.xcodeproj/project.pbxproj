@@ -130,7 +130,6 @@
 				57C3AC042B65B2FB0058AE5F /* DUDLApp.swift */,
 				57C3AC082B65B2FC0058AE5F /* Assets.xcassets */,
 				57C3AC0A2B65B2FC0058AE5F /* Preview Content */,
-				57C3AC552B69E57F0058AE5F /* PlayerProfileView.swift */,
 				57CE50EB2B6EA0230071E806 /* LobbyView.swift */,
 			);
 			path = DUDL;
@@ -183,6 +182,7 @@
 				57C3AC4F2B68B54E0058AE5F /* SettingsView.swift */,
 				57C3AC3B2B668F970058AE5F /* StartView.swift */,
 				57C3AC532B68BE620058AE5F /* JoinView.swift */,
+				57C3AC552B69E57F0058AE5F /* PlayerProfileView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";

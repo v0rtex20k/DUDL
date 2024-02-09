@@ -10,13 +10,19 @@ import SwiftUI
 
 protocol BDZSContainerView: View {
     associatedtype Content
-    @inlinable init(currentView: Binding<ViewFinder>, dragToView: ViewFinder, @ViewBuilder content: @escaping () -> Content)
+    @inlinable init(currentView: Binding<ViewFinder>, dragToView: ViewFinder, enableOneTap: Bool,  onDragEndFunc: Optional<() async -> Void>, @ViewBuilder content: @escaping () -> Content)
 }
 
 struct BlackDraggableZStack<Content: View>: BDZSContainerView {
     @Binding var currentView: ViewFinder
     var dragToView: ViewFinder
+    var enableOneTap: Bool = true
+    var onDragEndFunc: Optional<() async -> Void>
     var content: () -> Content
+    
+    // MARK: VIEW CREATION
+    
+    
 
     var body: some View {
         ZStack{
@@ -24,20 +30,28 @@ struct BlackDraggableZStack<Content: View>: BDZSContainerView {
             content()
         }
         .ignoresSafeArea(.keyboard)
-        .gesture(DragGesture(minimumDistance: 20, coordinateSpace: .global)
+        .gesture(
+            DragGesture(minimumDistance: 20, coordinateSpace: .global)
             .onEnded { value in
                 let h = value.translation.width
                 let v = value.translation.height
                 
                 if abs(h) > abs(v) {
-                    currentView = .home
-                    let impactMed = UIImpactFeedbackGenerator(style: .medium)
-                    impactMed.impactOccurred()
+
+                    if let onDragEndFunc = onDragEndFunc {
+                        Task.detached {
+                            await onDragEndFunc()
+                        }
+                    }
+                    
+                    currentView = dragToView
+                    UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                    
                 }
             }
         )
-        .onTapGesture(count: 1) {
-            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
+        .onTapGesture(count: 2) {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
     }
 }

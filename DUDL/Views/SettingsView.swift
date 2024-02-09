@@ -32,11 +32,11 @@ struct SettingsView : View {
     @Binding var restController: RestController
     var body: some View {
         GeometryReader { geo in
-            BlackDraggableZStack(currentView: $currentView, dragToView: .home, content: {
+            BlackDraggableZStack(currentView: $currentView, dragToView: .home, onDragEndFunc: nil) {
                 VStack {
                     Spacer()
                     Text("Host IP Address")
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color(primary_color))
                         .font(Font.custom("Galvji", size: 16))
                     TextField(restController._host, text: $host)
                         .keyboardType(.numberPad)
@@ -64,7 +64,7 @@ struct SettingsView : View {
                     Spacer()
                     Spacer()
                 }
-            })
+            }
             .ignoresSafeArea(.keyboard)
         }
     }

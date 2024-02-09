@@ -17,6 +17,9 @@ enum ViewFinder {
     case playerProfile
 }
 
+
+let primary_color = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+
 @main
 struct DUDLApp: App {
     @State var gameCode: String = ""

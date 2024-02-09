@@ -46,17 +46,17 @@ struct StartView : View {
     }
     
     var body: some View {
-        BlackDraggableZStack(currentView: $currentView, dragToView: .home) {
+        BlackDraggableZStack(currentView: $currentView, dragToView: .home, onDragEndFunc: nil) {
             RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent) { code in
                     VStack{
                         ShareLink(item: "Let's DÜDL: \(gameCode)") {
                             Text(code.wrappedValue)
-                                .foregroundStyle(.white)
                                 .font(Font.custom("Galvji", size: 25))
+                                .foregroundColor(Color(primary_color))
                         }
                         Text("Tap the code to share")
                             .padding()
-                            .foregroundStyle(.white)
+                            .foregroundColor(Color(primary_color))
                             .font(Font.custom("Galvji", size: 8))
                     }
             }.task {

@@ -17,7 +17,8 @@ struct SquareColorPickerView: View {
             .overlay(RoundedRectangle(cornerRadius: 5.0).stroke(Color.white, style: StrokeStyle(lineWidth: 3)))
             .padding(10)
             .background(AngularGradient(gradient: Gradient(colors: [.red,.yellow,.green,.blue,.purple,.pink]), center:.center).cornerRadius(8.0))
-            .overlay(ColorPicker("", selection: $colorValue).labelsHidden().opacity(0.015))
+            .overlay(
+                ColorPicker("", selection: $colorValue, supportsOpacity: true).labelsHidden().opacity(0.015))
             .shadow(radius: 5.0)
 
     }

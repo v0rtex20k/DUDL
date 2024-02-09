@@ -40,13 +40,13 @@ struct RestfulGroup<Content: View>: RGContainerView {
             }   else {
                     ProgressView {
                         Text("Connecting to Server")
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color(primary_color))
                             .padding()
                             .font(Font.custom("Galvji", size: 20))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color(primary_color))
                     }
                     .progressViewStyle(.circular)
-                    .tint(.white)
+                    .tint(Color(primary_color))
         
             }
         }

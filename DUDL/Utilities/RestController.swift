@@ -49,52 +49,18 @@ struct RestController {
         }
     }
     
+    func deviceId() async -> String {
+        return  await UIDevice.current.identifierForVendor!.uuidString
+    }
+    
+    func encodeRequest<T : Encodable>(_ request: T) async -> Optional<Data> {
+        guard let uploadData = try? JSONEncoder().encode(request) else {
+            return nil
+        }
+        return uploadData
+    }
+    
     // MARK: Encodings
-    
-    func encodeNewGameRequest() async -> Optional<Data> {
-        let pid: String = await UIDevice.current.identifierForVendor!.uuidString
-        if pid.isEmpty {
-            return nil
-        }
-        let req = NewGameRequest(playerId: pid)
-        guard let uploadData = try? JSONEncoder().encode(req) else {
-            return nil
-        }
-        return uploadData
-    }
-    
-    func encodeJoinGameRequest(code: String) async -> Optional<Data> {
-        let pid: String = await UIDevice.current.identifierForVendor!.uuidString
-        if pid.isEmpty {
-            return nil
-        }
-        let req = JoinGameRequest(gameCode: code, playerId: pid)
-        guard let uploadData = try? JSONEncoder().encode(req) else {
-            return nil
-        }
-        return uploadData
-    }
-    
-    func encodeUpdatePlayerProfileRequest(code: String, nickname: String, rgba: RGBA) async -> Optional<Data> {
-        let pid: String = await UIDevice.current.identifierForVendor!.uuidString
-        if pid.isEmpty {
-            return nil
-        }
-        
-        let req = PlayerProfile(gameCode: code, playerId: pid, nickname: nickname, rgba: rgba)
-        guard let uploadData = try? JSONEncoder().encode(req) else {
-            return nil
-        }
-        return uploadData
-    }
-    
-    func encodeAllPlayerProfilesRequest(code: String) async -> Optional<Data> {
-        let req = AllPlayerProfilesRequest(gameCode: code)
-        guard let uploadData = try? JSONEncoder().encode(req) else {
-            return nil
-        }
-        return uploadData
-    }
     
     func encodeEjectPlayerRequest(code: String, playerId: String) async -> Optional<Data> {
         let req = EjectPlayerRequest(gameCode: code, playerId: playerId)
@@ -109,7 +75,7 @@ struct RestController {
     // MARK: Use Cases
     
     func startNewGame(completionHandler: @escaping (Result<NewGameResponse, HTTPError>) -> Void) async {
-        guard let uploadData = await self.encodeNewGameRequest() else {
+        guard let uploadData = await self.encodeRequest(NewGameRequest(playerId: await deviceId())) else {
             completionHandler(.failure(.unidentifiedUser))
             return
         }
@@ -136,7 +102,7 @@ struct RestController {
     }
     
     func joinExistingGame(_ code: String, completionHandler: @escaping (Result<JoinGameResponse, HTTPError>) -> Void) async {
-        guard let uploadData = await self.encodeJoinGameRequest(code: code) else {
+        guard let uploadData = await self.encodeRequest(JoinGameRequest(gameCode: code, playerId: await deviceId())) else {
             completionHandler(.failure(.unidentifiedUser))
             return
         }
@@ -170,7 +136,9 @@ struct RestController {
     }
     
     func updatePlayerProfile(code: String, nickname: String, rgba: RGBA, completionHandler: @escaping (Result<UpdatePlayerProfileResponse, HTTPError>) -> Void) async {
-        guard let uploadData = await self.encodeUpdatePlayerProfileRequest(code: code, nickname: nickname, rgba: rgba) else {
+        guard let uploadData = await self.encodeRequest(PlayerProfile(gameCode: code, 
+                                                                      playerId: await deviceId(),
+                                                                      nickname: nickname, rgba: rgba)) else {
             completionHandler(.failure(.unidentifiedUser))
             return
         }
@@ -204,7 +172,7 @@ struct RestController {
     }
     
     func allPlayerProfiles(code: String, completionHandler: @escaping (Result<[PlayerProfile], HTTPError>) -> Void) async {
-        guard let uploadData = await self.encodeAllPlayerProfilesRequest(code: code) else {
+        guard let uploadData = await self.encodeRequest(AllPlayerProfilesRequest(gameCode: code)) else {
             completionHandler(.failure(.unidentifiedUser))
             return
         }
@@ -245,8 +213,17 @@ struct RestController {
         }
     }
     
-    func ejectPlayer(code: String, playerId: String, completionHandler: @escaping (Result<[PlayerProfile], HTTPError>) -> Void) async {
-        guard let uploadData = await self.encodeEjectPlayerRequest(code: code, playerId: playerId) else {
+    func ejectPlayer(code: String, playerId: Optional<String> = nil, completionHandler: @escaping (Result<[PlayerProfile], HTTPError>) -> Void) async {
+        
+        var pid: String = ""
+
+        if playerId != nil {
+            pid = playerId!
+        } else {
+            pid = await deviceId()
+        }
+        
+        guard let uploadData = await self.encodeRequest(EjectPlayerRequest(gameCode: code, playerId: pid)) else {
             completionHandler(.failure(.unidentifiedUser))
             return
         }
