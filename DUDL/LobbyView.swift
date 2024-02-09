@@ -112,6 +112,7 @@ struct LobbyView : View {
                         .task {
                             await loadAllPlayerProfiles()
                         }
+                        .background(Color.black)
                         .refreshable {
                             print("Loading All Player Profiles ...")
                             await loadAllPlayerProfiles()
@@ -127,11 +128,32 @@ struct LobbyView : View {
                                         .font(.subheadline).foregroundStyle(Color(primary_color))
                                 }
                             }
+                            ToolbarItem(placement: .bottomBar) {
+                                Button {
+                                    print("KICK OFF GAME")
+                                } label : {
+                                    Text("Let's DÜDL!")
+                                    .font(.headline).foregroundStyle(Color(primary_color))
+                                }
+                            }
                         })
-                        .toolbarBackground(.hidden , for: .navigationBar)
+                        .toolbarBackground(.hidden, for: .navigationBar)
+                        .toolbarBackground(.hidden, for: .bottomBar)
                     }
                 }
             }
         }
     }
 }
+
+#Preview {
+   struct PreviewWrapper: View {
+       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
+       @State var vf: ViewFinder = .lobby
+       var body: some View {
+           LobbyView(gameCode: .constant("happy-hippo"), currentView: $vf, restController: $rc)
+       }
+   }
+   return PreviewWrapper()
+}
+

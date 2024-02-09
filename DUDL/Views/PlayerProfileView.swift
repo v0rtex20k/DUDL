@@ -18,7 +18,7 @@ struct PlayerProfileView : View {
     private let alertTitle = "Unable to create Player Profile"
     
     @State var nickname: String = ""
-    @State private var bgColor = Color.blue
+    @State private var bgColor = Color.cyan
     @State private var alertMessage: String = ""
     @State private var wasSubmitted: Bool = false
     @State private var shouldShowAlert: Bool = false
@@ -113,8 +113,18 @@ struct PlayerProfileView : View {
                             Spacer()
                             HStack {
                                 Spacer()
-                                SquareColorPickerView(colorValue: $bgColor)
-                                    .padding()
+                                Text("")
+                                .padding()
+                                .background(
+                                    ZStack{
+                                        RoundedRectangle(cornerRadius:10).foregroundStyle(Color(primary_color))
+                                        SquareColorPickerView(colorValue: $bgColor)
+                                            .zIndex(100)
+                                            .padding(3)
+                                    }
+                                   
+                                )
+                                .padding()
                                 Button {
                                     if !nickname.isEmpty{
                                         Task.detached {
@@ -122,8 +132,13 @@ struct PlayerProfileView : View {
                                         }
                                     }
                                 } label: {
-                                    Label("", systemImage: "hand.thumbsup.fill")
-                                        .foregroundStyle(Color(primary_color))
+                                    Text(Image(systemName: "hand.thumbsup.fill"))
+                                        .foregroundStyle(bgColor)
+                                        .padding()
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 10).foregroundStyle(Color(primary_color))
+                                                .padding(3)
+                                        )
                                         
                                 }
                                 .padding()
@@ -141,10 +156,10 @@ struct PlayerProfileView : View {
 
 #Preview {
    struct PreviewWrapper: View {
-       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
+       @State var rc: RestController = RestController(host: "127.0.0.1", port:8001)
        @State var vf: ViewFinder = .playerProfile
        var body: some View {
-           PlayerProfileView(gameCode: .constant("happy-hippo"), currentView: $vf, restController: $rc)
+           PlayerProfileView(gameCode: .constant("chunky-rottweiler"), currentView: $vf, restController: $rc)
        }
    }
    return PreviewWrapper()
