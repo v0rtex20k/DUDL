@@ -82,13 +82,17 @@ class GameCollection:
             self.games[game_code].update_player_profile(player_id=player_id,
                                                         nickname=nickname,
                                                         rgba=rgba)
+        except KeyError:
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"Game \"{game_code}\" does not exist")
         except Exception as e:
             traceback.print_exception(e)
-            log_and_abort(status.HTTP_404_NOT_FOUND, f"Failed to update Player {player_id}'s profile in Game {game_code}")
+            log_and_abort(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Failed to update Player {player_id}'s profile in Game {game_code}")
 
     def get_all_active_players_profiles_in_game(self, game_code: str)-> List[PlayerProfile]:
         try:
             return [v for v in self.games[game_code].player_profiles.values()]
+        except KeyError:
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"Game \"{game_code}\" does not exist")
         except Exception as e:
             traceback.print_exception(e)
-            log_and_abort(status.HTTP_404_NOT_FOUND, f"Failed to get all active PlayerProfiles in Game {game_code}")
+            log_and_abort(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Failed to get all active PlayerProfiles in Game {game_code}")
