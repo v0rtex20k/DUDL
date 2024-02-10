@@ -44,6 +44,7 @@ struct LobbyView : View {
             }
         }
     }
+
     
     func leaveGame() async {
         await restController.ejectPlayer(code: gameCode) { result in
@@ -87,60 +88,62 @@ struct LobbyView : View {
     
     var body: some View {
         BlackDraggableZStack(currentView: $currentView, dragToView: .home, onDragEndFunc: nil) {
-            VStack {
-                RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent) { code in
-                    NavigationStack {
-                        GeometryReader { geo in
-                            ScrollView(.vertical) {
-                                ForEach(playerProfiles, id: \.playerId) { profile in
-                                    PlayerProfileGridItemView(size: geo.size, playerProfile: profile)
-                                        .contextMenu {
-                                            Button(role: .destructive) {
-                                                Task.detached {
-                                                    selfSelect = await restController.deviceId() == profile.playerId
-                                                    await selfSelect ? leaveGame() : eject(profile.playerId)
-                                                }
-                                                let impact = UIImpactFeedbackGenerator(style: .medium)
-                                                impact.impactOccurred()
-                                            } label: {
-                                                Label(selfSelect ? "Leave" : "Delete", systemImage: selfSelect ? "arrow.turn.up.left" : "trash")
+            RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent) { code in
+                NavigationStack {
+                    GeometryReader { geo in
+                        ScrollView(.vertical) {
+                            ForEach(playerProfiles, id: \.playerId) { profile in
+                                PlayerProfileGridItemView(size: geo.size, playerProfile: profile)
+                                    .contextMenu {
+                                        Button(role: .destructive) {
+                                            Task.detached {
+                                                selfSelect = await restController.deviceId() == profile.playerId
+                                                await selfSelect ? leaveGame() : eject(profile.playerId)
                                             }
+                                            let impact = UIImpactFeedbackGenerator(style: .medium)
+                                            impact.impactOccurred()
+                                        } label: {
+                                            Label(selfSelect ? "Leave" : "Delete", systemImage: selfSelect ? "arrow.turn.up.left" : "trash")
                                         }
-                                }
+                                    }
                             }
                         }
-                        .task {
-                            await loadAllPlayerProfiles()
-                        }
-                        .background(Color.black)
-                        .refreshable {
-                            print("Loading All Player Profiles ...")
-                            await loadAllPlayerProfiles()
-                        }
-                        .toolbar(content: {
-                            ToolbarItem(placement: .principal) {
-                                VStack {
-                                    let np = playerProfiles.count
-                                    Spacer()
-                                    Text(gameCode)
-                                        .font(.headline).foregroundStyle(Color(primary_color))
-                                    Text("\(np) player\(np == 1 ? "" : "s")")
-                                        .font(.subheadline).foregroundStyle(Color(primary_color))
-                                }
-                            }
-                            ToolbarItem(placement: .bottomBar) {
-                                Button {
-                                    print("KICK OFF GAME")
-                                } label : {
-                                    Text("Let's DÜDL!")
-                                    .font(.headline).foregroundStyle(Color(primary_color))
-                                }
-                            }
-                        })
-                        .toolbarBackground(.hidden, for: .navigationBar)
-                        .toolbarBackground(.hidden, for: .bottomBar)
                     }
+                    .task {
+                        await loadAllPlayerProfiles()
+                    }
+                    .background(Color.black)
+                    .refreshable {
+                        print("Loading All Player Profiles ...")
+                        await loadAllPlayerProfiles()
+                    }
+                    .toolbar(content: {
+                        ToolbarItem(placement: .principal) {
+                            VStack {
+                                let np = playerProfiles.count
+                                Spacer()
+                                Text(gameCode)
+                                    .font(.headline).foregroundStyle(Color(primary_color))
+                                Text("\(np) player\(np == 1 ? "" : "s")")
+                                    .font(.subheadline).foregroundStyle(Color(primary_color))
+                            }
+                        }
+                        ToolbarItem(placement: .bottomBar) {
+                            Button {
+                                print("KICK OFF GAME")
+                            } label : {
+                                Text("Let's DÜDL!")
+                                .font(.headline)
+                                .foregroundStyle(Color(primary_color))
+                            }
+                        }
+                    })
+                    .toolbarBackground(.hidden, for: .navigationBar)
+                    .toolbarBackground(.hidden, for: .bottomBar)
+
                 }
+                .toolbarBackground(.hidden)
+
             }
         }
     }

@@ -53,6 +53,8 @@ struct StartView : View {
                             Text(code.wrappedValue)
                                 .font(Font.custom("Galvji", size: 25))
                                 .foregroundColor(Color(primary_color))
+                                .shadow(color: Color(primary_color), radius: 10)
+                                .shadow(color: Color(primary_color), radius: 20)
                         }
                         Text("Tap the code to share")
                             .padding()

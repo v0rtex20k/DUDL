@@ -65,7 +65,7 @@ class GetAllActivePlayerProfiles(MethodView):
         profiles = collection.get_all_active_players_profiles_in_game(game_code=game_code)
         current_app.logger.debug(f"Returning all active players in Game \"{game_code}\": {profiles}")
 
-        return [p.as_dict() for p in profiles], status.HTTP_200_OK
+        return [p.as_dict() for p in profiles or []], status.HTTP_200_OK
 
 @dudl_blueprint.route('eject-player')
 class EjectPlayer(MethodView):
@@ -77,4 +77,4 @@ class EjectPlayer(MethodView):
         profiles = collection.remove_player_from_all_games(player_id=player_id)
         current_app.logger.debug(f"Returning all active players in Game \"{game_code}\": {profiles}")
 
-        return [p.as_dict() for p in profiles], status.HTTP_200_OK
+        return [p.as_dict() for p in profiles or []], status.HTTP_200_OK

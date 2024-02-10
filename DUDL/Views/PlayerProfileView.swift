@@ -9,6 +9,7 @@ import Foundation
 import Combine
 import SwiftUI
 
+
 struct PlayerProfileView : View {
     @Binding var gameCode: String
     @Binding var currentView: ViewFinder
@@ -18,7 +19,7 @@ struct PlayerProfileView : View {
     private let alertTitle = "Unable to create Player Profile"
     
     @State var nickname: String = ""
-    @State private var bgColor = Color.cyan
+    @State private var playerColor = Color.green
     @State private var alertMessage: String = ""
     @State private var wasSubmitted: Bool = false
     @State private var shouldShowAlert: Bool = false
@@ -33,7 +34,7 @@ struct PlayerProfileView : View {
     }
     
     func updateProfile() async {
-        let c = bgColor.resolve(in: env)
+        let c = playerColor.resolve(in: env)
         shouldShowContent = false
         print("Attempting to Update Player Profile \"\(nickname)\" in \(gameCode) : \(c.description) ...")
         await restController.updatePlayerProfile(code: gameCode, nickname: nickname, rgba: RGBA(r: c.red, g: c.green, b: c.blue, a: c.opacity)) { result in
@@ -98,12 +99,12 @@ struct PlayerProfileView : View {
                                             .shadow(radius: 3)
                                             .zIndex(1)
                                         RoundedRectangle(cornerRadius: 10)
-                                            .fill(bgColor.gradient)
+                                            .fill(playerColor.gradient)
                                             .frame(width: minDim * 0.75, height: minDim * 0.75, alignment: .center)
                                             .shadow(radius: 3)
-                                         .shadow(color: Color(bgColor), radius: 20)
-                                         .shadow(color: Color(bgColor), radius: 30)
-                                         .shadow(color: Color(bgColor), radius: 40)
+                                         .shadow(color: Color(playerColor), radius: 20)
+                                         .shadow(color: Color(playerColor), radius: 30)
+                                         .shadow(color: Color(playerColor), radius: 40)
                                     }
                                 )
                                 .disableAutocorrection(true)
@@ -113,18 +114,20 @@ struct PlayerProfileView : View {
                             Spacer()
                             HStack {
                                 Spacer()
+                                Spacer()
                                 Text("")
                                 .padding()
                                 .background(
                                     ZStack{
                                         RoundedRectangle(cornerRadius:10).foregroundStyle(Color(primary_color))
-                                        SquareColorPickerView(colorValue: $bgColor)
+                                        SquareColorPickerView(colorValue: $playerColor)
                                             .zIndex(100)
                                             .padding(3)
                                     }
                                    
                                 )
                                 .padding()
+                                Spacer()
                                 Button {
                                     if !nickname.isEmpty{
                                         Task.detached {
@@ -133,8 +136,9 @@ struct PlayerProfileView : View {
                                     }
                                 } label: {
                                     Text(Image(systemName: "hand.thumbsup.fill"))
-                                        .foregroundStyle(bgColor)
+                                        .foregroundStyle(.black)
                                         .padding()
+                                        .font(Font.custom("Galvji-Bold", size: 14))
                                         .background(
                                             RoundedRectangle(cornerRadius: 10).foregroundStyle(Color(primary_color))
                                                 .padding(3)
@@ -142,6 +146,7 @@ struct PlayerProfileView : View {
                                         
                                 }
                                 .padding()
+                                Spacer()
                                 Spacer()
                             }
                             Spacer()
