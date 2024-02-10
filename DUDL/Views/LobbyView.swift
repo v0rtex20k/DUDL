@@ -21,9 +21,8 @@ struct LobbyView : View {
     let alertTitle = "Connection Lost"
     
     @State private var playerProfiles: [PlayerProfile] = []
-    @State private var draggingItem: Color?
     
-    @State private var selfSelect: Bool = false
+    @State private var deviceUUID: String = ""
     
     func loadAllPlayerProfiles() async {
         await restController.allPlayerProfiles(code: gameCode) { result in
@@ -87,29 +86,34 @@ struct LobbyView : View {
     }
     
     var body: some View {
-        BlackDraggableZStack(currentView: $currentView, dragToView: .home, onDragEndFunc: nil) {
+        BlackDraggableZStack(currentView: $currentView, dragToView: .playerProfile, onDragEndFunc: nil) {
             RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent) { code in
                 NavigationStack {
                     GeometryReader { geo in
                         ScrollView(.vertical) {
                             ForEach(playerProfiles, id: \.playerId) { profile in
-                                PlayerProfileGridItemView(size: geo.size, playerProfile: profile)
+                                PlayerProfileIconView(size: geo.size, playerProfile: profile)
                                     .contextMenu {
                                         Button(role: .destructive) {
+                                            print("\(deviceUUID) VS \(profile.playerId)")
                                             Task.detached {
-                                                selfSelect = await restController.deviceId() == profile.playerId
-                                                await selfSelect ? leaveGame() : eject(profile.playerId)
+                                                await deviceUUID == profile.playerId ? leaveGame() : eject(profile.playerId)
                                             }
                                             let impact = UIImpactFeedbackGenerator(style: .medium)
                                             impact.impactOccurred()
                                         } label: {
+                                            let selfSelect = deviceUUID == profile.playerId
                                             Label(selfSelect ? "Leave" : "Delete", systemImage: selfSelect ? "arrow.turn.up.left" : "trash")
                                         }
+                                    } preview: {
+                                        PlayerProfileIconView(size: geo.size, playerProfile: profile)
                                     }
                             }
                         }
                     }
+                    .border(.red)
                     .task {
+                        deviceUUID = await restController.deviceId()
                         await loadAllPlayerProfiles()
                     }
                     .background(Color.black)
@@ -134,6 +138,8 @@ struct LobbyView : View {
                             } label : {
                                 Text("Let's DÜDL!")
                                 .font(.headline)
+                                .shadow(color: Color(primary_color), radius: 6)
+                                .shadow(color: Color(primary_color), radius: 8)
                                 .foregroundStyle(Color(primary_color))
                             }
                         }

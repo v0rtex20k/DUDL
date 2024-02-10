@@ -2,7 +2,9 @@
 import traceback
 from flask_api import status
 from flask import current_app
-from typing import Any, Dict, List, Set
+from typing import Any, Dict, List, Optional, Set
+
+import randomname
 
 
 from dudl.web.models.game import Game
@@ -44,10 +46,13 @@ class GameCollection:
         empties = [self.remove_player_from_game(player_id=player_id, game_code=gc) for gc in self.games if gc not in excludes]
         [self.games.pop(code) for code in empties]
 
-    def add_game(self, game_code: str, host_id: str):
-        if game_code in self.games:
-            # can't add the same game twice
-            log_and_abort(status.HTTP_409_CONFLICT, f"Duplicate GameCode \"{game_code}\"")
+    def add_game(self, host_id: str, game_code: Optional[str]=None)-> str:
+        while not game_code:
+            potential_game_code = randomname.get_name()
+
+            if not potential_game_code in self.games:
+                # can't add the same game twice
+                game_code = potential_game_code
 
         self.remove_player_from_all_games(host_id)
         
@@ -56,6 +61,7 @@ class GameCollection:
 
         self.games[game_code] = new_game
         current_app.logger.debug(f"Started Game \"{game_code}\" with Host Player {host_id} ...")
+        return game_code
 
     def add_player_to_game(self, game_code: str, player_id: str):
         try:
@@ -88,9 +94,9 @@ class GameCollection:
             traceback.print_exception(e)
             log_and_abort(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Failed to update Player {player_id}'s profile in Game {game_code}")
 
-    def get_all_active_players_profiles_in_game(self, game_code: str)-> List[PlayerProfile]:
+    def get_all_active_profiles_in_game(self, game_code: str)-> Dict[str, PlayerProfile]:
         try:
-            return [v for v in self.games[game_code].player_profiles.values()]
+            return self.games[game_code].player_profiles or {}
         except KeyError:
             log_and_abort(status.HTTP_404_NOT_FOUND, f"Game \"{game_code}\" does not exist")
         except Exception as e:

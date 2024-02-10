@@ -27,6 +27,7 @@ struct JoinGameRequest: Encodable {
 
 struct JoinGameResponse: Decodable {
     let playerId: String
+    let existingPlayer: Bool
 }
 
 // MARK: Player Profiles
@@ -58,19 +59,19 @@ struct PlayerProfile: Encodable, Decodable, Equatable, Hashable {
     let gameCode: String?
     let playerId: String
     let nickname: String
+    let isHost: Bool?
     let rgba: RGBA
     
-    init(gameCode: String, playerId: String, nickname: String, rgba: RGBA) {
+    init(gameCode: String?, playerId: String, nickname: String, rgba: RGBA, isHost: Bool? = false) {
         self.gameCode = gameCode
         self.playerId = playerId
         self.nickname = nickname
         self.rgba = rgba
+        self.isHost = isHost
     }
     
     static func == (lhs: PlayerProfile, rhs: PlayerProfile) -> Bool {
-        return  lhs.playerId == rhs.playerId &&
-                lhs.nickname == rhs.nickname &&
-                lhs.rgba == rhs.rgba
+        return lhs.playerId == rhs.playerId
     }
     
     func hash(into hasher: inout Hasher) {
@@ -88,13 +89,9 @@ struct AllPlayerProfilesRequest: Encodable {
     let gameCode: String
 }
 
-// MARK: Eject a player from a game
+// MARK: remove a player from a game
 
-struct EjectPlayerRequest: Encodable {
+struct RemovePlayerRequest: Encodable {
     let gameCode: String
-    let playerId: String
-}
-
-struct EjectPlayerResponse: Decodable {
     let playerId: String
 }

@@ -76,9 +76,10 @@ struct HomeView: View {
                         .foregroundStyle(Color(primary_color))
 
                     }
-                }
+                }.ignoresSafeArea(.keyboard)
             }
         }
+        .ignoresSafeArea(.keyboard)
     }
 }
 

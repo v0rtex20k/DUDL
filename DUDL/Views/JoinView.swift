@@ -60,15 +60,15 @@ struct JoinView : View {
         await restController.joinExistingGame(gameCode) { result in
             switch result {
             case .success(let jgr):
-                currentView = .playerProfile
+                currentView = jgr.existingPlayer ? .lobby : .playerProfile
                 shouldShowContent = false
                 print("Joined Game \(jgr.playerId)")
             case .failure(let error):
                 switch error {
-                case .serviceUnavailable:
-                    alertMessage = "Failed to connect to server \n Please check your internet connection"
-                default:
-                    alertMessage = "Something went wrong \n Please try again later"
+                    case .serviceUnavailable:
+                        alertMessage = "Failed to connect to server \n Please check your internet connection"
+                    default:
+                        alertMessage = "Something went wrong \n Please try again later"
                 }
                 shouldShowAlert = true
                 print(error.localizedDescription)
@@ -103,7 +103,7 @@ struct JoinView : View {
                                 .foregroundStyle(.black)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .multilineTextAlignment(.center)
-                                .frame(width: geo.size.width * 0.80)
+                                .frame(width: geo.size.width * 0.85)
                                 .font(Font.custom("Galvji", size: 20))
                         }
                     }

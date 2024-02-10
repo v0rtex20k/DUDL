@@ -8,13 +8,14 @@
 import Foundation
 import SwiftUI
 
-
-struct PlayerProfileGridItemView : View {
+struct PlayerProfileIconView : View {
     @State var size: CGSize
     @State var playerProfile: PlayerProfile
+    
     var body : some View {
         ZStack {
-            let minDim = min(size.width, size.height)
+            Color.black.edgesIgnoringSafeArea(.all)
+            let dim = min(size.width, size.height)
             Text(playerProfile.nickname)
                 .padding()
                 .foregroundStyle(.black)
@@ -22,31 +23,32 @@ struct PlayerProfileGridItemView : View {
                 .multilineTextAlignment(.center)
                 .font(Font.custom("Galvji", size: 14))
                 .background {
-                    RoundedRectangle(cornerRadius: 5)
+                    RoundedRectangle(cornerRadius: 10)
                         .fill(Color(primary_color).gradient)
                         .shadow(radius: 3)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 25)
                         .zIndex(1)
-                        .frame(width: minDim * 0.71, height: minDim * 0.25)
+                        .frame(width: dim * 0.55, height: dim * 0.125, alignment: .center)
                     RoundedRectangle(cornerRadius: 10)
                         .fill(Color(red: Double(playerProfile.rgba.r),
                                     green: Double(playerProfile.rgba.g),
                                     blue: Double(playerProfile.rgba.b),
                                     opacity: Double(playerProfile.rgba.a))
                             .gradient)
-                        .frame(width: minDim * 0.75, height: minDim * 0.3)
-                }.frame(width: size.width)
+                        .frame(width: dim * 0.75, height: dim * 0.18, alignment: .center)
+                }
+                .frame(width: dim, alignment: .center)
         }
     }
 }
 
-//#Preview {
-//   struct PreviewWrapper: View {
-//       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
-//       var body: some View {
-//           LobbyView(gameCode: .constant("tangy-cut"), currentView: .constant("LobbyView"), restController: $rc)
-//       }
-//   }
-//   return PreviewWrapper()
-//}
+#Preview {
+   struct PreviewWrapper: View {
+       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
+       @State var vf: ViewFinder = .lobby
+       var body: some View {
+           LobbyView(gameCode: .constant("happy-hippo"), currentView: $vf, restController: $rc)
+       }
+   }
+   return PreviewWrapper()
+}
+

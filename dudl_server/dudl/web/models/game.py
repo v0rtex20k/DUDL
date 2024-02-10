@@ -26,8 +26,14 @@ class Game:
 
     def update_player_profile(self, player_id: str, nickname: str, rgba: Dict[str, Any]):
         try:
-            if player_id in self.player_profiles:
-                is_host = self.player_profiles[player_id]
+            if (profile := self.player_profiles.get(player_id)):
+                if isinstance(profile, bool):
+                    is_host = profile
+                elif isinstance(profile, PlayerProfile):
+                    is_host = profile.is_host
+                else:
+                    raise ValueError
+
                 self.player_profiles[player_id] = PlayerProfile(
                     player_id=player_id, nickname=nickname, rgba=rgba, is_host=is_host
                 )
@@ -35,8 +41,8 @@ class Game:
                 raise AttributeError
         except AttributeError:
             log_and_abort(status.HTTP_409_CONFLICT, f"Duplicate Player \"{player_id}\"")
-        except:
-            log_and_abort(status.HTTP_404_NOT_FOUND, f"Refusing to update PlayerProfile for \"{player_id}\"")
+        except Exception as e:
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"Refusing to update PlayerProfile for \"{player_id}\": {e}")
 
     def add_player(self, player_id: str, is_host: bool):
         self.player_profiles[player_id] = is_host

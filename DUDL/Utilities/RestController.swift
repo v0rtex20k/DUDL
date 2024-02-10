@@ -62,8 +62,8 @@ struct RestController {
     
     // MARK: Encodings
     
-    func encodeEjectPlayerRequest(code: String, playerId: String) async -> Optional<Data> {
-        let req = EjectPlayerRequest(gameCode: code, playerId: playerId)
+    func encodeRemovePlayerRequest(code: String, playerId: String) async -> Optional<Data> {
+        let req = RemovePlayerRequest(gameCode: code, playerId: playerId)
         guard let uploadData = try? JSONEncoder().encode(req) else {
             return nil
         }
@@ -223,7 +223,7 @@ struct RestController {
             pid = await deviceId()
         }
         
-        guard let uploadData = await self.encodeRequest(EjectPlayerRequest(gameCode: code, playerId: pid)) else {
+        guard let uploadData = await self.encodeRequest(RemovePlayerRequest(gameCode: code, playerId: pid)) else {
             completionHandler(.failure(.unidentifiedUser))
             return
         }

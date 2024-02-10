@@ -15,7 +15,7 @@ struct PlayerProfileView : View {
     @Binding var currentView: ViewFinder
     @Binding var restController: RestController
     
-    private let maxLen = 20
+    private let maxLen = 15
     private let alertTitle = "Unable to create Player Profile"
     
     @State var nickname: String = ""
@@ -95,12 +95,12 @@ struct PlayerProfileView : View {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 5)
                                             .fill(Color.white.gradient)
-                                            .frame(width: minDim * 0.6, height: 45, alignment: .center)
+                                            .frame(width: minDim * 0.65, height: 45, alignment: .center)
                                             .shadow(radius: 3)
                                             .zIndex(1)
                                         RoundedRectangle(cornerRadius: 10)
                                             .fill(playerColor.gradient)
-                                            .frame(width: minDim * 0.75, height: minDim * 0.75, alignment: .center)
+                                            .frame(width: minDim * 0.8, height: minDim * 0.8, alignment: .center)
                                             .shadow(radius: 3)
                                          .shadow(color: Color(playerColor), radius: 20)
                                          .shadow(color: Color(playerColor), radius: 30)

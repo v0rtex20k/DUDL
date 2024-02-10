@@ -20,7 +20,8 @@ class PlayerProfile:
         return {
             "playerId": self.player_id,
             "nickname": self.nickname,
-            "rgba": self.rgba
+            "rgba": self.rgba,
+            "isHost": self.is_host
         }
 
     def __repr__(self) -> str:
