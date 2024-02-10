@@ -213,7 +213,7 @@ struct RestController {
         }
     }
     
-    func ejectPlayer(code: String, playerId: Optional<String> = nil, completionHandler: @escaping (Result<[PlayerProfile], HTTPError>) -> Void) async {
+    func removePlayer(code: String, playerId: Optional<String> = nil, completionHandler: @escaping (Result<[PlayerProfile], HTTPError>) -> Void) async {
         
         var pid: String = ""
 
@@ -228,7 +228,7 @@ struct RestController {
             return
         }
         
-        return await postAsync(endpoint: "eject-player", uploadData: uploadData) { post_result in
+        return await postAsync(endpoint: "remove-player", uploadData: uploadData) { post_result in
             do {
                 switch post_result {
                     case .success(let post_data):

@@ -67,8 +67,8 @@ class GetAllActivePlayerProfiles(MethodView):
 
         return [p.as_dict() for p in profiles or []], status.HTTP_200_OK
 
-@dudl_blueprint.route('eject-player')
-class EjectPlayer(MethodView):
+@dudl_blueprint.route('remove-player')
+class RemovePlayer(MethodView):
     def post(self)-> Tuple[PlayerProfile, int]:
         """ DUDL is up and running """
         game_code: str = abort_if_missing(request, "gameCode")

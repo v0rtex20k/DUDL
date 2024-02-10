@@ -47,7 +47,7 @@ struct LobbyView : View {
 
     
     func leaveGame() async {
-        await restController.ejectPlayer(code: gameCode) { result in
+        await restController.removePlayer(code: gameCode) { result in
             switch result {
             case .success:
                 currentView = .lobby
@@ -68,7 +68,7 @@ struct LobbyView : View {
     
     
     func eject(_ pid: String) async {
-        await restController.ejectPlayer(code: gameCode, playerId: pid) { result in
+        await restController.removePlayer(code: gameCode, playerId: pid) { result in
             switch result {
             case .success(let ps):
                 playerProfiles = ps
