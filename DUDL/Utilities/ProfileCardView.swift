@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct PlayerProfileIconView : View {
+struct ProfileCardView : View {
     @State var size: CGSize
     @State var playerProfile: PlayerProfile
     

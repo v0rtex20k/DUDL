@@ -213,7 +213,7 @@ struct RestController {
         }
     }
     
-    func removePlayer(code: String, playerId: Optional<String> = nil, completionHandler: @escaping (Result<[PlayerProfile], HTTPError>) -> Void) async {
+    func removePlayer(code: String, playerId: Optional<String> = nil, completionHandler: @escaping (Result<Data, HTTPError>) -> Void) async {
         
         var pid: String = ""
 
@@ -229,22 +229,30 @@ struct RestController {
         }
         
         return await postAsync(endpoint: "remove-player", uploadData: uploadData) { post_result in
+            switch post_result {
+                case .success(let post_data):
+                    // doesn't really return anything
+                    completionHandler(.success(post_data))
+                case .failure(let http_error):
+                    completionHandler(.failure(http_error))
+            }
+        }
+    }
+    
+    func gameStatus(code: String, completionHandler: @escaping (Result<GameStatusResponse, HTTPError>) -> Void) async {
+        guard let uploadData = await self.encodeRequest(GameStatusRequest(gameCode: code)) else {
+            completionHandler(.failure(.unidentifiedUser))
+            return
+        }
+        
+        return await postAsync(endpoint: "game-status", uploadData: uploadData) { post_result in
             do {
                 switch post_result {
                     case .success(let post_data):
-                    
                         dump(post_data)
-                    
-                        let decoded_result = try JSONDecoder()
-                                                    .decode([FailableDecodable<PlayerProfile>].self, from: post_data)
-                                                    .compactMap { $0.base }
+                        let decoded_result = try JSONDecoder().decode(GameStatusResponse.self, from: post_data)
                         
-                        if decoded_result.isEmpty {
-                            completionHandler(.failure(.decodingError))
-                        }
-                    
                         completionHandler(.success(decoded_result))
-                        return
                         
                     case .failure(let http_error):
                         completionHandler(.failure(http_error))
@@ -252,12 +260,7 @@ struct RestController {
             }
             catch {
                 
-                print("Failed to decode list of PlayerProfiles")
-//                do {
-//                    try print(String(decoding: post_result.get(), as: UTF8.self))
-//                } catch {
-//                    print("nope ;)")
-//                }
+                print("Failed to decode GameStatusResponse")
                 completionHandler(.failure(.decodingError))
             }
             

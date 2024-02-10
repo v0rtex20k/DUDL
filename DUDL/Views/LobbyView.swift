@@ -85,6 +85,31 @@ struct LobbyView : View {
         }
     }
     
+    func poll() {
+        // can't play by yourself :)
+        if playerProfiles.count > 1 {
+            await restController.gameStatus(code: gameCode) { result in
+                switch result {
+                case .success(let gsr):
+                    if gsr.started {
+                        currentView = .arena
+                    }
+                    print("LET THE GAMES BEGIN")
+                case .failure(let error):
+                    switch error {
+                    case .serviceUnavailable:
+                        alertMessage = "Failed to connect to server \n Please check your internet connection"
+                    default:
+                        alertMessage = "Something went wrong \n Please try again later"
+                    }
+                    shouldShowAlert = true
+                    print(error.localizedDescription)
+                }
+            }
+        }
+                
+    }
+    
     var body: some View {
         BlackDraggableZStack(currentView: $currentView, dragToView: .playerProfile, onDragEndFunc: nil) {
             RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent) { code in
@@ -92,7 +117,7 @@ struct LobbyView : View {
                     GeometryReader { geo in
                         ScrollView(.vertical) {
                             ForEach(playerProfiles, id: \.playerId) { profile in
-                                PlayerProfileIconView(size: geo.size, playerProfile: profile)
+                                ProfileCardView(size: geo.size, playerProfile: profile)
                                     .contextMenu {
                                         Button(role: .destructive) {
                                             print("\(deviceUUID) VS \(profile.playerId)")
@@ -107,7 +132,7 @@ struct LobbyView : View {
                                         }
                                     } preview: {
                                         let dim = min(geo.size.width, geo.size.height)
-                                        PlayerProfileIconView(size: geo.size, playerProfile: profile)
+                                        ProfileCardView(size: geo.size, playerProfile: profile)
                                             .frame(width: dim, height: dim * 0.3, alignment: .center)
                                     }
                             }
@@ -116,6 +141,12 @@ struct LobbyView : View {
                     .task {
                         deviceUUID = await restController.deviceId()
                         await loadAllPlayerProfiles()
+                        Timer.scheduledTimer(
+                                    withTimeInterval: 5,
+                                    repeats: true
+                                ) { _ in
+                                    poll()
+                                }
                     }
                     .background(Color.black)
                     .refreshable {

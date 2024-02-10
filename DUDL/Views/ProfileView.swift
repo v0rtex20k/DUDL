@@ -10,7 +10,7 @@ import Combine
 import SwiftUI
 
 
-struct PlayerProfileView : View {
+struct ProfileView : View {
     @Binding var gameCode: String
     @Binding var currentView: ViewFinder
     @Binding var restController: RestController
@@ -162,9 +162,9 @@ struct PlayerProfileView : View {
 #Preview {
    struct PreviewWrapper: View {
        @State var rc: RestController = RestController(host: "127.0.0.1", port:8001)
-       @State var vf: ViewFinder = .playerProfile
+       @State var vf: ViewFinder = .profile
        var body: some View {
-           PlayerProfileView(gameCode: .constant("chunky-rottweiler"), currentView: $vf, restController: $rc)
+           ProfileView(gameCode: .constant("chunky-rottweiler"), currentView: $vf, restController: $rc)
        }
    }
    return PreviewWrapper()

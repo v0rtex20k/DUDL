@@ -60,7 +60,7 @@ struct JoinView : View {
         await restController.joinExistingGame(gameCode) { result in
             switch result {
             case .success(let jgr):
-                currentView = jgr.existingPlayer ? .lobby : .playerProfile
+                currentView = jgr.existingPlayer ? .lobby : .profile
                 shouldShowContent = false
                 print("Joined Game \(jgr.playerId)")
             case .failure(let error):

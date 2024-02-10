@@ -95,3 +95,13 @@ struct RemovePlayerRequest: Encodable {
     let gameCode: String
     let playerId: String
 }
+
+// MARK: start the game
+
+struct GameStatusRequest: Encodable  {
+    let gameCode: String
+}
+
+struct GameStatusResponse: Decodable  {
+    let started: Bool
+}

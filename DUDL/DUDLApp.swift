@@ -13,8 +13,10 @@ enum ViewFinder {
     case settings
     case start
     case join
+    case profile
     case lobby
-    case playerProfile
+    case arena
+    case results
 }
 
 
@@ -36,7 +38,9 @@ struct DUDLApp: App {
                 case .start: StartView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
                 case .join: JoinView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
                 case .lobby: LobbyView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
-                case .playerProfile : PlayerProfileView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
+                case .profile : ProfileView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
+                case .arena: ArenaView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
+                case .results: ResultsView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
             }
         }
     }
