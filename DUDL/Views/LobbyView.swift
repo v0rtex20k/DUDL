@@ -103,15 +103,16 @@ struct LobbyView : View {
                                             impact.impactOccurred()
                                         } label: {
                                             let selfSelect = deviceUUID == profile.playerId
-                                            Label(selfSelect ? "Leave" : "Delete", systemImage: selfSelect ? "arrow.turn.up.left" : "trash")
+                                            Label(selfSelect ? "Leave Game" : "Remove \"\(profile.nickname)\" from Game", systemImage: selfSelect ? "arrow.turn.up.left" : "xmark.octagon.fill")
                                         }
                                     } preview: {
+                                        let dim = min(geo.size.width, geo.size.height)
                                         PlayerProfileIconView(size: geo.size, playerProfile: profile)
+                                            .frame(width: dim, height: dim * 0.3, alignment: .center)
                                     }
                             }
                         }
                     }
-                    .border(.red)
                     .task {
                         deviceUUID = await restController.deviceId()
                         await loadAllPlayerProfiles()
