@@ -86,7 +86,7 @@ struct JoinView : View {
             BlackDraggableZStack(currentView: $currentView, dragToView: .home, onDragEndFunc: clearGameCode) {
                 VStack {
                     Spacer()
-                    RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent) {code in
+                    RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent, contentValue: $gameCode) {code in
                         VStack {
                             Text("Game Code")
                                 .padding()

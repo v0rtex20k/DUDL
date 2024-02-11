@@ -6,7 +6,7 @@ from flask.views import MethodView
 from flask_smorest import Blueprint
 from flask import current_app, request
 
-from dudl.web.utils import abort_if_missing
+from dudl.web.utils import abort_if_missing, log_and_abort
 from dudl.web.models.playerprofile import PlayerProfile
 from dudl.web.models.gamecollection import GameCollection
 
@@ -14,8 +14,8 @@ collection: GameCollection = GameCollection()
 
 dudl_blueprint = Blueprint("dudl", __name__, url_prefix='/', description="DUDL REST Endpoints")
 
-@dudl_blueprint.route('/start-game')
-class NewGame(MethodView):
+@dudl_blueprint.route('create-game')
+class CreateGame(MethodView):
     def post(self)-> Tuple[Dict[str, str], int]:
         """ Create a new DUDL Game """
         player_id: str = abort_if_missing(request, "playerId")
@@ -24,7 +24,7 @@ class NewGame(MethodView):
 
         return dict(gameCode=game_code), status.HTTP_200_OK
     
-@dudl_blueprint.route('/join-game')
+@dudl_blueprint.route('join-game')
 class JoinGame(MethodView):
     def post(self)-> Tuple[Dict[str, str], int]:
         """ Join an existing DUDL Game """
@@ -69,14 +69,27 @@ class GetAllActivePlayerProfiles(MethodView):
 
         return [p.as_dict() for p in profiles.values() or []], status.HTTP_200_OK
 
-@dudl_blueprint.route('remove-player')
-class RemovePlayer(MethodView):
+@dudl_blueprint.route('game-status')
+class GameStatus(MethodView):
     def post(self)-> Tuple[PlayerProfile, int]:
         """ DUDL is up and running """
         game_code: str = abort_if_missing(request, "gameCode")
-        player_id: str = abort_if_missing(request, "playerId")
 
-        collection.remove_player_from_all_games(player_id=player_id)
-        current_app.logger.debug(f"Removed {player_id} from Game \"{game_code}\"")
+        try:
+            is_started = collection.games[game_code].started
+            current_app.logger.debug(f"Game \"{game_code}\" has{'' if is_started else ' NOT'} started!")
+            return dict(started=collection.games[game_code].started), status.HTTP_200_OK
+        except Exception as e:
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"Could not retrieve the status of Game \"{game_code}\": {e}")
 
-        return status.HTTP_200_OK
+@dudl_blueprint.route('start-game')
+class StartGame(MethodView):
+    def post(self)-> Tuple[PlayerProfile, int]:
+        """ DUDL is up and running """
+        game_code: str = abort_if_missing(request, "gameCode")
+        try:
+            collection.games[game_code].start()
+            current_app.logger.debug(f"Manually Started Game \"{game_code}\"!")
+            return {}, status.HTTP_200_OK
+        except Exception as e:
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"Could not start Game \"{game_code}\": {e}")

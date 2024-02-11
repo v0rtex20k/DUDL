@@ -38,34 +38,38 @@ struct HomeView: View {
                     Spacer()
                     HStack {
                         Spacer()
-                        Button("Start"){
-                            self.currentView = .start
+                        Button("Create\nGame"){
+                            self.currentView = .create
                         }
-                            .padding()
-                            .foregroundStyle(Color(primary_color))
-                            .font(Font.custom("Galvji", size: 18))
-                            .background(
-                                RoundedRectangle(cornerRadius: 10).stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
-                                    .foregroundColor(Color(primary_color))
-                                    .frame(width: geo.size.width / 4,
-                                                  height: geo.size.height / 12)
-                            )
-                        Spacer()
-                        Button("Join"){
+                        .padding()
+                        .foregroundStyle(Color(primary_color))
+                        .font(Font.custom("Galvji", size: 16))
+                        .background(
+                            RoundedRectangle(cornerRadius: 10).stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                                .foregroundColor(Color(primary_color))
+                                .frame(width: geo.size.width / 3,
+                                              height: geo.size.height / 12)
+                        )
+                        .padding(.horizontal)
+                        .padding(.horizontal)
+                        
+                        Button("Join\nGame"){
                             self.currentView = .join
                         }
                         .padding()
-                        .font(Font.custom("Galvji", size: 18))
+                        .font(Font.custom("Galvji", size: 16))
                         .foregroundStyle(Color(primary_color))
                         .background(
                             RoundedRectangle(cornerRadius: 10).stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
                                 .foregroundColor(Color(primary_color))
-                                .frame(width: geo.size.width / 4,
+                                .frame(width: geo.size.width / 3,
                                               height: geo.size.height / 12)
                         )
+                        .padding(.horizontal)
+                        .padding(.horizontal)
+                    
                         Spacer()
                     }
-                    Spacer()
                     Spacer()
                     HStack{
                         Button("Settings", systemImage: "gearshape.2"){
@@ -76,7 +80,7 @@ struct HomeView: View {
                         .foregroundStyle(Color(primary_color))
 
                     }
-                }.ignoresSafeArea(.keyboard)
+                }
             }
         }
         .ignoresSafeArea(.keyboard)

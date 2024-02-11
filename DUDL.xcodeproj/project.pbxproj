@@ -10,6 +10,7 @@
 		57369D172B70ACA200918CF5 /* ProfileCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57369D162B70ACA200918CF5 /* ProfileCardView.swift */; };
 		579714BB2B77E8C8007F5CB5 /* ArenaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714BA2B77E8C8007F5CB5 /* ArenaView.swift */; };
 		579714BD2B77E8D1007F5CB5 /* ResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714BC2B77E8D1007F5CB5 /* ResultsView.swift */; };
+		579714C12B785351007F5CB5 /* InitialPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C02B785351007F5CB5 /* InitialPromptView.swift */; };
 		57C3AC052B65B2FB0058AE5F /* DUDLApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC042B65B2FB0058AE5F /* DUDLApp.swift */; };
 		57C3AC092B65B2FC0058AE5F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 57C3AC082B65B2FC0058AE5F /* Assets.xcassets */; };
 		57C3AC0C2B65B2FC0058AE5F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 57C3AC0B2B65B2FC0058AE5F /* Preview Assets.xcassets */; };
@@ -19,7 +20,7 @@
 		57C3AC312B65BF180058AE5F /* Scribble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC302B65BF180058AE5F /* Scribble.swift */; };
 		57C3AC382B668BE50058AE5F /* Galvji.ttc in Resources */ = {isa = PBXBuildFile; fileRef = 57C3AC342B668AF60058AE5F /* Galvji.ttc */; };
 		57C3AC3A2B668F4F0058AE5F /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC392B668F4F0058AE5F /* HomeView.swift */; };
-		57C3AC3C2B668F970058AE5F /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC3B2B668F970058AE5F /* StartView.swift */; };
+		57C3AC3C2B668F970058AE5F /* CreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC3B2B668F970058AE5F /* CreateView.swift */; };
 		57C3AC3E2B6697EE0058AE5F /* WebStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC3D2B6697EE0058AE5F /* WebStructs.swift */; };
 		57C3AC482B68340C0058AE5F /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC472B68340C0058AE5F /* Errors.swift */; };
 		57C3AC4E2B6864DB0058AE5F /* RestController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC4D2B6864DB0058AE5F /* RestController.swift */; };
@@ -53,6 +54,7 @@
 		57369D162B70ACA200918CF5 /* ProfileCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCardView.swift; sourceTree = "<group>"; };
 		579714BA2B77E8C8007F5CB5 /* ArenaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArenaView.swift; sourceTree = "<group>"; };
 		579714BC2B77E8D1007F5CB5 /* ResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsView.swift; sourceTree = "<group>"; };
+		579714C02B785351007F5CB5 /* InitialPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialPromptView.swift; sourceTree = "<group>"; };
 		57C3AC012B65B2FB0058AE5F /* DUDL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DUDL.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		57C3AC042B65B2FB0058AE5F /* DUDLApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DUDLApp.swift; sourceTree = "<group>"; };
 		57C3AC082B65B2FC0058AE5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -66,7 +68,7 @@
 		57C3AC342B668AF60058AE5F /* Galvji.ttc */ = {isa = PBXFileReference; lastKnownFileType = file; path = Galvji.ttc; sourceTree = "<group>"; };
 		57C3AC372B668B950058AE5F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		57C3AC392B668F4F0058AE5F /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		57C3AC3B2B668F970058AE5F /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
+		57C3AC3B2B668F970058AE5F /* CreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateView.swift; sourceTree = "<group>"; };
 		57C3AC3D2B6697EE0058AE5F /* WebStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebStructs.swift; sourceTree = "<group>"; };
 		57C3AC472B68340C0058AE5F /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		57C3AC4D2B6864DB0058AE5F /* RestController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestController.swift; sourceTree = "<group>"; };
@@ -174,6 +176,7 @@
 				57C3AC4D2B6864DB0058AE5F /* RestController.swift */,
 				57D2873C2B732E2D00FE2280 /* BlackDraggableZStack.swift */,
 				57D2873F2B73318100FE2280 /* RestfulGroup.swift */,
+				579714C02B785351007F5CB5 /* InitialPromptView.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -183,7 +186,7 @@
 			children = (
 				57C3AC392B668F4F0058AE5F /* HomeView.swift */,
 				57C3AC4F2B68B54E0058AE5F /* SettingsView.swift */,
-				57C3AC3B2B668F970058AE5F /* StartView.swift */,
+				57C3AC3B2B668F970058AE5F /* CreateView.swift */,
 				57C3AC532B68BE620058AE5F /* JoinView.swift */,
 				57C3AC552B69E57F0058AE5F /* ProfileView.swift */,
 				57CE50EB2B6EA0230071E806 /* LobbyView.swift */,
@@ -330,13 +333,14 @@
 			files = (
 				57C3AC562B69E57F0058AE5F /* ProfileView.swift in Sources */,
 				57C3AC3E2B6697EE0058AE5F /* WebStructs.swift in Sources */,
+				579714C12B785351007F5CB5 /* InitialPromptView.swift in Sources */,
 				57C3AC502B68B54E0058AE5F /* SettingsView.swift in Sources */,
 				57CE50EA2B69F2030071E806 /* SquareColorPickerView.swift in Sources */,
 				57C3AC3A2B668F4F0058AE5F /* HomeView.swift in Sources */,
 				57CE50EC2B6EA0230071E806 /* LobbyView.swift in Sources */,
 				57C3AC312B65BF180058AE5F /* Scribble.swift in Sources */,
 				57C3AC052B65B2FB0058AE5F /* DUDLApp.swift in Sources */,
-				57C3AC3C2B668F970058AE5F /* StartView.swift in Sources */,
+				57C3AC3C2B668F970058AE5F /* CreateView.swift in Sources */,
 				57D2873D2B732E2D00FE2280 /* BlackDraggableZStack.swift in Sources */,
 				57369D172B70ACA200918CF5 /* ProfileCardView.swift in Sources */,
 				57D287402B73318100FE2280 /* RestfulGroup.swift in Sources */,
@@ -515,8 +519,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -545,8 +549,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -21,8 +21,10 @@ struct LobbyView : View {
     let alertTitle = "Connection Lost"
     
     @State private var playerProfiles: [PlayerProfile] = []
-    
     @State private var deviceUUID: String = ""
+    @State private var isHost: Bool = false
+    
+    let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
     
     func loadAllPlayerProfiles() async {
         await restController.allPlayerProfiles(code: gameCode) { result in
@@ -30,6 +32,13 @@ struct LobbyView : View {
             switch result {
             case .success(let ps):
                 playerProfiles = ps
+                
+                for p in playerProfiles {
+                    if (p.isHost ?? false) && p.playerId == deviceUUID {
+                        isHost = true
+                    }
+                }
+                            
                 print("Active Players: \(dump(playerProfiles))")
             case .failure(let error):
                 switch error {
@@ -69,8 +78,8 @@ struct LobbyView : View {
     func eject(_ pid: String) async {
         await restController.removePlayer(code: gameCode, playerId: pid) { result in
             switch result {
-            case .success(let ps):
-                playerProfiles = ps
+            case .success:
+                playerProfiles = playerProfiles.filter(){p in p.playerId == pid}
                 print("Removed \(pid) --> Remaining Players: \(dump(playerProfiles))")
             case .failure(let error):
                 switch error {
@@ -85,25 +94,48 @@ struct LobbyView : View {
         }
     }
     
-    func poll() {
-        // can't play by yourself :)
+    func pollGameStatus() {
+        // you can't play by yourself :)
+        if !gameCode.isEmpty && playerProfiles.count > 1 {
+            Task.detached {
+                await restController.gameStatus(code: gameCode) { result in
+                    switch result {
+                    case .success(let gsr):
+                        if gsr.started { currentView = .arena }
+                        print("LET THE GAMES BEGIN")
+                    case .failure(let error):
+                        switch error {
+                        case .serviceUnavailable:
+                            alertMessage = "Failed to connect to server \n Please check your internet connection"
+                        default:
+                            alertMessage = "Something went wrong \n Please try again later"
+                        }
+                        shouldShowAlert = true
+                        print(error.localizedDescription)
+                    }
+                }
+            }
+        }
+                
+    }
+    
+    func startGame() async {
+        // you can't play by yourself :)
         if playerProfiles.count > 1 {
-            await restController.gameStatus(code: gameCode) { result in
+            await restController.startGame(code: gameCode) { result in
                 switch result {
-                case .success(let gsr):
-                    if gsr.started {
+                    case .success:
                         currentView = .arena
-                    }
-                    print("LET THE GAMES BEGIN")
-                case .failure(let error):
-                    switch error {
-                    case .serviceUnavailable:
-                        alertMessage = "Failed to connect to server \n Please check your internet connection"
-                    default:
-                        alertMessage = "Something went wrong \n Please try again later"
-                    }
-                    shouldShowAlert = true
-                    print(error.localizedDescription)
+                        print("THE GAME HAS BEEN STARTED")
+                    case .failure(let error):
+                        switch error {
+                            case .serviceUnavailable:
+                                alertMessage = "Failed to connect to server \n Please check your internet connection"
+                            default:
+                                alertMessage = "Something went wrong \n Please try again later"
+                        }
+                        shouldShowAlert = true
+                        print(error.localizedDescription)
                 }
             }
         }
@@ -111,49 +143,54 @@ struct LobbyView : View {
     }
     
     var body: some View {
-        BlackDraggableZStack(currentView: $currentView, dragToView: .playerProfile, onDragEndFunc: nil) {
-            RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent) { code in
+        BlackDraggableZStack(currentView: $currentView, dragToView: .profile, onDragEndFunc: nil) {
+            RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent, contentValue: $gameCode) { code in
                 NavigationStack {
                     GeometryReader { geo in
                         ScrollView(.vertical) {
                             ForEach(playerProfiles, id: \.playerId) { profile in
+                                let selfSelect = deviceUUID == profile.playerId
+                                Spacer()
                                 ProfileCardView(size: geo.size, playerProfile: profile)
                                     .contextMenu {
-                                        Button(role: .destructive) {
-                                            print("\(deviceUUID) VS \(profile.playerId)")
-                                            Task.detached {
-                                                await deviceUUID == profile.playerId ? leaveGame() : eject(profile.playerId)
+                                        if selfSelect || isHost {
+                                            Button(role: .destructive) {
+                                                print("\(deviceUUID) VS \(profile.playerId)")
+                                                Task.detached {
+                                                    await selfSelect ? leaveGame() : eject(profile.playerId)
+                                                }
+                                                let impact = UIImpactFeedbackGenerator(style: .medium)
+                                                impact.impactOccurred()
+                                            } label: {
+                                                Label(selfSelect ? "Leave Game" : "Remove \"\(profile.nickname)\" from Game", systemImage: selfSelect ? "arrow.turn.up.left" : "xmark.octagon.fill")
                                             }
-                                            let impact = UIImpactFeedbackGenerator(style: .medium)
-                                            impact.impactOccurred()
-                                        } label: {
-                                            let selfSelect = deviceUUID == profile.playerId
-                                            Label(selfSelect ? "Leave Game" : "Remove \"\(profile.nickname)\" from Game", systemImage: selfSelect ? "arrow.turn.up.left" : "xmark.octagon.fill")
                                         }
                                     } preview: {
                                         let dim = min(geo.size.width, geo.size.height)
                                         ProfileCardView(size: geo.size, playerProfile: profile)
-                                            .frame(width: dim, height: dim * 0.3, alignment: .center)
+                                            .frame(width: dim, height: dim * 0.5, alignment: .center)
                                     }
+                                    .padding(.vertical)
+                                Spacer()
                             }
                         }
                     }
                     .task {
                         deviceUUID = await restController.deviceId()
                         await loadAllPlayerProfiles()
-                        Timer.scheduledTimer(
-                                    withTimeInterval: 5,
-                                    repeats: true
-                                ) { _ in
-                                    poll()
-                                }
+                    }
+                    .onReceive(timer) { _ in
+                        pollGameStatus()
+                    }
+                    .onDisappear {
+                        timer.upstream.connect().cancel()
                     }
                     .background(Color.black)
                     .refreshable {
                         print("Loading All Player Profiles ...")
                         await loadAllPlayerProfiles()
                     }
-                    .toolbar(content: {
+                    .toolbar {
                         ToolbarItem(placement: .principal) {
                             VStack {
                                 let np = playerProfiles.count
@@ -165,17 +202,21 @@ struct LobbyView : View {
                             }
                         }
                         ToolbarItem(placement: .bottomBar) {
-                            Button {
-                                print("KICK OFF GAME")
-                            } label : {
-                                Text("Let's DÜDL!")
-                                .font(.headline)
-                                .shadow(color: Color(primary_color), radius: 6)
-                                .shadow(color: Color(primary_color), radius: 8)
-                                .foregroundStyle(Color(primary_color))
+                            if isHost {
+                                Button {
+                                    Task.detached {
+                                        await startGame()
+                                    }
+                                } label : {
+                                    Text("Let's DÜDL!")
+                                        .font(.headline)
+                                        .shadow(color: Color(primary_color), radius: 10)
+                                        .shadow(color: Color(primary_color), radius: 15)
+                                        .foregroundStyle(Color(primary_color))
+                                }
                             }
                         }
-                    })
+                    }
                     .toolbarBackground(.hidden, for: .navigationBar)
                     .toolbarBackground(.hidden, for: .bottomBar)
 

@@ -34,6 +34,8 @@ class GameCollection:
                     current_app.logger.info(f"Player \"{new_host}\" is now the host of {game_code}")
                 
                 current_app.logger.info(f"Removed Player \"{player_id}\" from {game_code}")
+            
+            return game_code
 
         except AttributeError as ae:
             traceback.print_exception(ae)

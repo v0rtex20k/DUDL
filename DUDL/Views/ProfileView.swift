@@ -82,7 +82,7 @@ struct ProfileView : View {
             let minDim = min(geo.size.width, geo.size.height)
             BlackDraggableZStack(currentView: $currentView, dragToView: .home, onDragEndFunc: leaveGame) {
                 VStack {
-                    RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent) { code in
+                    RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent, contentValue: $gameCode) { code in
                         VStack {
                             Spacer(minLength: minDim * 0.4)
                             TextField("Username", text: $nickname)

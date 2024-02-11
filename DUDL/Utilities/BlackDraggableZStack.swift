@@ -10,19 +10,17 @@ import SwiftUI
 
 protocol BDZSContainerView: View {
     associatedtype Content
-    @inlinable init(currentView: Binding<ViewFinder>, dragToView: ViewFinder, enableOneTap: Bool,  onDragEndFunc: Optional<() async -> Void>, @ViewBuilder content: @escaping () -> Content)
+    @inlinable init(currentView: Binding<ViewFinder>, dragToView: Optional<ViewFinder>, enableOneTap: Bool, onDragEndFunc: Optional<() async -> Void>, @ViewBuilder content: @escaping () -> Content)
 }
 
 struct BlackDraggableZStack<Content: View>: BDZSContainerView {
     @Binding var currentView: ViewFinder
-    var dragToView: ViewFinder
+    var dragToView: Optional<ViewFinder> = nil
     var enableOneTap: Bool = true
     var onDragEndFunc: Optional<() async -> Void>
     var content: () -> Content
     
     // MARK: VIEW CREATION
-    
-    
 
     var body: some View {
         ZStack{
@@ -43,9 +41,10 @@ struct BlackDraggableZStack<Content: View>: BDZSContainerView {
                             await onDragEndFunc()
                         }
                     }
-                    
-                    currentView = dragToView
-                    UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                    if let dtv = dragToView {
+                        currentView = dtv
+                        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                    }
                     
                 }
             }

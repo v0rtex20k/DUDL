@@ -105,3 +105,15 @@ struct GameStatusRequest: Encodable  {
 struct GameStatusResponse: Decodable  {
     let started: Bool
 }
+
+struct StartGameRequest: Encodable  {
+    let gameCode: String
+}
+
+
+// MARK: send game data
+struct SendPromptRequest: Encodable  {
+    let gameCode: String
+    let playerId: String
+    let prompt: String
+}

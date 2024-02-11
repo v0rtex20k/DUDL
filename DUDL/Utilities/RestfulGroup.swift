@@ -10,7 +10,7 @@ import SwiftUI
 
 protocol RGContainerView: View {
     associatedtype Content
-    @inlinable init(currentView: Binding<ViewFinder>, gameCode: Binding<String>, shouldShowAlert: Binding<Bool>, alertTitle: String, alertMessage: String, shouldShowContent: Binding<Bool>, @ViewBuilder content: @escaping (Binding<String>) -> Content)
+    @inlinable init(currentView: Binding<ViewFinder>, gameCode: Binding<String>, shouldShowAlert: Binding<Bool>, alertTitle: String, alertMessage: String, shouldShowContent: Binding<Bool>, contentValue: Binding<String>, @ViewBuilder content: @escaping (Binding<String>) -> Content)
 }
 
 struct RestfulGroup<Content: View>: RGContainerView {
@@ -20,6 +20,7 @@ struct RestfulGroup<Content: View>: RGContainerView {
     var alertTitle: String
     var alertMessage: String
     @Binding var shouldShowContent: Bool
+    @Binding var contentValue: String
     var content: (Binding<String>) -> Content
     
     var body: some View {
@@ -36,7 +37,7 @@ struct RestfulGroup<Content: View>: RGContainerView {
                     }
             } 
             else if shouldShowContent {
-                content($gameCode)
+                content(contentValue.isEmpty ? $gameCode :  $contentValue)
             }   else {
                     ProgressView {
                         Text("Connecting to Server")

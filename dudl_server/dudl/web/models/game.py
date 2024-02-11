@@ -7,6 +7,7 @@ from dudl.web.models.playerprofile import PlayerProfile, PlayerProfileSchema
 
 class GameSchema(Schema):
     code = fields.String()
+    started = fields.Bool()
     player_profiles = fields.Dict(keys=fields.Str(), values=fields.Dict())
     data = fields.Dict(keys=fields.Str(), values=fields.String())
 
@@ -18,15 +19,20 @@ class GameSchema(Schema):
 class Game:
     def __init__(self, code: str) -> None:
         self.code = code
+        self.started = False
         self.player_profiles: Dict[str, PlayerProfile] = {}
         self.data: Dict[str, Any] = {}
+
+    def start(self):
+        if len(self.player_profiles or []) > 1:
+            self.started = True
 
     def get_player_profile(self, player_id: str)-> Optional[PlayerProfile]:
         return self.player_profiles.get(player_id)
 
     def update_player_profile(self, player_id: str, nickname: str, rgba: Dict[str, Any]):
         try:
-            if (profile := self.player_profiles.get(player_id)):
+            if (profile := self.player_profiles.get(player_id)) is not None:
                 if isinstance(profile, bool):
                     is_host = profile
                 elif isinstance(profile, PlayerProfile):

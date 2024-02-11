@@ -74,13 +74,13 @@ struct RestController {
     
     // MARK: Use Cases
     
-    func startNewGame(completionHandler: @escaping (Result<NewGameResponse, HTTPError>) -> Void) async {
+    func createGame(completionHandler: @escaping (Result<NewGameResponse, HTTPError>) -> Void) async {
         guard let uploadData = await self.encodeRequest(NewGameRequest(playerId: await deviceId())) else {
             completionHandler(.failure(.unidentifiedUser))
             return
         }
             
-        return await postAsync(endpoint: "start-game", uploadData: uploadData) { post_result in
+        return await postAsync(endpoint: "create-game", uploadData: uploadData) { post_result in
             do {
                 switch post_result {
                     case .success(let post_data):
@@ -265,6 +265,54 @@ struct RestController {
             }
             
         }
+    }
+    
+    func startGame(code: String, completionHandler: @escaping (Result<Bool, HTTPError>) -> Void) async {
+        guard let uploadData = await self.encodeRequest(StartGameRequest(gameCode: code)) else {
+            completionHandler(.failure(.unidentifiedUser))
+            return
+        }
+
+        return await postAsync(endpoint: "start-game", uploadData: uploadData) { post_result in
+            switch post_result {
+                case .success:
+                    print("Sucessfully processed StartGame Response!")
+                    completionHandler(.success(true))
+                    
+                case .failure(let http_error):
+                    print("Failed to process StartGame Response!")
+                    completionHandler(.failure(http_error))
+            }
+        }
+
+    }
+    
+    func sendPrompt(code: String, prompt: String, completionHandler: @escaping (Result<Data, HTTPError>) -> Void) async {
+        guard let uploadData = await self.encodeRequest(SendPromptRequest(gameCode: code, playerId: await deviceId(), prompt: prompt)) else {
+            completionHandler(.failure(.unidentifiedUser))
+            return
+        }
+
+        return await postAsync(endpoint: "send-prompt", uploadData: uploadData) { post_result in
+            do {
+                switch post_result {
+                    case .success(let post_data):
+                        dump(post_data)
+                        let decoded_result = try JSONDecoder().decode(Data.self, from: post_data)
+                        
+                        completionHandler(.success(decoded_result))
+                        
+                    case .failure(let http_error):
+                        completionHandler(.failure(http_error))
+                }
+            }
+            catch {
+                
+                print("Failed to decode GameStatusResponse")
+                completionHandler(.failure(.decodingError))
+            }
+        }
+        
     }
     
         
