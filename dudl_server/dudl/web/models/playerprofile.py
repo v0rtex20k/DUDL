@@ -12,6 +12,9 @@ class PlayerProfile:
         self.nickname = nickname
         self.rgba = rgba
         self.is_host = is_host
+
+        self.content_source = player_id  # updated at each turn 
+        self.content_target = None       # never updated during the game
     
     def make_host(self):
         self.is_host = True

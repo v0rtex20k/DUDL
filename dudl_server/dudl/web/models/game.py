@@ -1,3 +1,5 @@
+import random
+from copy import deepcopy
 from flask_api import status
 from typing import Any, Dict, Optional, Set
 from marshmallow import Schema, ValidationError, fields, validates
@@ -26,6 +28,15 @@ class Game:
     def start(self):
         if len(self.player_profiles or []) > 1:
             self.started = True
+
+        n_players = len(self.player_profiles)
+
+        shuffled_profiles = deepcopy(list(self.player_profiles.keys()))
+        random.shuffle(shuffled_profiles)
+        for player_id, profile in self.player_profiles.items():
+            profile.target = shuffled_profiles[(shuffled_profiles.index(player_id) + 1) % n_players]
+
+
 
     def get_player_profile(self, player_id: str)-> Optional[PlayerProfile]:
         return self.player_profiles.get(player_id)

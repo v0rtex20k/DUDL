@@ -50,7 +50,7 @@ struct RestController {
     }
     
     func deviceId() async -> String {
-        return  await UIDevice.current.identifierForVendor!.uuidString
+        return await UIDevice.current.identifierForVendor!.uuidString
     }
     
     func encodeRequest<T : Encodable>(_ request: T) async -> Optional<Data> {
@@ -287,32 +287,12 @@ struct RestController {
 
     }
     
-    func sendPrompt(code: String, prompt: String, completionHandler: @escaping (Result<Data, HTTPError>) -> Void) async {
-        guard let uploadData = await self.encodeRequest(SendPromptRequest(gameCode: code, playerId: await deviceId(), prompt: prompt)) else {
-            completionHandler(.failure(.unidentifiedUser))
-            return
-        }
-
-        return await postAsync(endpoint: "send-prompt", uploadData: uploadData) { post_result in
-            do {
-                switch post_result {
-                    case .success(let post_data):
-                        dump(post_data)
-                        let decoded_result = try JSONDecoder().decode(Data.self, from: post_data)
-                        
-                        completionHandler(.success(decoded_result))
-                        
-                    case .failure(let http_error):
-                        completionHandler(.failure(http_error))
-                }
-            }
-            catch {
-                
-                print("Failed to decode GameStatusResponse")
-                completionHandler(.failure(.decodingError))
-            }
-        }
-        
+    func push(code: String, out: String, completionHandler: @escaping (Result<Data, HTTPError>) -> Void) async {
+       // TODO
+    }
+    
+    func pull(code: String, completionHandler: @escaping (Result<String, HTTPError>) -> Void) async {
+        // TODO
     }
     
         

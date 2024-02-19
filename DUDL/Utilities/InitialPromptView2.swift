@@ -8,7 +8,7 @@
 import SwiftUI
 import Combine
 
-struct InitialPromptView: View {
+struct OLDInitialPromptView: View {
     @Binding var textPrompt: String
     @Binding var startDate: Date
     

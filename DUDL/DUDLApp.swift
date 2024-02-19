@@ -16,7 +16,7 @@ enum ViewFinder {
     case profile
     case lobby
     case arena
-    case results
+//    case results
 }
 
 
@@ -26,7 +26,7 @@ var primary_color = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
 struct DUDLApp: App {
     @State var gameCode: String = ""
     @State var currentView: ViewFinder = .home
-    @State var restController: RestController = RestController(host: "192.168.1.15",
+    @State var restController: RestController = RestController(host: "192.168.1.7",
                                                                port: 8001)
     
     var body: some Scene {
@@ -39,7 +39,6 @@ struct DUDLApp: App {
                 case .lobby: LobbyView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
                 case .profile : ProfileView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
                 case .arena: ArenaView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
-                case .results: ResultsView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
             }
         }
     }

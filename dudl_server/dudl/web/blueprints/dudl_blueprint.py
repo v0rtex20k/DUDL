@@ -67,7 +67,14 @@ class GetAllActivePlayerProfiles(MethodView):
         profiles = collection.get_all_active_profiles_in_game(game_code=game_code)
         current_app.logger.debug(f"Returning all active players in Game \"{game_code}\": {profiles}")
 
-        return [p.as_dict() for p in profiles.values() or []], status.HTTP_200_OK
+        active_profiles = []
+        for p in profiles.values() or []:
+            try:
+                active_profiles.append(p.as_dict())
+            except:
+                pass
+        
+        return active_profiles, status.HTTP_200_OK
 
 @dudl_blueprint.route('game-status')
 class GameStatus(MethodView):
