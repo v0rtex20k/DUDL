@@ -26,7 +26,7 @@ class Game:
         self.data: Dict[str, Any] = {}
 
     def start(self):
-        if len(self.player_profiles or []) > 1:
+        if len(self.player_profiles or []) >= 1: # TODO: remove =, this is just to speed up testing
             self.started = True
 
         n_players = len(self.player_profiles)

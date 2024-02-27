@@ -62,7 +62,7 @@ class GameCollection:
         new_game.add_player(player_id=host_id, is_host=True)
 
         self.games[game_code] = new_game
-        current_app.logger.debug(f"Started Game \"{game_code}\" with Host Player {host_id} ...")
+        current_app.logger.debug(f"Added Game \"{game_code}\" with Host Player {host_id} ...")
         return game_code
 
     def add_player_to_game(self, game_code: str, player_id: str):

@@ -9,92 +9,114 @@ import Foundation
 import SwiftUI
 
 enum GameState {
-    case initialPrompt
-    case drawFromPrompt
-    case promptFromDrawing
+    case notset, initialPrompt, drawFromPrompt, promptFromDrawing
 }
 
-struct StateMachine {
-    let gameCode: String
-    let restController: RestController
-    @State private var state: GameState = .initialPrompt // always start w initial prompt
-    @State var inputData: String = ""
-    @State var outputData: String = ""
-    @State var view: AnyView = AnyView(EmptyView())
+class StateMachine: ObservableObject {
+    var gameCode: String = ""
+    var restController: RestController? = nil
+    @Published public var stateContent: AnyView = AnyView(EmptyView())
     
     
-    @State var startDate: Date = Date.now
-    @State private var alertMessage: String = ""
-    @State private var shouldShowAlert: Bool = false
-    @State private var shouldShowContent: Bool = true
+    @Published private var state: GameState = .notset
+    @Published var inputData: String = ""
+    @Published var outputData: String = ""
+    
+    
+    @Published private var alertMessage: String = ""
+    @Published private var shouldShowAlert: Bool = false
+    @Published private var shouldShowContent: Bool = true
     let alertTitle = "Unable to Submit Your Work"
     
-    init(gameCode: String, restController: RestController) {
+    init() {
+        print("Initialized the StateMachine")
+    }
+    
+    func attach(gameCode: String, restController: RestController?) {
         self.gameCode = gameCode
-        self.restController = restController
-        self.view = AnyView(InitialPromptView(textPrompt: $inputData))
+        self.restController = restController!
     }
     
     func pull() async {
-        await self.restController.pull(code: self.gameCode) { result in
+        await self.restController?.pull(code: self.gameCode) { result in
             switch result {
                 case .success(let jgr):
                     self.inputData = jgr
-                    self.step()
                 case .failure(let error):
                     switch error {
                         case .serviceUnavailable:
-                            alertMessage = "Failed to connect to server \n Please check your internet connection"
+                            self.alertMessage = "Failed to connect to server \n Please check your internet connection"
                         default:
-                            alertMessage = "Something went wrong \n Please try again later"
+                            self.alertMessage = "Something went wrong \n Please try again later"
                     }
-                    shouldShowAlert = true
+                    self.shouldShowAlert = true
                     print(error.localizedDescription)
             }
         }
     }
     
     func push() async {
-        await self.restController.push(code: self.gameCode, out: self.outputData) { result in
+        await self.restController?.push(code: self.gameCode, out: self.outputData) { result in
             switch result {
             case .success:
                 self.outputData = ""
-                self.step()
             case .failure(let error):
                 switch error {
                     case .serviceUnavailable:
-                        alertMessage = "Failed to connect to server \n Please check your internet connection"
+                        self.alertMessage = "Failed to connect to server \n Please check your internet connection"
                     default:
-                        alertMessage = "Something went wrong \n Please try again later"
+                        self.alertMessage = "Something went wrong \n Please try again later"
                 }
-                shouldShowAlert = true
+                self.shouldShowAlert = true
                 print(error.localizedDescription)
             }
         }
     }
-    
-    func step() {
+
+    func next() {
+        // TODO: remove this, should rely on PULL
+        self.inputData = self.outputData
+        self.outputData.removeAll()
+        
+        let inputDataBinding = Binding<String>(
+            get: { self.inputData },
+            set: {self.inputData = $0 }
+        )
+
+        let outputDataBinding = Binding<String>(
+            get: {self.outputData },
+            set: {self.outputData = $0 }
+        )
+        
         switch self.state {
+            case.notset:
+                print("NS --> IP")
+                self.state = .initialPrompt
+                self.stateContent = AnyView(InitialPromptView(prompt: outputDataBinding))
             case .initialPrompt:
+                print("IP --> DFP w/ \(self.inputData) / \(inputDataBinding.wrappedValue)")
                 Task.detached {
                     await self.push()
                 }
+            
                 self.state = .drawFromPrompt
-                self.view  = AnyView(DrawFromPromptView())
+                self.stateContent =  AnyView(DrawFromPromptView(prompt: inputDataBinding, drawing: outputDataBinding))
             case .drawFromPrompt:
+                print("DFP --> PFD")
                 Task.detached {
                     await self.pull()
                     await self.push()
                 }
                 self.state = .promptFromDrawing
-                self.view  = AnyView(PromptFromDrawingView())
+                self.stateContent = AnyView(PromptFromDrawingView(drawing: inputDataBinding, prompt: outputDataBinding))
             case .promptFromDrawing :
+                print("PFD --> DFP")
                 Task.detached {
                     await self.pull()
                     await self.push()
                 }
                 self.state = .drawFromPrompt
-                self.view  = AnyView(DrawFromPromptView())
+            self.stateContent = AnyView(DrawFromPromptView(prompt: inputDataBinding, drawing: outputDataBinding))
         }
     }
 }

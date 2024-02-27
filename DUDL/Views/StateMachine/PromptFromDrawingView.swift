@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct PromptFromDrawingView: View {
+    @Binding var drawing: String
+    @Binding var prompt: String
+    
     var body: some View {
-        Text("Prompt From Drawing!").foregroundColor(.black)
+        Text("Prompt From Drawing!").foregroundColor(Color(primary_color))
     }
 }
 
 #Preview {
-    PromptFromDrawingView()
+    PromptFromDrawingView(drawing: .constant("base64-encoded-drawing"), prompt: .constant("fake-prompt"))
 }

@@ -30,25 +30,26 @@ struct LobbyView : View {
         await restController.allPlayerProfiles(code: gameCode) { result in
             playerProfiles.removeAll()
             switch result {
-            case .success(let ps):
-                playerProfiles = ps
-                
-                for p in playerProfiles {
-                    if (p.isHost ?? false) && p.playerId == deviceUUID {
-                        isHost = true
+                case .success(let ps):
+                    playerProfiles = [PlayerProfile(gameCode: gameCode, playerId: "fakeId", nickname: "Ghost", rgba: RGBA(r: 255, g: 255, b: 255, a: 1) )]
+                playerProfiles.append(contentsOf: ps)
+                    
+                    for p in playerProfiles {
+                        if (p.isHost ?? false) && p.playerId == deviceUUID {
+                            isHost = true
+                        }
                     }
-                }
-                            
-                print("Active Players: \(dump(playerProfiles))")
-            case .failure(let error):
-                switch error {
-                case .serviceUnavailable:
-                    alertMessage = "Failed to connect to server \n Please check your internet connection"
-                default:
-                    alertMessage = "Something went wrong \n Please try again later"
-                }
-                shouldShowAlert = true
-                print(error.localizedDescription)
+                                
+                    print("Active Players: \(dump(playerProfiles))")
+                case .failure(let error):
+                    switch error {
+                    case .serviceUnavailable:
+                        alertMessage = "Failed to connect to server \n Please check your internet connection"
+                    default:
+                        alertMessage = "Something went wrong \n Please try again later"
+                    }
+                    shouldShowAlert = true
+                    print(error.localizedDescription)
             }
         }
     }
@@ -78,18 +79,18 @@ struct LobbyView : View {
     func eject(_ pid: String) async {
         await restController.removePlayer(code: gameCode, playerId: pid) { result in
             switch result {
-            case .success:
-                playerProfiles = playerProfiles.filter(){p in p.playerId == pid}
-                print("Removed \(pid) --> Remaining Players: \(dump(playerProfiles))")
-            case .failure(let error):
-                switch error {
-                case .serviceUnavailable:
-                    alertMessage = "Failed to connect to server \n Please check your internet connection"
-                default:
-                    alertMessage = "Something went wrong \n Please try again later"
-                }
-                shouldShowAlert = true
-                print(error.localizedDescription)
+                case .success:
+                    playerProfiles = playerProfiles.filter(){p in p.playerId == pid}
+                    print("Removed \(pid) --> Remaining Players: \(dump(playerProfiles))")
+                case .failure(let error):
+                    switch error {
+                    case .serviceUnavailable:
+                        alertMessage = "Failed to connect to server \n Please check your internet connection"
+                    default:
+                        alertMessage = "Something went wrong \n Please try again later"
+                    }
+                    shouldShowAlert = true
+                    print(error.localizedDescription)
             }
         }
     }
@@ -101,8 +102,12 @@ struct LobbyView : View {
                 await restController.gameStatus(code: gameCode) { result in
                     switch result {
                     case .success(let gsr):
-                        if gsr.started { currentView = .arena }
-                        print("LET THE GAMES BEGIN")
+                        if gsr.started {
+                            print("LET THE GAMES BEGIN")
+                            currentView = .arena
+                        } else {
+                            print("Still waiting for the game to start ...")
+                        }
                     case .failure(let error):
                         switch error {
                         case .serviceUnavailable:

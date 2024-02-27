@@ -96,7 +96,11 @@ class StartGame(MethodView):
         game_code: str = abort_if_missing(request, "gameCode")
         try:
             collection.games[game_code].start()
-            current_app.logger.debug(f"Manually Started Game \"{game_code}\"!")
-            return {}, status.HTTP_200_OK
+            if collection.games[game_code].started:
+                current_app.logger.debug(f"Manually Started Game \"{game_code}\"!")
+                return {}, status.HTTP_200_OK
+            else:
+                current_app.logger.warning(f"Failed to start Game \"{game_code}\"!")
+                return {}, status.HTTP_412_PRECONDITION_FAILED
         except Exception as e:
             log_and_abort(status.HTTP_404_NOT_FOUND, f"Could not start Game \"{game_code}\": {e}")

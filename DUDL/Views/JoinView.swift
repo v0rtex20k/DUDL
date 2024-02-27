@@ -18,7 +18,7 @@ func isValidGameCode(_ code: String) -> Bool {
         return false
     }
     
-    let regex  = "^[a-z]{3,50}+(?:-[a-z]{3,50}+)+$"
+    let regex  = "^[a-z]{2,50}+(?:-[a-z]{2,50}+)+$"
     let test = NSPredicate(format: "SELF MATCHES %@", regex)
     
     return test.evaluate(with: code)
