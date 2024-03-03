@@ -112,8 +112,17 @@ struct StartGameRequest: Encodable  {
 
 
 // MARK: send game data
-struct SendPromptRequest: Encodable  {
+struct PushContentRequest: Encodable  {
     let gameCode: String
     let playerId: String
-    let prompt: String
+    let content: String
+}
+
+struct PullContentRequest: Encodable  {
+    let gameCode: String
+    let playerId: String
+}
+
+struct PullContentResponse: Decodable  {
+    let content: String
 }

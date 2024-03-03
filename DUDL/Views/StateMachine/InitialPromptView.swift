@@ -22,6 +22,7 @@ struct InitialPromptView: View {
     
     var body: some View {
         VStack {
+            Spacer()
             GeometryReader { geo in
                 Text("Say something funny")
                     .padding()
@@ -33,13 +34,14 @@ struct InitialPromptView: View {
                     .onReceive(Just(prompt)) { _ in
                         limitText()
                     }
-                    .foregroundStyle(.yellow)
+                    .foregroundStyle(.black)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .multilineTextAlignment(.center)
                     .frame(width: 0.75 * geo.size.width)
                     .fixedSize(horizontal: false, vertical: true)
                     .font(Font.custom("Galvji", size: 20))
             }
+            Spacer()
         }
     }
     

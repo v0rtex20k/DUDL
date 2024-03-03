@@ -41,7 +41,7 @@ class StateMachine: ObservableObject {
         await self.restController?.pull(code: self.gameCode) { result in
             switch result {
                 case .success(let jgr):
-                    self.inputData = jgr
+                    self.inputData = jgr.content
                 case .failure(let error):
                     switch error {
                         case .serviceUnavailable:
@@ -59,7 +59,7 @@ class StateMachine: ObservableObject {
         await self.restController?.push(code: self.gameCode, out: self.outputData) { result in
             switch result {
             case .success:
-                self.outputData = ""
+                self.outputData.removeAll()
             case .failure(let error):
                 switch error {
                     case .serviceUnavailable:
@@ -74,10 +74,6 @@ class StateMachine: ObservableObject {
     }
 
     func next() {
-        // TODO: remove this, should rely on PULL
-        self.inputData = self.outputData
-        self.outputData.removeAll()
-        
         let inputDataBinding = Binding<String>(
             get: { self.inputData },
             set: {self.inputData = $0 }

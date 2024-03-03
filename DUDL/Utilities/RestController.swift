@@ -287,12 +287,51 @@ struct RestController {
 
     }
     
-    func push(code: String, out: String, completionHandler: @escaping (Result<Data, HTTPError>) -> Void) async {
-       // TODO
+    func push(code: String, out: String, completionHandler: @escaping (Result<Bool, HTTPError>) -> Void) async {
+        print("PREPARING TO PUSH: \(out)")
+        guard let uploadData = await self.encodeRequest(PushContentRequest(gameCode: code, playerId: await deviceId(), content: out)) else {
+            completionHandler(.failure(.unidentifiedUser))
+            return
+        }
+
+        return await postAsync(endpoint: "push-content", uploadData: uploadData) { post_result in
+            switch post_result {
+                case .success:
+                    print("Sucessfully pushed PushContent!")
+                    completionHandler(.success(true))
+                    
+                case .failure(let http_error):
+                    print("Failed to process StartGame Response!")
+                    completionHandler(.failure(http_error))
+            }
+        }
     }
     
-    func pull(code: String, completionHandler: @escaping (Result<String, HTTPError>) -> Void) async {
-        // TODO
+    func pull(code: String, completionHandler: @escaping (Result<PullContentResponse, HTTPError>) -> Void) async {
+        print("PREPARING TO PULL")
+        guard let uploadData = await self.encodeRequest(PullContentRequest(gameCode: code, playerId: await deviceId())) else {
+            completionHandler(.failure(.unidentifiedUser))
+            return
+        }
+
+        return await postAsync(endpoint: "pull-content", uploadData: uploadData) { post_result in
+            do {
+                switch post_result {
+                    case .success(let post_data):
+                        let decoded_result = try JSONDecoder().decode(PullContentResponse.self, from: post_data)
+                        
+                        completionHandler(.success(decoded_result))
+                        print("Sucessfully pulled PullContentResponse!")
+                        
+                    case .failure(let http_error):
+                        print("Failed to process PullContentResponse!")
+                        completionHandler(.failure(http_error))
+                }
+            } catch {
+                print("Failed to decode PullContentResponse")
+                completionHandler(.failure(.decodingError))
+            }
+        }
     }
     
         
