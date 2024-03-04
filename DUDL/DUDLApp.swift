@@ -32,15 +32,13 @@ struct DUDLApp: App {
     var body: some Scene {
         WindowGroup {
             switch self.currentView {
-            default:
-                DrawFromPromptView(prompt: .constant("Something that is super duper funny"), drawing: .constant(""))
-//                case .home: HomeView(currentView: $currentView)
-//                case .settings: SettingsView(currentView: $currentView, restController: $restController)
-//                case .create: CreateView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
-//                case .join: JoinView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
-//                case .lobby: LobbyView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
-//                case .profile : ProfileView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
-//                case .arena: ArenaView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
+                case .home: HomeView(currentView: $currentView)
+                case .settings: SettingsView(currentView: $currentView, restController: $restController)
+                case .create: CreateView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
+                case .join: JoinView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
+                case .lobby: LobbyView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
+                case .profile : ProfileView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
+                case .arena: ArenaView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
             }
         }
     }

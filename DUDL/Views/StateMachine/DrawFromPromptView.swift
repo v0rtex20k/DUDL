@@ -23,6 +23,7 @@ struct DrawFromPromptView: View {
     
     private func canvasDidChange() {
         if showTools {
+            // if it was manually updated, hide it again
             showTools = false
         }
     }
@@ -55,16 +56,11 @@ struct DrawFromPromptView: View {
                 Text("Draw ...")
                     .font(Font.custom("Galvji", size: 14))
                     .foregroundStyle(Color(primary_color))
-                Text(prompt)
+                Text("\"" + prompt + "\"")
                         .padding()
-                    .font(Font.custom("Galvji", size: 20))
+                    .font(Font.custom("Galvji-Oblique", size: 20))
                     .foregroundStyle(Color(primary_color))
                     .multilineTextAlignment(.center)
-//                    .background(
-//                        RoundedRectangle(cornerRadius: 15)
-//                            .stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
-//                            .foregroundStyle(Color(primary_color))
-//                    )
                 
             }
             .padding()
@@ -83,6 +79,7 @@ struct DrawFromPromptView: View {
             .disabled(showTools)
             .opacity(showTools ? 0 : 1)
             .foregroundStyle(Color(primary_color))
+            .font(Font.custom("Galvji-Bold", size: 25))
         }.background(Color.black)
     }
 }
