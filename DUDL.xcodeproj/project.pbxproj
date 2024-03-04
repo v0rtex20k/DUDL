@@ -14,6 +14,7 @@
 		579714C82B82D052007F5CB5 /* DrawFromPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C72B82D052007F5CB5 /* DrawFromPromptView.swift */; };
 		579714CA2B82D05D007F5CB5 /* PromptFromDrawingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C92B82D05D007F5CB5 /* PromptFromDrawingView.swift */; };
 		579714CE2B82FAFB007F5CB5 /* ArenaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714CD2B82FAFB007F5CB5 /* ArenaView.swift */; };
+		57B6E7A72B961FB700A19258 /* DudlCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57B6E7A62B961FB700A19258 /* DudlCanvas.swift */; };
 		57C3AC052B65B2FB0058AE5F /* DUDLApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC042B65B2FB0058AE5F /* DUDLApp.swift */; };
 		57C3AC162B65B2FC0058AE5F /* DUDLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC152B65B2FC0058AE5F /* DUDLTests.swift */; };
 		57C3AC202B65B2FC0058AE5F /* DUDLUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC1F2B65B2FC0058AE5F /* DUDLUITests.swift */; };
@@ -59,6 +60,7 @@
 		579714C72B82D052007F5CB5 /* DrawFromPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawFromPromptView.swift; sourceTree = "<group>"; };
 		579714C92B82D05D007F5CB5 /* PromptFromDrawingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptFromDrawingView.swift; sourceTree = "<group>"; };
 		579714CD2B82FAFB007F5CB5 /* ArenaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArenaView.swift; sourceTree = "<group>"; };
+		57B6E7A62B961FB700A19258 /* DudlCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DudlCanvas.swift; sourceTree = "<group>"; };
 		57C3AC012B65B2FB0058AE5F /* DUDL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DUDL.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		57C3AC042B65B2FB0058AE5F /* DUDLApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DUDLApp.swift; sourceTree = "<group>"; };
 		57C3AC082B65B2FC0058AE5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 				57D2873C2B732E2D00FE2280 /* BlackDraggableZStack.swift */,
 				57D2873F2B73318100FE2280 /* RestfulGroup.swift */,
 				579714C02B785351007F5CB5 /* InitialPromptView2.swift */,
+				57B6E7A62B961FB700A19258 /* DudlCanvas.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -354,6 +357,7 @@
 				579714C52B82CFCF007F5CB5 /* InitialPromptView.swift in Sources */,
 				579714CE2B82FAFB007F5CB5 /* ArenaView.swift in Sources */,
 				57CE50EC2B6EA0230071E806 /* LobbyView.swift in Sources */,
+				57B6E7A72B961FB700A19258 /* DudlCanvas.swift in Sources */,
 				57C3AC312B65BF180058AE5F /* Scribble.swift in Sources */,
 				57C3AC052B65B2FB0058AE5F /* DUDLApp.swift in Sources */,
 				57C3AC3C2B668F970058AE5F /* CreateView.swift in Sources */,

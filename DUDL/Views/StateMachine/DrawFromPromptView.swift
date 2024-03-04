@@ -9,59 +9,42 @@ import SwiftUI
 import UIKit
 import PencilKit
 
-
-struct MyCanvas: UIViewRepresentable {
-    @Binding var canvasView: PKCanvasView
-    @Binding var toolPicker: PKToolPicker
-    
-    
-    func makeUIView(context: Context) -> PKCanvasView {
-        canvasView.drawingPolicy = .anyInput
-        canvasView.minimumZoomScale = 0.2
-        canvasView.maximumZoomScale = 4.0
-        canvasView.backgroundColor = UIColor(Color.black)
-        canvasView.becomeFirstResponder()
-        
-        canvasView.tool = PKInkingTool(.marker, color: primary_color, width: 10)
-        
-
-        toolPicker.setVisible(true, forFirstResponder: canvasView)
-        toolPicker.addObserver(canvasView)
-        
-        
-        return canvasView
-    }
-    
-
-    func updateUIView(_ uiView: PKCanvasView, context: Context){
-        // pass
-    }
-    
-}
-
 struct DrawFromPromptView: View {
     @Binding var prompt: String
     @Binding var drawing: String
+
     
     @Environment(\.undoManager) private var undoManager
+    
     @State private var canvasView = PKCanvasView()
+    
+    @State var showTools: Bool = true
     @State private var toolPicker = PKToolPicker.init()
     
+    private func canvasDidChange() {
+        if showTools {
+            showTools = false
+        }
+    }
     
     private var canvasToolbar: some View  {
         HStack {
             Spacer()
             Button("Clear", systemImage: "xmark.circle.fill", role: .destructive) {
                 canvasView.drawing = PKDrawing()
+                showTools = true
             }
             Spacer()
             Button("Undo", systemImage: "arrow.uturn.backward.circle.fill", role: ButtonRole.cancel) {
                 undoManager?.undo()
+                if canvasView.drawing.bounds.isEmpty {
+                    showTools = true
+                }
             }
             Spacer()
             Button("Redo", systemImage: "arrow.uturn.forward.circle.fill") {
                 undoManager?.redo()
-            }
+            }.foregroundStyle(Color.green)
             Spacer()
         }
     }
@@ -70,7 +53,6 @@ struct DrawFromPromptView: View {
         VStack {
             VStack{
                 Text("Draw ...")
-                        .padding()
                     .font(Font.custom("Galvji", size: 14))
                     .foregroundStyle(Color(primary_color))
                 Text(prompt)
@@ -78,21 +60,33 @@ struct DrawFromPromptView: View {
                     .font(Font.custom("Galvji", size: 20))
                     .foregroundStyle(Color(primary_color))
                     .multilineTextAlignment(.center)
-                    .background(
-                        RoundedRectangle(cornerRadius: 15)
-                            .stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
-                            .foregroundStyle(Color(primary_color))
-                    )
+//                    .background(
+//                        RoundedRectangle(cornerRadius: 15)
+//                            .stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
+//                            .foregroundStyle(Color(primary_color))
+//                    )
                 
             }
             .padding()
             canvasToolbar.padding()
-            MyCanvas(canvasView: $canvasView, toolPicker: $toolPicker)
-                .padding()
+            GeometryReader { geo in
+                DudlCanvas(canvasView: $canvasView, toolPicker: $toolPicker, showTools: $showTools, onChange: canvasDidChange)
+//                    .frame(height: geo.size.height * 0.8)
+                    .border(Color(primary_color), width: 3)
+                    .padding()
+            }
+            Button("", systemImage: "pencil.circle.fill") {
+                // clicking this button shows tools and hides itself
+                showTools = true
+                
+            }
+            .disabled(showTools)
+            .opacity(showTools ? 0 : 1)
+            .foregroundStyle(Color(primary_color))
         }.background(Color.black)
     }
 }
 
 #Preview {
-    DrawFromPromptView(prompt: .constant("Something Funny that is super hilarious omg"), drawing: .constant(""))
+    DrawFromPromptView(prompt: .constant("Something really funny that is super hilarious right now"), drawing: .constant(""))
 }
