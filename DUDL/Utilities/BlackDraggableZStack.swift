@@ -49,7 +49,7 @@ struct BlackDraggableZStack<Content: View>: BDZSContainerView {
                 }
             }
         )
-        .onTapGesture(count: 2) {
+        .onTapGesture(count: 1) {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
     }

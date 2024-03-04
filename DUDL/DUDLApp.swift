@@ -29,9 +29,13 @@ struct DUDLApp: App {
     @State var restController: RestController = RestController(host: "192.168.1.7",
                                                                port: 8001)
     
+    @State var initialPrompt = ""
+    
     var body: some Scene {
         WindowGroup {
             switch self.currentView {
+//            default:
+//                InitialPromptView(prompt: $initialPrompt)
                 case .home: HomeView(currentView: $currentView)
                 case .settings: SettingsView(currentView: $currentView, restController: $restController)
                 case .create: CreateView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
