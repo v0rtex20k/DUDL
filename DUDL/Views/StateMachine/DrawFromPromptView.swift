@@ -12,7 +12,6 @@ import PencilKit
 struct DrawFromPromptView: View {
     @Binding var prompt: String
     @Binding var drawing: String
-
     
     @Environment(\.undoManager) private var undoManager
     
@@ -25,6 +24,12 @@ struct DrawFromPromptView: View {
         if showTools {
             // if it was manually updated, hide it again
             showTools = false
+        }
+        
+        // update the drawing
+        if !canvasView.drawing.bounds.isEmpty {
+            drawing = canvasView.drawing.base64EncodedString()
+            print(drawing)
         }
     }
     

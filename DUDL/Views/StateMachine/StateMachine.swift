@@ -104,7 +104,7 @@ class StateMachine: ObservableObject {
                     await self.push()
                 }
                 self.state = .promptFromDrawing
-                self.stateContent = AnyView(PromptFromDrawingView(drawing: inputDataBinding, prompt: outputDataBinding))
+            self.stateContent = AnyView(PromptFromDrawingView(drawing: inputDataBinding.wrappedValue, prompt: outputDataBinding))
             case .promptFromDrawing :
                 print("PFD --> DFP")
                 Task.detached {
