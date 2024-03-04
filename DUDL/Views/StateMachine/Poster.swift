@@ -13,8 +13,8 @@ struct Poster: UIViewRepresentable {
     @Binding var canvasView: PKCanvasView
 
     func makeUIView(context: Context) -> PKCanvasView {
-        canvasView.minimumZoomScale = 0.2
-        canvasView.maximumZoomScale = 4.0
+        canvasView.minimumZoomScale = 0.5
+        canvasView.maximumZoomScale = 3.0
         canvasView.backgroundColor = UIColor(Color.black)
         
         canvasView.drawingGestureRecognizer.isEnabled = false

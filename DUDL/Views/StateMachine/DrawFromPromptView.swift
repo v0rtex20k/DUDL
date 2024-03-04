@@ -70,12 +70,9 @@ struct DrawFromPromptView: View {
             }
             .padding()
             canvasToolbar.padding()
-            GeometryReader { geo in
-                DudlCanvas(canvasView: $canvasView, toolPicker: $toolPicker, showTools: $showTools, onChange: canvasDidChange)
-//                    .frame(height: geo.size.height * 0.8)
-                    .border(Color(primary_color), width: 3)
-                    .padding()
-            }
+            DudlCanvas(canvasView: $canvasView, toolPicker: $toolPicker, showTools: $showTools, onChange: canvasDidChange)
+                .border(Color(primary_color), width: 3)
+                .padding()
             Button("", systemImage: "pencil.circle.fill") {
                 // clicking this button shows tools and hides itself
                 showTools = true

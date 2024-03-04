@@ -121,6 +121,7 @@
 			children = (
 				579714C22B82CB3B007F5CB5 /* StateMachine.swift */,
 				579714C42B82CFCF007F5CB5 /* InitialPromptView.swift */,
+				576F15C52B963F9900058DE1 /* Poster.swift */,
 				57B6E7A62B961FB700A19258 /* DudlCanvas.swift */,
 				579714C72B82D052007F5CB5 /* DrawFromPromptView.swift */,
 				579714C92B82D05D007F5CB5 /* PromptFromDrawingView.swift */,
@@ -200,7 +201,6 @@
 				57D2873F2B73318100FE2280 /* RestfulGroup.swift */,
 				579714C02B785351007F5CB5 /* InitialPromptView2.swift */,
 				576F15C32B963BEB00058DE1 /* DrawingUtils.swift */,
-				576F15C52B963F9900058DE1 /* Poster.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
