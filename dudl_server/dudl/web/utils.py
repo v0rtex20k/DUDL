@@ -28,8 +28,20 @@ def log_and_abort(status_code: int, desc: str, log_lvl: int = ERROR):
     current_app.logger.log(level=log_lvl, msg=desc)
     abort(status_code, description=desc)
 
-def abort_if_missing(request: Request, attr: str, status_code: int = status.HTTP_400_BAD_REQUEST) -> Union[NoReturn, Any]:
-    if not request or (val := request.get_json().get(attr)) is None:
-        log_and_abort(status_code, f"Missing {attr} in Request!")
-    
-    return val
+def abort_if_missing(request: Request, *attrs: str) -> Union[NoReturn, Any]:
+    try:
+        vals = []
+        if not request:
+            raise ValueError
+        
+        json = request.get_json()
+
+        for attr in attrs:
+            if (val := json[attr]) is None:
+                raise AttributeError
+            else:
+                vals.append(val)
+                
+        return vals if len(vals) > 1 else vals[0]
+    except Exception:
+        log_and_abort(status.HTTP_400_BAD_REQUEST, f"Invalid Request - one or more attributes missing ({attrs})")

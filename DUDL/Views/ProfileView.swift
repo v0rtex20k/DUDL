@@ -148,6 +148,8 @@ struct ProfileView : View {
                                 .padding()
                                 Spacer()
                                 Spacer()
+                            }.onTapGesture {
+                                // do nothing!
                             }
                             Spacer()
                         }

@@ -5,12 +5,12 @@ import time
 import waitress
 import importlib
 import inflection
-from flask import Flask, current_app
-from flask.logging import create_logger
 from flasgger import Swagger
-from typing import Any, Callable, Dict
-from flask_smorest import Blueprint, Api
 from pymongo import MongoClient
+from flask import Flask, current_app
+from typing import Any, Callable, Dict
+from flask.logging import create_logger
+from flask_smorest import Blueprint, Api
 from dudl.web.env import load_runtime_environment
 
 def setup_logging(default_level=logging.INFO):
@@ -101,6 +101,7 @@ def build_app(runtime_env: Dict[str, Any]):
     swagger_config['title'] = app.config.get('API_TITLE', "DUDL Server")
     swagger_config['version'] = app.config.get("API_VERSION", "1.0")
     Swagger(app=app, config=swagger_config)
+    
 
     with app.app_context():
         # Update configuration

@@ -31,8 +31,8 @@ struct LobbyView : View {
             playerProfiles.removeAll()
             switch result {
                 case .success(let ps):
-                    playerProfiles = [PlayerProfile(gameCode: gameCode, playerId: "fakeId", nickname: "Ghost", rgba: RGBA(r: 255, g: 255, b: 255, a: 1) )]
-                playerProfiles.append(contentsOf: ps)
+//                    playerProfiles = [PlayerProfile(gameCode: gameCode, playerId: "fakeId", nickname: "Ghost", rgba: RGBA(r: 255, g: 255, b: 255, a: 1) )]
+                    playerProfiles.append(contentsOf: ps)
                     
                     for p in playerProfiles {
                         if (p.isHost ?? false) && p.playerId == deviceUUID {

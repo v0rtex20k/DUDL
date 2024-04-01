@@ -30,12 +30,17 @@ class GameCollection:
                     return game_code
                 else:
                     new_host = list(game.player_profiles.keys())[0]
-                    game.player_profiles[new_host].make_host()
+
+                    if isinstance(game.player_profiles[new_host], PlayerProfile):
+                        game.player_profiles[new_host].make_host()
+                    else:
+                        game.player_profiles[new_host] = True
+
                     current_app.logger.info(f"Player \"{new_host}\" is now the host of {game_code}")
                 
                 current_app.logger.info(f"Removed Player \"{player_id}\" from {game_code}")
             
-            return game_code
+                return game_code
 
         except AttributeError as ae:
             traceback.print_exception(ae)
@@ -46,7 +51,7 @@ class GameCollection:
 
     def remove_player_from_all_games(self, player_id: str, excludes: Set[str] = {*()}):
         empties = [self.remove_player_from_game(player_id=player_id, game_code=gc) for gc in self.games if gc not in excludes]
-        [self.games.pop(code) for code in empties]
+        [self.games.pop(code) for code in empties if code is not None]
 
     def add_game(self, host_id: str, game_code: Optional[str]=None)-> str:
         while not game_code:

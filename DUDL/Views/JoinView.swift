@@ -37,6 +37,8 @@ struct JoinView : View {
     @Binding var currentView: ViewFinder
     @Binding var restController: RestController
     
+    @FocusState private var keyboardFocused: Bool
+    
     func limitText() {
         gameCode = gameCode.replacingOccurrences(of:"[^a-z-]", with: "", options: .regularExpression)
         if gameCode.count > maxLen {
@@ -98,8 +100,13 @@ struct JoinView : View {
                                 .onReceive(Just(code)) { _ in
                                     limitText()
                                 }
+                                .focused($keyboardFocused)
+                                .onAppear {
+                                    if (code.wrappedValue.count > 1) {
+                                            keyboardFocused = true
+                                    }
+                                }
                                 .onSubmit{ joinWrapper(code.wrappedValue) }
-                                .onAppear{ joinWrapper(code.wrappedValue) }
                                 .foregroundStyle(.black)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .multilineTextAlignment(.center)

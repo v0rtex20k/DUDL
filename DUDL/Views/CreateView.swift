@@ -51,7 +51,7 @@ struct CreateView : View {
                     VStack{
                         ShareLink(item: "Let's DÜDL: \(gameCode)") {
                             Text(code.wrappedValue)
-                                .font(Font.custom("Galvji", size: 25))
+                                .font(Font.custom("Galvji", size: 24))
                                 .foregroundColor(Color(primary_color))
                                 .shadow(color: Color(primary_color), radius: 20)
                                 .shadow(color: Color(primary_color), radius: 30)
