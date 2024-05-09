@@ -44,7 +44,7 @@ class GameCollection:
 
         except AttributeError as ae:
             traceback.print_exception(ae)
-            log_and_abort(status.HTTP_404_NOT_FOUND, f"Game \"{game_code}\" does not exist")
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"[RPFG] Game \"{game_code}\" does not exist")
         except Exception as e:
             traceback.print_exception(e)
             log_and_abort(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Failed to remove Player {player_id} from Game {game_code}")
@@ -80,12 +80,12 @@ class GameCollection:
                 game.add_player(player_id, is_host=False)
                 current_app.logger.debug(f"Added Player {player_id} to Game {game_code}...")
             else:
-                current_app.logger.debug(f"Player {'#' if is_host else ''}{player_id} is already in Game {game_code}...")
+                current_app.logger.debug(f"Player {player_id} is already {'hosting' if is_host else 'in' } Game {game_code}...")
         except NameError:
             log_and_abort(status.HTTP_400_BAD_REQUEST, f"Duplicate PlayerId: {player_id}")
         except AttributeError as ae:
             traceback.print_exception(ae)
-            log_and_abort(status.HTTP_404_NOT_FOUND, f"Game \"{game_code}\" does not exist")
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"[AG] Game \"{game_code}\" does not exist")
         except Exception as e:
             traceback.print_exception(e)
             log_and_abort(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Failed to add Player {player_id} to Game {game_code}")
@@ -96,7 +96,7 @@ class GameCollection:
                                                         nickname=nickname,
                                                         rgba=rgba)
         except KeyError:
-            log_and_abort(status.HTTP_404_NOT_FOUND, f"Game \"{game_code}\" does not exist")
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"[UPPIG] Game \"{game_code}\" does not exist")
         except Exception as e:
             traceback.print_exception(e)
             log_and_abort(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Failed to update Player {player_id}'s profile in Game {game_code}")
@@ -105,7 +105,7 @@ class GameCollection:
         try:
             return self.games[game_code].player_profiles or {}
         except KeyError:
-            log_and_abort(status.HTTP_404_NOT_FOUND, f"Game \"{game_code}\" does not exist")
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"[GAAPIG] Game \"{game_code}\" does not exist")
         except Exception as e:
             traceback.print_exception(e)
             log_and_abort(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Failed to get all active PlayerProfiles in Game {game_code}")

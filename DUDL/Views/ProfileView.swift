@@ -60,7 +60,7 @@ struct ProfileView : View {
         await restController.removePlayer(code: gameCode) { result in
             switch result {
             case .success:
-                currentView = .lobby
+                currentView = .home
                 print("Successfully left \(gameCode)")
             case .failure(let error):
                 switch error {

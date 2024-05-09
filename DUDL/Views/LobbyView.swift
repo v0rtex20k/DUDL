@@ -27,11 +27,12 @@ struct LobbyView : View {
     let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
     
     func loadAllPlayerProfiles() async {
-        await restController.allPlayerProfiles(code: gameCode) { result in
-            playerProfiles.removeAll()
-            switch result {
+        if !gameCode.isEmpty {
+            await restController.allPlayerProfiles(code: gameCode) { result in
+                playerProfiles.removeAll()
+                switch result {
                 case .success(let ps):
-//                    playerProfiles = [PlayerProfile(gameCode: gameCode, playerId: "fakeId", nickname: "Ghost", rgba: RGBA(r: 255, g: 255, b: 255, a: 1) )]
+                    //                    playerProfiles = [PlayerProfile(gameCode: gameCode, playerId: "fakeId", nickname: "Ghost", rgba: RGBA(r: 255, g: 255, b: 255, a: 1) )]
                     playerProfiles.append(contentsOf: ps)
                     
                     for p in playerProfiles {
@@ -39,7 +40,7 @@ struct LobbyView : View {
                             isHost = true
                         }
                     }
-                                
+                    
                     print("Active Players: \(dump(playerProfiles))")
                 case .failure(let error):
                     switch error {
@@ -50,6 +51,7 @@ struct LobbyView : View {
                     }
                     shouldShowAlert = true
                     print(error.localizedDescription)
+                }
             }
         }
     }
