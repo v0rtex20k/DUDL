@@ -31,7 +31,7 @@
 		57C3AC502B68B54E0058AE5F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC4F2B68B54E0058AE5F /* SettingsView.swift */; };
 		57C3AC542B68BE620058AE5F /* JoinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC532B68BE620058AE5F /* JoinView.swift */; };
 		57C3AC562B69E57F0058AE5F /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC552B69E57F0058AE5F /* ProfileView.swift */; };
-		57CE50EA2B69F2030071E806 /* SquareColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57CE50E92B69F2030071E806 /* SquareColorPickerView.swift */; };
+		57CE50EA2B69F2030071E806 /* ColorUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57CE50E92B69F2030071E806 /* ColorUtils.swift */; };
 		57CE50EC2B6EA0230071E806 /* LobbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57CE50EB2B6EA0230071E806 /* LobbyView.swift */; };
 		57D2873D2B732E2D00FE2280 /* BlackDraggableZStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D2873C2B732E2D00FE2280 /* BlackDraggableZStack.swift */; };
 		57D287402B73318100FE2280 /* RestfulGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D2873F2B73318100FE2280 /* RestfulGroup.swift */; };
@@ -85,7 +85,7 @@
 		57C3AC4F2B68B54E0058AE5F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		57C3AC532B68BE620058AE5F /* JoinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinView.swift; sourceTree = "<group>"; };
 		57C3AC552B69E57F0058AE5F /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
-		57CE50E92B69F2030071E806 /* SquareColorPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SquareColorPickerView.swift; sourceTree = "<group>"; };
+		57CE50E92B69F2030071E806 /* ColorUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorUtils.swift; sourceTree = "<group>"; };
 		57CE50EB2B6EA0230071E806 /* LobbyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LobbyView.swift; sourceTree = "<group>"; };
 		57D2873C2B732E2D00FE2280 /* BlackDraggableZStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlackDraggableZStack.swift; sourceTree = "<group>"; };
 		57D2873F2B73318100FE2280 /* RestfulGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestfulGroup.swift; sourceTree = "<group>"; };
@@ -191,7 +191,7 @@
 		57D2873E2B73311900FE2280 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				57CE50E92B69F2030071E806 /* SquareColorPickerView.swift */,
+				57CE50E92B69F2030071E806 /* ColorUtils.swift */,
 				57369D162B70ACA200918CF5 /* ProfileCardView.swift */,
 				57C3AC302B65BF180058AE5F /* Scribble.swift */,
 				57C3AC3D2B6697EE0058AE5F /* WebStructs.swift */,
@@ -358,7 +358,7 @@
 				579714C12B785351007F5CB5 /* InitialPromptView2.swift in Sources */,
 				579714C82B82D052007F5CB5 /* DrawFromPromptView.swift in Sources */,
 				57C3AC502B68B54E0058AE5F /* SettingsView.swift in Sources */,
-				57CE50EA2B69F2030071E806 /* SquareColorPickerView.swift in Sources */,
+				57CE50EA2B69F2030071E806 /* ColorUtils.swift in Sources */,
 				57C3AC3A2B668F4F0058AE5F /* HomeView.swift in Sources */,
 				579714C52B82CFCF007F5CB5 /* InitialPromptView.swift in Sources */,
 				579714CE2B82FAFB007F5CB5 /* ArenaView.swift in Sources */,

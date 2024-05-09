@@ -19,7 +19,7 @@ struct ProfileView : View {
     private let alertTitle = "Unable to create Player Profile"
     
     @State var nickname: String = ""
-    @State private var playerColor = Color.green
+    @State private var playerColor = Color.random(from: [.red, .yellow, .green, .blue, .purple, .orange])
     @State private var alertMessage: String = ""
     @State private var wasSubmitted: Bool = false
     @State private var shouldShowAlert: Bool = false
