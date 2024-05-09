@@ -14,7 +14,7 @@ struct ProfileCardView : View {
     
     var body : some View {
         ZStack {
-            Color.black.edgesIgnoringSafeArea(.all)
+            Color.clear.edgesIgnoringSafeArea(.all)
             let dim = min(size.width, size.height)
             Text(playerProfile.nickname)
                 .padding()
@@ -37,6 +37,7 @@ struct ProfileCardView : View {
                         .frame(width: dim * 0.75, height: dim * 0.18, alignment: .center)
                 }
                 .frame(width: dim, alignment: .center)
+                .frame(height: dim * 0.225)
         }
     }
 }

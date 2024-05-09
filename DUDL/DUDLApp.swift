@@ -26,7 +26,7 @@ var primary_color = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
 struct DUDLApp: App {
     @State var gameCode: String = ""
     @State var currentView: ViewFinder = .home
-    @State var restController: RestController = RestController(host: "127.0.0.1",// "192.168.1.10",
+    @State var restController: RestController = RestController(host: "192.168.1.10",
                                                                port: 8001)
     
 //    @State var initialPrompt = ""

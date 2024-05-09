@@ -154,11 +154,12 @@ struct LobbyView : View {
             RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent, contentValue: $gameCode) { code in
                 NavigationStack {
                     GeometryReader { geo in
+                        let dim = min(geo.size.width, geo.size.height)
                         ScrollView(.vertical) {
-                            ForEach(playerProfiles, id: \.playerId) { profile in
+                            ForEach(playerProfiles, id: \.playerId) {profile in
                                 let selfSelect = deviceUUID == profile.playerId
-                                Spacer()
                                 ProfileCardView(size: geo.size, playerProfile: profile)
+                                    .contentShape(.contextMenuPreview, RoundedRectangle(cornerRadius: 10))
                                     .contextMenu {
                                         if selfSelect || isHost {
                                             Button(role: .destructive) {
@@ -172,12 +173,12 @@ struct LobbyView : View {
                                                 Label(selfSelect ? "Leave Game" : "Remove \"\(profile.nickname)\" from Game", systemImage: selfSelect ? "arrow.turn.up.left" : "xmark.octagon.fill")
                                             }
                                         }
-                                    } preview: {
-                                        let dim = min(geo.size.width, geo.size.height)
-                                        ProfileCardView(size: geo.size, playerProfile: profile)
-                                            .frame(width: dim, height: dim * 0.5, alignment: .center)
                                     }
-                                    .padding(.vertical)
+                                    preview: {
+                                        ProfileCardView(size: geo.size, playerProfile: profile)
+                                            .background(Color.black).ignoresSafeArea(.all)
+                                        
+                                    }
                                 Spacer()
                             }
                         }
