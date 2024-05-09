@@ -47,12 +47,6 @@ struct BlackDraggableZStack<Content: View>: BDZSContainerView {
                     }
                 }
             )
-//            .simultaneousGesture(
-//                TapGesture()
-//                    .onEnded { _ in
-//                        print("1 tapped") // outer simultaneous tap
-//                    }
-//            )
             .onTapGesture(count: 1) {x in
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }

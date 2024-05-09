@@ -84,12 +84,12 @@ struct ProfileView : View {
                 VStack {
                     RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent, contentValue: $gameCode) { code in
                         VStack {
-                            Spacer(minLength: minDim * 0.4)
+                            Spacer(minLength: minDim * 0.55)
                             TextField("Username", text: $nickname)
                                 .multilineTextAlignment(.center)
                                 .padding()
                                 .allowsTightening(true)
-                                .font(Font.custom("Galvji", size: 16))
+                                .font(Font.custom("Galvji", size: 14))
                                 .foregroundColor(.gray)
                                 .background(
                                     Button {
@@ -98,16 +98,16 @@ struct ProfileView : View {
                                         ZStack {
                                             RoundedRectangle(cornerRadius: 5)
                                                 .fill(Color.white.gradient)
-                                                .frame(width: minDim * 0.65, height: 45, alignment: .center)
+                                                .frame(width: minDim * 0.55, height: 45, alignment: .center)
                                                 .shadow(radius: 3)
                                                 .zIndex(1)
                                             RoundedRectangle(cornerRadius: 10)
                                                 .fill(playerColor.gradient)
-                                                .frame(width: minDim * 0.8, height: minDim * 0.8, alignment: .center)
+                                                .frame(width: minDim * 0.75, height: minDim * 0.75, alignment: .center)
                                                 .shadow(radius: 3)
+                                                .shadow(color: Color(playerColor), radius: 10)
                                                 .shadow(color: Color(playerColor), radius: 20)
                                                 .shadow(color: Color(playerColor), radius: 30)
-                                                .shadow(color: Color(playerColor), radius: 40)
                                             ColorPicker("", selection: $playerColor, supportsOpacity: true).labelsHidden().opacity(0.015)
                                         }
                                     }
@@ -117,6 +117,12 @@ struct ProfileView : View {
                                     limitText(maxLen)
                                 }
                             Spacer()
+                            Spacer()
+                            Text("Tap the square to change color!")
+                                .padding()
+                                .foregroundStyle(Color(primary_color))
+                                .font(Font.custom("Galvji", size: 11))
+                            Spacer()
                             Button {
                                 if !nickname.isEmpty{
                                     Task.detached {
@@ -124,7 +130,7 @@ struct ProfileView : View {
                                     }
                                 }
                             } label: {
-                                Text("Enter Lobby")
+                                Text("Enter Lobby \(Image(systemName: "arrow.right.circle"))")
                                     .foregroundStyle(.black)
                                     .padding()
                                     .font(Font.custom("Galvji-Bold", size: 14))
@@ -132,7 +138,6 @@ struct ProfileView : View {
                                         RoundedRectangle(cornerRadius: 10).foregroundStyle(Color(primary_color))
                                             .padding(3)
                                     )
-                                    
                             }
                             .padding()
                             Spacer()
