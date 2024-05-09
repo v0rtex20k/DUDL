@@ -23,34 +23,38 @@ struct BlackDraggableZStack<Content: View>: BDZSContainerView {
     // MARK: VIEW CREATION
 
     var body: some View {
-        ZStack{
-            Color.black.edgesIgnoringSafeArea(.all)
-            content()
-        }
-        .ignoresSafeArea(.keyboard)
-        .gesture(
-            DragGesture(minimumDistance: 20, coordinateSpace: .global)
-            .onEnded { value in
-                let h = value.translation.width
-                let v = value.translation.height
-                
-                if abs(h) > abs(v) {
-
-                    if let onDragEndFunc = onDragEndFunc {
-                        Task.detached {
-                            await onDragEndFunc()
-                        }
-                    }
-                    if let dtv = dragToView {
-                        currentView = dtv
-                        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-                    }
+        Color.black.edgesIgnoringSafeArea(.all)
+            .overlay(content())
+            .ignoresSafeArea(.keyboard)
+            .gesture(
+                DragGesture(minimumDistance: 20, coordinateSpace: .global)
+                .onEnded { value in
+                    let h = value.translation.width
+                    let v = value.translation.height
                     
+                    if abs(h) > abs(v) {
+
+                        if let onDragEndFunc = onDragEndFunc {
+                            Task.detached {
+                                await onDragEndFunc()
+                            }
+                        }
+                        if let dtv = dragToView {
+                            currentView = dtv
+                            UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                        }
+                        
+                    }
                 }
+            )
+//            .simultaneousGesture(
+//                TapGesture()
+//                    .onEnded { _ in
+//                        print("1 tapped") // outer simultaneous tap
+//                    }
+//            )
+            .onTapGesture(count: 1) {x in
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }
-        )
-//        .onTapGesture(count: 1) {
-//            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-//        }
     }
 }

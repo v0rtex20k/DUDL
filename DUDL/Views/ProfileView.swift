@@ -115,18 +115,17 @@ struct ProfileView : View {
                             HStack {
                                 Spacer()
                                 Spacer()
-                                Text("")
-                                .padding()
-                                .background(
+                                Button(action: {
+                                    UIColorWellHelper.helper.execute?()
+                                }, label: {
                                     ZStack{
                                         RoundedRectangle(cornerRadius:10).foregroundStyle(Color(primary_color))
                                         SquareColorPickerView(colorValue: $playerColor)
-                                            .zIndex(100)
                                             .padding(3)
                                     }
-                                   
-                                )
-                                .padding()
+                                    .frame(width: 50, height: 50)
+                                    .border(Color.yellow)
+                                })
                                 Spacer()
                                 Button {
                                     if !nickname.isEmpty{

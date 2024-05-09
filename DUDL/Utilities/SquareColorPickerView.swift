@@ -19,8 +19,30 @@ struct SquareColorPickerView: View {
             .overlay(
                 ColorPicker("", selection: $colorValue, supportsOpacity: true).labelsHidden().opacity(0.015)
             )
-            .aspectRatio(contentMode: .fill)
+            .aspectRatio(contentMode: .fit)
             .shadow(radius: 5.0)
 
+    }
+}
+
+class UIColorWellHelper: NSObject {
+    static let helper = UIColorWellHelper()
+    var execute: (() -> ())?
+    @objc func handler(_ sender: Any) {
+        execute?()
+    }
+}
+
+extension UIColorWell {
+    override open func didMoveToSuperview() {
+        // ...
+        
+        // find a button and store handler with it in helper
+        if let uiButton = self.subviews.first?.subviews.last as? UIButton {
+            UIColorWellHelper.helper.execute = {
+                uiButton.sendActions(for: .touchUpInside)
+                
+            }
+        }
     }
 }

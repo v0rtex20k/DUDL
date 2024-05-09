@@ -24,34 +24,31 @@ struct RestfulGroup<Content: View>: RGContainerView {
     var content: (Binding<String>) -> Content
     
     var body: some View {
-        Group {
-            if shouldShowAlert {
-                Text("")
-                    .alert(alertTitle, isPresented: $shouldShowAlert) {
-                        Button("OK", role: .cancel) {
-                            gameCode.removeAll()
-                            currentView = .home
-                        }
-                    } message: {
-                        Text(alertMessage)
+        if shouldShowAlert {
+            Text("")
+                .alert(alertTitle, isPresented: $shouldShowAlert) {
+                    Button("OK", role: .cancel) {
+                        gameCode.removeAll()
+                        currentView = .home
                     }
-            } 
-            else if shouldShowContent {
-                content(contentValue.isEmpty ? $gameCode :  $contentValue)
-            }   else {
-                    ProgressView {
-                        Text("Connecting to Server")
-                            .foregroundStyle(Color(primary_color))
-                            .font(Font.custom("Galvji", size: 20))
-                            .foregroundStyle(Color(primary_color))
-                    }
-                    .padding()
-                    .progressViewStyle(.circular)
-                    .tint(Color(primary_color))
-        
-            }
+                } message: {
+                    Text(alertMessage)
+                }
         }
-
+        else if shouldShowContent {
+            content(contentValue.isEmpty ? $gameCode :  $contentValue)
+        }   else {
+                ProgressView {
+                    Text("Connecting to Server")
+                        .foregroundStyle(Color(primary_color))
+                        .font(Font.custom("Galvji", size: 20))
+                        .foregroundStyle(Color(primary_color))
+                }
+                .padding()
+                .progressViewStyle(.circular)
+                .tint(Color(primary_color))
+    
+        }
     }
 }
 
