@@ -154,7 +154,6 @@ struct LobbyView : View {
             RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent, contentValue: $gameCode) { code in
                 NavigationStack {
                     GeometryReader { geo in
-                        let dim = min(geo.size.width, geo.size.height)
                         ScrollView(.vertical) {
                             ForEach(playerProfiles, id: \.playerId) {profile in
                                 let selfSelect = deviceUUID == profile.playerId
