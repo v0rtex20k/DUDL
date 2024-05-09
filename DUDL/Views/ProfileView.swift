@@ -92,19 +92,24 @@ struct ProfileView : View {
                                 .font(Font.custom("Galvji", size: 16))
                                 .foregroundColor(.gray)
                                 .background(
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 5)
-                                            .fill(Color.white.gradient)
-                                            .frame(width: minDim * 0.65, height: 45, alignment: .center)
-                                            .shadow(radius: 3)
-                                            .zIndex(1)
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .fill(playerColor.gradient)
-                                            .frame(width: minDim * 0.8, height: minDim * 0.8, alignment: .center)
-                                            .shadow(radius: 3)
-                                         .shadow(color: Color(playerColor), radius: 20)
-                                         .shadow(color: Color(playerColor), radius: 30)
-                                         .shadow(color: Color(playerColor), radius: 40)
+                                    Button {
+                                        UIColorWellHelper.helper.execute?()
+                                    } label: {
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .fill(Color.white.gradient)
+                                                .frame(width: minDim * 0.65, height: 45, alignment: .center)
+                                                .shadow(radius: 3)
+                                                .zIndex(1)
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .fill(playerColor.gradient)
+                                                .frame(width: minDim * 0.8, height: minDim * 0.8, alignment: .center)
+                                                .shadow(radius: 3)
+                                                .shadow(color: Color(playerColor), radius: 20)
+                                                .shadow(color: Color(playerColor), radius: 30)
+                                                .shadow(color: Color(playerColor), radius: 40)
+                                            ColorPicker("", selection: $playerColor, supportsOpacity: true).labelsHidden().opacity(0.015)
+                                        }
                                     }
                                 )
                                 .disableAutocorrection(true)
@@ -112,42 +117,24 @@ struct ProfileView : View {
                                     limitText(maxLen)
                                 }
                             Spacer()
-                            HStack {
-                                Spacer()
-                                Spacer()
-                                Button(action: {
-                                    UIColorWellHelper.helper.execute?()
-                                }, label: {
-                                    ZStack{
-                                        RoundedRectangle(cornerRadius:10).foregroundStyle(Color(primary_color))
-                                        SquareColorPickerView(colorValue: $playerColor)
-                                            .padding(3)
+                            Button {
+                                if !nickname.isEmpty{
+                                    Task.detached {
+                                        await updateProfile()
                                     }
-                                    .frame(width: 50, height: 50)
-                                    .border(Color.yellow)
-                                })
-                                Spacer()
-                                Button {
-                                    if !nickname.isEmpty{
-                                        Task.detached {
-                                            await updateProfile()
-                                        }
-                                    }
-                                } label: {
-                                    Text(Image(systemName: "hand.thumbsup.fill"))
-                                        .foregroundStyle(.black)
-                                        .padding()
-                                        .font(Font.custom("Galvji-Bold", size: 14))
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 10).foregroundStyle(Color(primary_color))
-                                                .padding(3)
-                                        )
-                                        
                                 }
-                                .padding()
-                                Spacer()
-                                Spacer()
+                            } label: {
+                                Text("Enter Lobby")
+                                    .foregroundStyle(.black)
+                                    .padding()
+                                    .font(Font.custom("Galvji-Bold", size: 14))
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 10).foregroundStyle(Color(primary_color))
+                                            .padding(3)
+                                    )
+                                    
                             }
+                            .padding()
                             Spacer()
                         }
                     }
