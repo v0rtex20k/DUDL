@@ -25,7 +25,7 @@ struct LobbyView : View {
     @State private var deviceUUID: String = ""
     @State private var isHost: Bool = false
     
-    let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     func loadAllPlayerProfiles() async {
         if !gameCode.isEmpty {

@@ -14,6 +14,21 @@ collection: GameCollection = GameCollection()
 
 dudl_blueprint = Blueprint("dudl", __name__, url_prefix='/', description="DUDL REST Endpoints")
 
+# NOTE: FOR DEBUG PURPOSES ONLY!!
+def start_fake_solo_game(gc: str, pid: str):
+    import uuid
+    collection.add_game(host_id=pid, game_code=gc)
+    
+    pid2 = str(uuid.uuid4()).upper()
+    collection.add_player_to_game(game_code=gc, player_id=pid2)
+
+    collection.update_player_profile_in_game(game_code=gc, player_id=pid, nickname="Yoda", rgba=dict(r=0, g=255, b=0, a=0.5))
+    collection.update_player_profile_in_game(game_code=gc, player_id=pid2, nickname="Darth Vader", rgba=dict(r=255, g=0, b=0, a=0.5))
+
+    collection.games[gc].start()
+
+    assert collection.games[gc].started
+
 @dudl_blueprint.route('create-game')
 class CreateGame(MethodView):
     @swag_from('create-game.yml')
@@ -91,7 +106,7 @@ class GetAllActivePlayerProfiles(MethodView):
 
 @dudl_blueprint.route('game-status')
 class GameStatus(MethodView):
-    def post(self)-> Tuple[PlayerProfile, int]:
+    def post(self)-> Tuple[bool, int]:
         """ DUDL is up and running """
         game_code: str = abort_if_missing(request, "gameCode")
 
@@ -105,7 +120,6 @@ class GameStatus(MethodView):
 @dudl_blueprint.route('start-game')
 class StartGame(MethodView):
     def post(self)-> Tuple[PlayerProfile, int]:
-        """ DUDL is up and running """
         game_code: str = abort_if_missing(request, "gameCode")
         try:
             collection.games[game_code].start()
@@ -117,6 +131,82 @@ class StartGame(MethodView):
                 return {}, status.HTTP_412_PRECONDITION_FAILED
         except Exception as e:
             log_and_abort(status.HTTP_404_NOT_FOUND, f"Could not start Game \"{game_code}\": {e}")
+
+
+#### GAME DYNAMICS ### 
+            
+@dudl_blueprint.route('next-target')
+class NextTarget(MethodView):
+    def post(self)-> Tuple[str, int]:
+        game_code, player_id = abort_if_missing(request, "gameCode", "playerId")
+
+        try:
+            if (game := collection.games[game_code]).started and player_id in game.player_profiles:
+                target_player_id = game.targets[player_id].popleft()
+                current_app.logger.debug(f"\t[{game_code}] {player_id} --(will_target)--> {player_id}")
+                return dict(target=target_player_id), status.HTTP_200_OK
+        except IndexError:
+            current_app.logger.debug(f"\t[{game_code}] {player_id} has run out of targets")
+            return dict(target=target_player_id), status.HTTP_204_NO_CONTENT
+        except Exception as e:
+            log_and_abort(status.HTTP_409_CONFLICT, f"Could not retrieve the status of Game \"{game_code}\": {e}")
+
+@dudl_blueprint.route('upload-text')
+class UploadText(MethodView):
+    def post(self)-> Tuple[PlayerProfile, int]:
+        game_code, player_id, target_id, text = abort_if_missing(request, "gameCode", "playerId", "targetId", "text")
+
+        start_fake_solo_game(game_code, player_id)
+
+        try:
+            current_app.logger.debug(f"Submitting Player <{player_id}>'s text for Game \"{game_code}\": \"{text}\" ...")
+            collection.games[game_code].upload_text(text=text, player_id=player_id, target_id=target_id)
+            return {}, status.HTTP_200_OK
+        except Exception as e:
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"Failed to submit Player <{player_id}>'s text for Game \"{game_code}\": {e}")
+
+@dudl_blueprint.route('upload-drawing')
+class UploadDrawing(MethodView):
+    def post(self)-> Tuple[PlayerProfile, int]:
+        game_code, player_id, target_id, encoded_drawing = abort_if_missing(request, "gameCode", "playerId", "targetId", "encodedDrawing")
+
+        start_fake_solo_game(game_code, player_id)
+
+        try:
+            current_app.logger.debug(f"Submitting Player <{player_id}>'s drawing for Game \"{game_code}\": \n\t\"{encoded_drawing}\" ...")
+            collection.games[game_code].upload_drawing(drawing=encoded_drawing, player_id=player_id, target_id=target_id)
+            return {}, status.HTTP_200_OK
+        except Exception as e:
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"Failed to submit Player <{player_id}>'s text for Game \"{game_code}\": {e}")
+
+
+@dudl_blueprint.route('download-text')
+class DownloadText(MethodView):
+    def post(self)-> Tuple[PlayerProfile, int]:
+        game_code, player_id, target_id, text = abort_if_missing(request, "gameCode", "playerId", "targetId", "text")
+
+        start_fake_solo_game(game_code, player_id)
+
+        try:
+            current_app.logger.debug(f"Submitting Player <{player_id}>'s text for Game \"{game_code}\": \"{text}\" ...")
+            collection.games[game_code].upload_text(text=text, player_id=player_id, target_id=target_id)
+            return {}, status.HTTP_200_OK
+        except Exception as e:
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"Failed to submit Player <{player_id}>'s text for Game \"{game_code}\": {e}")
+
+@dudl_blueprint.route('download-drawing')
+class DownloadDrawing(MethodView):
+    def post(self)-> Tuple[PlayerProfile, int]:
+        game_code, player_id, target_id, encoded_drawing = abort_if_missing(request, "gameCode", "playerId", "targetId", "encodedDrawing")
+
+        start_fake_solo_game(game_code, player_id)
+
+        try:
+            current_app.logger.debug(f"Submitting Player <{player_id}>'s drawing for Game \"{game_code}\": \n\t\"{encoded_drawing}\" ...")
+            collection.games[game_code].upload_drawing(drawing=encoded_drawing, player_id=player_id, target_id=target_id)
+            return {}, status.HTTP_200_OK
+        except Exception as e:
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"Failed to submit Player <{player_id}>'s text for Game \"{game_code}\": {e}")
 
 
 @dudl_blueprint.route('pull-content')
@@ -132,15 +222,16 @@ class PullContent(MethodView):
         except Exception as e:
             log_and_abort(status.HTTP_404_NOT_FOUND, f"Failed to pull Player <{player_id}>'s content for Game \"{game_code}\": {e}")
 
-
 @dudl_blueprint.route('push-content')
 class PushContent(MethodView):
     def post(self)-> Tuple[PlayerProfile, int]:
         game_code, player_id, content = abort_if_missing(request, "gameCode", "playerId", "content")
 
+        start_fake_solo_game(game_code, player_id)
+
         try:
             current_app.logger.debug(f"Pushing Player <{player_id}>'s content for Game \"{game_code}\" \n\t--> {content} ...")
-            content = collection.games[game_code].push_content(player_id=player_id, content=content)
+            content = collection.games[game_code].push_content(content=content, player_id=player_id)
             return {}, status.HTTP_200_OK
         except Exception as e:
             log_and_abort(status.HTTP_404_NOT_FOUND, f"Failed to push Player <{player_id}>'s content for Game \"{game_code}\": {e}")

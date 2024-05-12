@@ -19,11 +19,10 @@ struct ArenaView: View {
     @Binding var currentView: ViewFinder
     @Binding var restController: RestController
     
-    private let DURATION = 30
-    @State private var timeElapsed = 0
-    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    
-    
+    private let roundDuration: TimeInterval = 10
+    private let timeStep: TimeInterval = 0.5
+    @State private var timeElapsed: TimeInterval = 0
+
     @StateObject var stateMachine : StateMachine = StateMachine()
     
     var body: some View {
@@ -31,44 +30,29 @@ struct ArenaView: View {
             Color.black.ignoresSafeArea(edges: .all)
             VStack {
                 Spacer()
-                stateMachine.stateContent
-            }.onReceive(timer) { _ in
-                stateMachine.update()
+                stateMachine.stateContent.onChange(of: stateMachine.isDone) {
+                    print("The \(gameCode) Game is complete")
+                    currentView = .end
+                }
             }
             Spacer()
             Spacer()
         }
         .onAppear() {
-            stateMachine.attach(gameCode: gameCode, restController: restController, nRounds: nRounds, roundDuration: DURATION)
-            stateMachine.next()
-        }
-        .onDisappear {
-            timer.upstream.connect().cancel()
-        }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                VStack {
-                    Text("\(DURATION - timeElapsed)")
-                        .font(.headline)
-                        .foregroundStyle(Color(primary_color))
-                        .padding()
-                        .border(.red)
-                }
-            }
+            print("START! :)")
+            stateMachine.start(gameCode: gameCode, restController: restController, nRounds: nRounds, timeStep: timeStep, roundDuration: roundDuration)
         }
     }
 }
 
 
-//#Preview {
-//   struct PreviewWrapper: View {
-//       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
-//       @State var vf: ViewFinder = .arena
-//       var body: some View {
-//           ArenaView(gameCode: .constant("happy-hippo"), currentView: $vf, restController: $rc)
-//       }
-//   }
-//   return PreviewWrapper()
-//}
-//
-//
+#Preview {
+   struct PreviewWrapper: View {
+       @State var rc: RestController = RestController(host: "192.168.1.10", port:8001)
+       @State var vf: ViewFinder = .arena
+       var body: some View {
+           ArenaView(gameCode: .constant("happy-hippo"), nRounds: .constant(2), currentView: $vf, restController: $rc)
+       }
+   }
+   return PreviewWrapper()
+}

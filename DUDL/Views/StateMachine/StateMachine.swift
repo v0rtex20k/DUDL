@@ -5,6 +5,7 @@
 //  Created by V on 2/18/24.
 //
 
+import Combine
 import Foundation
 import SwiftUI
 
@@ -16,9 +17,13 @@ class StateMachine: ObservableObject {
     var gameCode: String = ""
     var nRounds: Int = 0
     var roundCount: Int = 0
-    var roundDuration: Int = 0
-    var secondsElapsed: Int = 0
+    var timer: AnyCancellable? = nil
+    var roundDuration: TimeInterval = 0
+    var timeStep: TimeInterval = 0
+    var secondsElapsed: TimeInterval = 0
     var restController: RestController? = nil
+    
+    @Published public var isDone: Bool = false
     @Published public var stateContent: AnyView = AnyView(EmptyView())
     
     
@@ -38,12 +43,29 @@ class StateMachine: ObservableObject {
         print("Initialized the StateMachine")
     }
     
-    func attach(gameCode: String, restController: RestController?, nRounds: Int, roundDuration: Int) {
+    func start(gameCode: String, restController: RestController?, nRounds: Int, timeStep: TimeInterval, roundDuration: TimeInterval) {
         self.nRounds = nRounds
         self.roundDuration = roundDuration
+        self.timeStep = timeStep
         self.gameCode = gameCode
         self.restController = restController!
+    
+        print("STARTING THE TIMER!")
+        
+        self.step()
+        self.timer = Timer.publish(every: self.timeStep, on: .main, in: .common).autoconnect().sink {_ in
+            print("UPDATING THE SM!")
+            self.update()
+        }
+        
     }
+    
+    func stop() {
+        print("STOPPING THE TIMER!")
+        self.timer!.cancel()
+        self.isDone = true
+    }
+
     
     func pull() async {
         await self.restController?.pull(code: self.gameCode) { result in
@@ -82,23 +104,21 @@ class StateMachine: ObservableObject {
     }
     
     func update() {
-        self.secondsElapsed += 1
-        
         print("\t \(self.roundDuration - self.secondsElapsed) seconds left in ROUND")
-    
+        self.secondsElapsed += self.timeStep
         if self.secondsElapsed > self.roundDuration {
-            print("\tENDING ROUND \(self.roundCount)/\(self.nRounds)")
+            print("\tENDING ROUND \(self.roundCount + 1)/\(self.nRounds)")
             self.roundCount += 1
             self.secondsElapsed = 0
-            self.next()
+            self.step()
+        }
+        
+        if self.roundCount >= self.nRounds {
+            self.stop()
         }
     }
 
-    func next() {
-        if self.roundCount >= self.nRounds || self.secondsElapsed > self.roundDuration {
-            return
-        }
-        
+    func step() {
         let inputDataBinding = Binding<String>(
             get: { self.inputData },
             set: {self.inputData = $0 }
