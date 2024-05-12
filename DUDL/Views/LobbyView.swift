@@ -11,6 +11,7 @@ import SwiftUI
 
 struct LobbyView : View {
     @Binding var gameCode: String
+    @Binding var playerCount: Int
     @Binding var currentView: ViewFinder
     @Binding var restController: RestController
     
@@ -106,6 +107,7 @@ struct LobbyView : View {
                     case .success(let gsr):
                         if gsr.started {
                             print("LET THE GAMES BEGIN")
+                            playerCount = playerProfiles.count
                             currentView = .arena
                         } else {
                             print("Still waiting for the game to start ...")
@@ -132,6 +134,7 @@ struct LobbyView : View {
             await restController.startGame(code: gameCode) { result in
                 switch result {
                     case .success:
+                        playerCount = playerProfiles.count
                         currentView = .arena
                         print("THE GAME HAS BEEN STARTED")
                     case .failure(let error):
@@ -240,7 +243,7 @@ struct LobbyView : View {
        @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
        @State var vf: ViewFinder = .lobby
        var body: some View {
-           LobbyView(gameCode: .constant("happy-hippo"), currentView: $vf, restController: $rc)
+           LobbyView(gameCode: .constant("happy-hippo"), playerCount: .constant(2), currentView: $vf, restController: $rc)
        }
    }
    return PreviewWrapper()

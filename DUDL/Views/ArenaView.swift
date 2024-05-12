@@ -9,17 +9,17 @@ import SwiftUI
 import Combine
 
 struct ArenaView: View {
-    @State var startDate: Date = Date.now
     @State private var alertMessage: String = ""
     @State private var shouldShowAlert: Bool = false
     @State private var shouldShowContent: Bool = true
     let alertTitle = "Unable to Join Game"
     
     @Binding var gameCode: String
+    @Binding var nRounds: Int
     @Binding var currentView: ViewFinder
     @Binding var restController: RestController
     
-    private let DURATION = 6
+    private let DURATION = 30
     @State private var timeElapsed = 0
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
@@ -31,25 +31,15 @@ struct ArenaView: View {
             Color.black.ignoresSafeArea(edges: .all)
             VStack {
                 Spacer()
-//                RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent, contentValue: .constant("")) {data in
-//                    stateMachine.view
                 stateMachine.stateContent
-                }.onReceive(timer) { firedDate in
-                    timeElapsed = Int(firedDate.timeIntervalSince(startDate)) // seconds
-                    print("\t \(DURATION - timeElapsed) seconds left in ROUND")
-                    if timeElapsed >= DURATION {
-                        print("\t ROUND IS OVER")
-                        startDate = Date.now
-                        timeElapsed = 0
-                        stateMachine.next()
-                    }
-                }
-                Spacer()
-                Spacer()
-//            }
+            }.onReceive(timer) { _ in
+                stateMachine.update()
+            }
+            Spacer()
+            Spacer()
         }
         .onAppear() {
-            stateMachine.attach(gameCode: gameCode, restController: restController)
+            stateMachine.attach(gameCode: gameCode, restController: restController, nRounds: nRounds, roundDuration: DURATION)
             stateMachine.next()
         }
         .onDisappear {
@@ -71,5 +61,14 @@ struct ArenaView: View {
 
 
 //#Preview {
-//    ArenaView()
+//   struct PreviewWrapper: View {
+//       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
+//       @State var vf: ViewFinder = .arena
+//       var body: some View {
+//           ArenaView(gameCode: .constant("happy-hippo"), currentView: $vf, restController: $rc)
+//       }
+//   }
+//   return PreviewWrapper()
 //}
+//
+//

@@ -25,6 +25,7 @@ var primary_color = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
 @main
 struct DUDLApp: App {
     @State var gameCode: String = ""
+    @State var playerCount: Int = 0
     @State var currentView: ViewFinder = .home
     @State var restController: RestController = RestController(host: "192.168.1.10",
                                                                port: 8001)
@@ -40,9 +41,9 @@ struct DUDLApp: App {
                 case .settings: SettingsView(currentView: $currentView, restController: $restController)
                 case .create: CreateView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
                 case .join: JoinView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
-                case .lobby: LobbyView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
                 case .profile : ProfileView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
-                case .arena: ArenaView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
+                case .lobby: LobbyView(gameCode: $gameCode, playerCount: $playerCount, currentView: $currentView, restController: $restController)
+                case .arena: ArenaView(gameCode: $gameCode, nRounds: $playerCount, currentView: $currentView, restController: $restController)
                 // default:
                 //     DrawFromPromptView(prompt: $initialPrompt, drawing: $drawing)
                 //     PromptFromDrawingView(drawing: drawing2, prompt: $initialPrompt)

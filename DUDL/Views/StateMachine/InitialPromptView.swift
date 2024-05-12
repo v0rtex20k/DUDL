@@ -10,6 +10,7 @@ import Combine
 
 struct InitialPromptView: View {
     @Binding var prompt: String
+    @Binding var advance: Bool
     private let maxLen = 50 // just to prevent some type of crazy long string
     
 
@@ -22,45 +23,58 @@ struct InitialPromptView: View {
     }
     
     var body: some View {
-        GeometryReader { geo in
-        ZStack {
-            Color.black.edgesIgnoringSafeArea(.all)
-            VStack {
-                Spacer()
-                Text("Say something funny")
-                        .padding()
-                        .foregroundStyle(Color(primary_color))
-                        .font(Font.custom("Galvji", size: 18))
-                TextField("something-funny", text: $prompt, axis: .vertical)
-                        .lineLimit(5)
-                        .textInputAutocapitalization(.never)
-                        .disableAutocorrection(true)
-                        .onReceive(Just(prompt)) { _ in
-                            limitText()
-                        }
-                        .foregroundStyle(.black)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .multilineTextAlignment(.center)
-                        .frame(width: 0.8 * geo.size.width)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .font(Font.custom("Galvji", size: 24))
-                Text("\($prompt.wrappedValue.count) / \(maxLen)")
-                        .padding()
-                        .foregroundStyle(Color(primary_color))
-                        .font(Font.custom("Galvji", size: 16))
-                Spacer()
-                Spacer()
-                
+        NavigationStack {
+            GeometryReader { geo in
+                ZStack {
+                    Color.black.edgesIgnoringSafeArea(.all)
+                    VStack {
+                        Spacer()
+                        Text("Say something funny")
+                            .padding()
+                            .border(Color.green)
+                            .foregroundStyle(Color(primary_color))
+                            .font(Font.custom("Galvji", size: 18))
+                        TextField("something-funny", text: $prompt, axis: .vertical)
+                            .lineLimit(5)
+                            .textInputAutocapitalization(.never)
+                            .disableAutocorrection(true)
+                            .onReceive(Just(prompt)) { _ in
+                                limitText()
+                            }
+                            .foregroundStyle(.black)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .multilineTextAlignment(.center)
+                            .frame(width: 0.8 * geo.size.width)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .font(Font.custom("Galvji", size: 24))
+                        Text("\($prompt.wrappedValue.count) / \(maxLen)")
+                            .padding()
+                            .foregroundStyle(Color(primary_color))
+                            .font(Font.custom("Galvji", size: 16))
+                        Spacer()
+                        Spacer()
+                    }
                 }
             }
-        }
-        .ignoresSafeArea(.keyboard)
-        .onTapGesture {
-            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            .ignoresSafeArea(.keyboard)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    VStack {
+                        Text("GOGO1")
+                            .font(.subheadline)
+                            .foregroundStyle(Color(primary_color))
+                    }
+                    .border(Color.red)
+                }
+            }
+            .toolbarBackground(.hidden, for: .automatic)
+            .onTapGesture {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            }
         }
     }
 }
 
 #Preview {
-    InitialPromptView(prompt: .constant("donald trump eating a cheeseburger"))
+    InitialPromptView(prompt: .constant("donald trump eating a cheeseburger"), advance: .constant(false))
 }

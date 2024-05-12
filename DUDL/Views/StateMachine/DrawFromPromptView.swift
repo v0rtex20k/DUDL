@@ -12,6 +12,7 @@ import PencilKit
 struct DrawFromPromptView: View {
     @Binding var prompt: String
     @Binding var drawing: String
+    @Binding var advance: Bool
     
     @Environment(\.undoManager) private var undoManager
     
@@ -69,6 +70,11 @@ struct DrawFromPromptView: View {
                 
             }
             .padding()
+            // TODO: REMOVE THIS
+            Button("", systemImage: "arrow.forward") {
+                print("MANUALLY ADVANCING TO NEXT ROUND")
+                advance = true
+            }
             canvasToolbar.padding()
             DudlCanvas(canvasView: $canvasView, toolPicker: $toolPicker, showTools: $showTools, onChange: canvasDidChange)
                 .border(Color(primary_color), width: 3)
@@ -87,5 +93,5 @@ struct DrawFromPromptView: View {
 }
 
 #Preview {
-    DrawFromPromptView(prompt: .constant("Something really funny that is super hilarious right now"), drawing: .constant(""))
+    DrawFromPromptView(prompt: .constant("Something really funny that is super hilarious right now"), drawing: .constant(""), advance: .constant(false))
 }

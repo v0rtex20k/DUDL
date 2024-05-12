@@ -47,7 +47,7 @@ struct ProfileCardView : View {
        @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
        @State var vf: ViewFinder = .lobby
        var body: some View {
-           LobbyView(gameCode: .constant("happy-hippo"), currentView: $vf, restController: $rc)
+           LobbyView(gameCode: .constant("happy-hippo"), playerCount: .constant(2), currentView: $vf, restController: $rc)
        }
    }
    return PreviewWrapper()
