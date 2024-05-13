@@ -66,6 +66,9 @@ class Game:
         self.results[player_id][round_idx] = content
 
     def download_content(self, player_id: str, round_idx: int)-> str:
-        return self.results[self.player_profiles[player_id].source][round_idx]
+        # TODO: uncomment this !!
+        # return self.results[self.player_profiles[player_id].source][round_idx]
+
+        return self.results[player_id][round_idx]
                 
                 

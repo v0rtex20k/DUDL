@@ -12,6 +12,7 @@ import PencilKit
 struct DrawFromPromptView: View {
     @Binding var prompt: String
     @Binding var drawing: String
+    @Binding var secondsRemaining: TimeInterval
     
     @Environment(\.undoManager) private var undoManager
     
@@ -56,36 +57,57 @@ struct DrawFromPromptView: View {
     }
     
     var body: some View {
-        VStack {
-            VStack{
-                Text("Draw ...")
-                    .font(Font.custom("Galvji", size: 14))
-                    .foregroundStyle(Color(primary_color))
-                Text("\"" + prompt + "\"")
+        NavigationStack {
+            GeometryReader { geo in
+                ZStack {
+                    Color.black.edgesIgnoringSafeArea(.all)
+                    VStack {
+                        VStack{
+                            Text("Draw ...")
+                                .font(Font.custom("Galvji", size: 14))
+                                .foregroundStyle(Color(primary_color))
+                            Text("\"" + prompt + "\"")
+                                .padding()
+                                .font(Font.custom("Galvji-Oblique", size: 20))
+                                .foregroundStyle(Color(primary_color))
+                                .multilineTextAlignment(.center)
+                            
+                        }
                         .padding()
-                    .font(Font.custom("Galvji-Oblique", size: 20))
-                    .foregroundStyle(Color(primary_color))
-                    .multilineTextAlignment(.center)
-                
+                        canvasToolbar.padding()
+                        DudlCanvas(canvasView: $canvasView, toolPicker: $toolPicker, showTools: $showTools, onChange: canvasDidChange)
+                            .border(Color(primary_color), width: 3)
+                            .padding()
+                        Button("", systemImage: "pencil.circle.fill") {
+                            // clicking this button shows tools and hides itself
+                            showTools = true
+                            
+                        }
+                        .disabled(showTools)
+                        .opacity(showTools ? 0 : 1)
+                        .foregroundStyle(Color(primary_color))
+                        .font(Font.custom("Galvji-Bold", size: 25))
+                    }
+                }
             }
-            .padding()
-            canvasToolbar.padding()
-            DudlCanvas(canvasView: $canvasView, toolPicker: $toolPicker, showTools: $showTools, onChange: canvasDidChange)
-                .border(Color(primary_color), width: 3)
-                .padding()
-            Button("", systemImage: "pencil.circle.fill") {
-                // clicking this button shows tools and hides itself
-                showTools = true
-                
+            .ignoresSafeArea(.keyboard)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    VStack {
+                        Text("\(Int(ceil(secondsRemaining)))")
+                            .font(.subheadline)
+                            .foregroundStyle(Color(primary_color))
+                    }
+                }
             }
-            .disabled(showTools)
-            .opacity(showTools ? 0 : 1)
-            .foregroundStyle(Color(primary_color))
-            .font(Font.custom("Galvji-Bold", size: 25))
-        }.background(Color.black)
+            .toolbarBackground(.hidden, for: .automatic)
+            .onTapGesture {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            }
+        }
     }
 }
 
 #Preview {
-    DrawFromPromptView(prompt: .constant("Something really funny that is super hilarious right now"), drawing: .constant(""))
+    DrawFromPromptView(prompt: .constant("Something really funny that is super hilarious right now"), drawing: .constant(""), secondsRemaining: .constant(30))
 }

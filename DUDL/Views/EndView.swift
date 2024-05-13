@@ -20,3 +20,10 @@ struct EndView : View {
         .ignoresSafeArea(.keyboard)
     }
 }
+
+#Preview {
+    ZStack{
+        EndView()
+    }
+}
+

@@ -10,6 +10,7 @@ import Combine
 
 struct InitialPromptView: View {
     @Binding var prompt: String
+    @Binding var secondsRemaining: TimeInterval
     private let maxLen = 50 // just to prevent some type of crazy long string
     
 
@@ -30,7 +31,6 @@ struct InitialPromptView: View {
                         Spacer()
                         Text("Say something funny")
                             .padding()
-                            .border(Color.green)
                             .foregroundStyle(Color(primary_color))
                             .font(Font.custom("Galvji", size: 18))
                         TextField("something-funny", text: $prompt, axis: .vertical)
@@ -59,11 +59,10 @@ struct InitialPromptView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     VStack {
-                        Text("GOGO1")
+                        Text("\(Int(ceil(secondsRemaining)))")
                             .font(.subheadline)
                             .foregroundStyle(Color(primary_color))
                     }
-                    .border(Color.red)
                 }
             }
             .toolbarBackground(.hidden, for: .automatic)
@@ -75,5 +74,5 @@ struct InitialPromptView: View {
 }
 
 #Preview {
-    InitialPromptView(prompt: .constant("donald trump eating a cheeseburger"))
+    InitialPromptView(prompt: .constant("donald trump eating a cheeseburger"), secondsRemaining: .constant(30))
 }

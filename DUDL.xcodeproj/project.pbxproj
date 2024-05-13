@@ -11,7 +11,6 @@
 		576F15C42B963BEB00058DE1 /* DrawingUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576F15C32B963BEB00058DE1 /* DrawingUtils.swift */; };
 		576F15C62B963F9900058DE1 /* Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576F15C52B963F9900058DE1 /* Poster.swift */; };
 		579714C12B785351007F5CB5 /* InitialPromptView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C02B785351007F5CB5 /* InitialPromptView2.swift */; };
-		579714C32B82CB3B007F5CB5 /* StateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C22B82CB3B007F5CB5 /* StateMachine.swift */; };
 		579714C52B82CFCF007F5CB5 /* InitialPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C42B82CFCF007F5CB5 /* InitialPromptView.swift */; };
 		579714C82B82D052007F5CB5 /* DrawFromPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C72B82D052007F5CB5 /* DrawFromPromptView.swift */; };
 		579714CA2B82D05D007F5CB5 /* PromptFromDrawingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C92B82D05D007F5CB5 /* PromptFromDrawingView.swift */; };
@@ -60,7 +59,6 @@
 		576F15C32B963BEB00058DE1 /* DrawingUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingUtils.swift; sourceTree = "<group>"; };
 		576F15C52B963F9900058DE1 /* Poster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Poster.swift; sourceTree = "<group>"; };
 		579714C02B785351007F5CB5 /* InitialPromptView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialPromptView2.swift; sourceTree = "<group>"; };
-		579714C22B82CB3B007F5CB5 /* StateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateMachine.swift; sourceTree = "<group>"; };
 		579714C42B82CFCF007F5CB5 /* InitialPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialPromptView.swift; sourceTree = "<group>"; };
 		579714C72B82D052007F5CB5 /* DrawFromPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawFromPromptView.swift; sourceTree = "<group>"; };
 		579714C92B82D05D007F5CB5 /* PromptFromDrawingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptFromDrawingView.swift; sourceTree = "<group>"; };
@@ -121,7 +119,6 @@
 		579714C62B82CFD6007F5CB5 /* StateMachine */ = {
 			isa = PBXGroup;
 			children = (
-				579714C22B82CB3B007F5CB5 /* StateMachine.swift */,
 				579714C42B82CFCF007F5CB5 /* InitialPromptView.swift */,
 				576F15C52B963F9900058DE1 /* Poster.swift */,
 				57B6E7A62B961FB700A19258 /* DudlCanvas.swift */,
@@ -378,7 +375,6 @@
 				579714CA2B82D05D007F5CB5 /* PromptFromDrawingView.swift in Sources */,
 				57C3AC482B68340C0058AE5F /* Errors.swift in Sources */,
 				576F15C62B963F9900058DE1 /* Poster.swift in Sources */,
-				579714C32B82CB3B007F5CB5 /* StateMachine.swift in Sources */,
 				57C3AC542B68BE620058AE5F /* JoinView.swift in Sources */,
 				57C3AC4E2B6864DB0058AE5F /* RestController.swift in Sources */,
 			);

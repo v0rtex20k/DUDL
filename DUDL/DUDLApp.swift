@@ -28,7 +28,7 @@ struct DUDLApp: App {
     @State var gameCode: String = ""
     @State var playerCount: Int = 0
     @State var currentView: ViewFinder = .home
-    @State var restController: RestController = RestController(host: "192.168.1.10",
+    @State var restController: RestController = RestController(host: "127.0.0.1", // "192.168.1.10",
                                                                port: 8001)
     
 //    @State var initialPrompt = ""

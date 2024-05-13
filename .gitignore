@@ -1,3 +1,4 @@
 .DS_Store/
 dudl.code-workspace
 dudl.egg-info/
+./*.log

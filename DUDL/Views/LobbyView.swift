@@ -191,6 +191,9 @@ struct LobbyView : View {
                     }
                     .onReceive(timer) { _ in
                         pollGameStatus()
+                        Task.detached{
+                            await loadAllPlayerProfiles()
+                        }
                     }
                     .onDisappear {
                         timer.upstream.connect().cancel()

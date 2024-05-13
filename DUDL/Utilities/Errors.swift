@@ -10,6 +10,7 @@ import Foundation
 enum HTTPError: Error {
     case invalidRequest
     case invalidResponse
+    case emptyResponse
     case decodingError
     case serviceUnavailable
     case unidentifiedUser
