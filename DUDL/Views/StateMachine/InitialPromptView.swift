@@ -10,7 +10,6 @@ import Combine
 
 struct InitialPromptView: View {
     @Binding var prompt: String
-    @Binding var advance: Bool
     private let maxLen = 50 // just to prevent some type of crazy long string
     
 
@@ -76,5 +75,5 @@ struct InitialPromptView: View {
 }
 
 #Preview {
-    InitialPromptView(prompt: .constant("donald trump eating a cheeseburger"), advance: .constant(false))
+    InitialPromptView(prompt: .constant("donald trump eating a cheeseburger"))
 }

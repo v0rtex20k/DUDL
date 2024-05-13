@@ -54,35 +54,40 @@ class GameCollection:
         [self.games.pop(code) for code in empties if code is not None]
 
     def add_game(self, host_id: str, game_code: Optional[str]=None)-> str:
-        while not game_code:
-            potential_game_code = randomname.get_name()
+        if game_code not in self.games:
+            while not game_code:
+                potential_game_code = randomname.get_name()
 
-            if not potential_game_code in self.games:
-                # can't add the same game twice
-                game_code = potential_game_code
+                if not potential_game_code in self.games:
+                    # can't add the same game twice
+                    game_code = potential_game_code
 
-        self.remove_player_from_all_games(host_id)
-        
-        new_game = Game(code=game_code)
-        new_game.add_player(player_id=host_id, is_host=True)
+            self.remove_player_from_all_games(host_id)
+            
+            new_game = Game(code=game_code)
+            new_game.add_player(player_id=host_id, is_host=True)
 
-        self.games[game_code] = new_game
-        current_app.logger.debug(f"Added Game \"{game_code}\" with Host Player {host_id} ...")
+            self.games[game_code] = new_game
+            current_app.logger.debug(f"Added Game \"{game_code}\" with Host Player {host_id} ...")
         return game_code
 
     def add_player_to_game(self, game_code: str, player_id: str):
         try:
-            self.remove_player_from_all_games(player_id, excludes={game_code})
             if not (game := self.games.get(game_code)):
                 raise AttributeError
-            if (is_host := game.get_player_profile(player_id)) is None:
+            
+            if game.started:
+                current_app.logger.warning(f"Refusing to add Player {player_id} to ongoing Game {game_code}...")
+                return
+
+            if player_id not in game.player_profiles:
                 # if they're not already in the game, they can't be the host!
+                self.remove_player_from_all_games(player_id, excludes={game_code})
                 game.add_player(player_id, is_host=False)
                 current_app.logger.debug(f"Added Player {player_id} to Game {game_code}...")
             else:
-                current_app.logger.debug(f"Player {player_id} is already {'hosting' if is_host else 'in' } Game {game_code}...")
-        except NameError:
-            log_and_abort(status.HTTP_400_BAD_REQUEST, f"Duplicate PlayerId: {player_id}")
+                is_host = isinstance(game.player_profiles[player_id], bool) and game.player_profiles[player_id]
+                current_app.logger.debug(f"Player {player_id} is already {'hosting' if is_host else 'in'} Game {game_code}...")
         except AttributeError as ae:
             traceback.print_exception(ae)
             log_and_abort(status.HTTP_404_NOT_FOUND, f"[AG] Game \"{game_code}\" does not exist")

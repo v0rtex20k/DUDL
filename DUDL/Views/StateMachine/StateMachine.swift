@@ -26,12 +26,9 @@ class StateMachine: ObservableObject {
     @Published public var isDone: Bool = false
     @Published public var stateContent: AnyView = AnyView(EmptyView())
     
-    
-    @State private var advance: Bool = false
-    
     @Published private var state: GameState = .notset
-    @Published var inputData: String = ""
-    @Published var outputData: String = ""
+    @Published var downloadData: String = ""
+    @Published var uploadData: String = ""
     
     
     @Published private var alertMessage: String = ""
@@ -67,11 +64,11 @@ class StateMachine: ObservableObject {
     }
 
     
-    func pull() async {
-        await self.restController?.pull(code: self.gameCode) { result in
+    func download() async {
+        await self.restController?.downloadContent(code: self.gameCode, roundIndex: self.roundCount) { result in
             switch result {
-                case .success(let jgr):
-                    self.inputData = jgr.content
+                case .success(let content):
+                    self.downloadData = content
                 case .failure(let error):
                     switch error {
                         case .serviceUnavailable:
@@ -85,11 +82,11 @@ class StateMachine: ObservableObject {
         }
     }
     
-    func push() async {
-        await self.restController?.push(code: self.gameCode, out: self.outputData) { result in
+    func upload() async {
+        await self.restController?.uploadContent(code: self.gameCode, data: self.uploadData, roundIndex: self.roundCount) { result in
             switch result {
             case .success:
-                self.outputData.removeAll()
+                self.uploadData.removeAll()
             case .failure(let error):
                 switch error {
                     case .serviceUnavailable:
@@ -104,61 +101,75 @@ class StateMachine: ObservableObject {
     }
     
     func update() {
-        print("\t \(self.roundDuration - self.secondsElapsed) seconds left in ROUND")
+        print("\t \(self.roundDuration - self.secondsElapsed) seconds left in ROUND \(self.roundCount + 1)/\(self.nRounds)")
         self.secondsElapsed += self.timeStep
-        if self.secondsElapsed > self.roundDuration {
-            print("\tENDING ROUND \(self.roundCount + 1)/\(self.nRounds)")
-            self.roundCount += 1
+        
+        if self.secondsElapsed >= self.roundDuration {
+            print("\tROUND \(self.roundCount + 1)/\(self.nRounds) HAS ENDED")
             self.secondsElapsed = 0
             self.step()
         }
         
-        if self.roundCount >= self.nRounds {
-            self.stop()
-        }
+        
     }
 
     func step() {
-        let inputDataBinding = Binding<String>(
-            get: { self.inputData },
-            set: {self.inputData = $0 }
+        let downloadDataBinding = Binding<String>(
+            get: {self.downloadData},
+            set: {self.downloadData = $0}
         )
 
-        let outputDataBinding = Binding<String>(
-            get: {self.outputData },
-            set: {self.outputData = $0 }
+        let uploadDataBinding = Binding<String>(
+            get: {self.uploadData},
+            set: {self.uploadData = $0}
         )
+        
+        if self.state != .notset {
+            // print("[\(self.state)] UPLOADING \(self.uploadData) ...")
+            
+            Task.detached {
+                await self.upload()     // UPload what YOU did this round
+                                        // TODO: retry on failure / no content?
+            }
+            
+            if (self.roundCount + 1) >= self.nRounds {
+                self.stop()
+                return
+            }
+            
+            Task.detached {
+                await self.download()   // DOWNload what your friend did this round
+                                        // TODO: retry on failure / no content?
+            }
+            
+            // print("[\(self.state)] DOWNLOADED \(self.downloadData) ...")
+            
+            print("SWITCHING ROUNDS: \(self.roundCount) --> \(self.roundCount + 1)")
+            self.roundCount += 1
+        }
+
         
         switch self.state {
             case.notset:
                 print("NS --> IP")
+
                 self.state = .initialPrompt
-                self.stateContent = AnyView(InitialPromptView(prompt: outputDataBinding, advance: $advance))
-                
+                self.stateContent = AnyView(InitialPromptView(prompt: uploadDataBinding))
             case .initialPrompt:
-                print("IP --> DFP w/ \(self.inputData) / \(inputDataBinding.wrappedValue)")
-                Task.detached {
-                    await self.push()
-                }
-            
+                print("IP --> DFP w/ \(self.downloadData) / \(downloadDataBinding.wrappedValue)")
+
                 self.state = .drawFromPrompt
-                self.stateContent =  AnyView(DrawFromPromptView(prompt: inputDataBinding, drawing: outputDataBinding, advance: $advance))
+                self.stateContent =  AnyView(DrawFromPromptView(prompt: downloadDataBinding, drawing: uploadDataBinding))
             case .drawFromPrompt:
-                print("DFP --> PFD")
-                Task.detached {
-                    await self.pull()
-                    await self.push()
-                }
+                print("DFP --> PFD w/ \(self.downloadData) / \(downloadDataBinding.wrappedValue)")
+
                 self.state = .promptFromDrawing
-            self.stateContent = AnyView(PromptFromDrawingView(drawing: inputDataBinding.wrappedValue, prompt: outputDataBinding, advance: $advance))
+                self.stateContent = AnyView(PromptFromDrawingView(drawing: downloadDataBinding, prompt: uploadDataBinding))
             case .promptFromDrawing :
-                print("PFD --> DFP")
-                Task.detached {
-                    await self.pull()
-                    await self.push()
-                }
+                print("PFD --> DFP w/ \(self.downloadData) / \(downloadDataBinding.wrappedValue)")
+
                 self.state = .drawFromPrompt
-                self.stateContent = AnyView(DrawFromPromptView(prompt: inputDataBinding, drawing: outputDataBinding, advance: $advance))
+                self.stateContent = AnyView(DrawFromPromptView(prompt: downloadDataBinding, drawing: uploadDataBinding))
         }
     }
 }

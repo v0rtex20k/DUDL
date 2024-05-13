@@ -287,54 +287,73 @@ struct RestController {
 
     }
     
-    func push(code: String, out: String, completionHandler: @escaping (Result<Bool, HTTPError>) -> Void) async {
-        print("PREPARING TO PUSH: \(out)")
-        guard let uploadData = await self.encodeRequest(PushContentRequest(gameCode: code, playerId: await deviceId(), content: out)) else {
+    func debug(code: String, completionHandler: @escaping (Result<Bool, HTTPError>) -> Void) async {
+        guard let uploadData = await self.encodeRequest(DebugContentRequest(gameCode: code, playerId: await deviceId())) else {
             completionHandler(.failure(.unidentifiedUser))
             return
         }
 
-        return await postAsync(endpoint: "push-content", uploadData: uploadData) { post_result in
+        return await postAsync(endpoint: "debug", uploadData: uploadData) { post_result in
             switch post_result {
                 case .success:
-                    print("Sucessfully pushed PushContent!")
+                    print("Sucessfully processed Debug Response!")
                     completionHandler(.success(true))
                     
                 case .failure(let http_error):
-                    print("Failed to process StartGame Response!")
+                    print("Failed to process Debug Response!")
                     completionHandler(.failure(http_error))
             }
         }
     }
     
-    func pull(code: String, completionHandler: @escaping (Result<PullContentResponse, HTTPError>) -> Void) async {
-        print("PREPARING TO PULL")
-        guard let uploadData = await self.encodeRequest(PullContentRequest(gameCode: code, playerId: await deviceId())) else {
+    func uploadContent(code: String, data: String, roundIndex: Int, completionHandler: @escaping (Result<Bool, HTTPError>) -> Void) async {
+        print("UPLOADING ROUND \(roundIndex + 1) CONTENT \"\(data)\" to Game \(code) ...")
+        guard let uploadData = await self.encodeRequest(UploadContentRequest(gameCode: code, playerId: await deviceId(), content: data, roundIdx: roundIndex)) else {
             completionHandler(.failure(.unidentifiedUser))
             return
         }
 
-        return await postAsync(endpoint: "pull-content", uploadData: uploadData) { post_result in
+        return await postAsync(endpoint: "upload-content", uploadData: uploadData) { post_result in
+            switch post_result {
+                case .success:
+                    print("Sucessfully posted UploadContent")
+                    completionHandler(.success(true))
+                    
+                case .failure(let http_error):
+                    print("Failed to post UploadContent")
+                    completionHandler(.failure(http_error))
+            }
+        }
+    }
+    
+    func downloadContent(code: String, roundIndex: Int, completionHandler: @escaping (Result<String, HTTPError>) -> Void) async {
+        guard let uploadData = await self.encodeRequest(DownloadContentRequest(gameCode: code, playerId: await deviceId(), roundIdx: roundIndex)) else {
+            completionHandler(.failure(.unidentifiedUser))
+            return
+        }
+
+        return await postAsync(endpoint: "download-content", uploadData: uploadData) { post_result in
             do {
                 switch post_result {
                     case .success(let post_data):
-                        let decoded_result = try JSONDecoder().decode(PullContentResponse.self, from: post_data)
+                        let decoded_result = try JSONDecoder().decode(DownloadContentResponse.self, from: post_data)
                         
-                        completionHandler(.success(decoded_result))
-                        print("Sucessfully pulled PullContentResponse!")
+                        completionHandler(.success(decoded_result.content))
+                        print("Sucessfully pulled DownloadContentResponse!")
+                        print("DOWNLOADED ROUND \(roundIndex + 1) CONTENT \(decoded_result.content) from Game \(code) ...")
                         
                     case .failure(let http_error):
-                        print("Failed to process PullContentResponse!")
+                        print("Failed to process DownloadContentResponse!")
                         completionHandler(.failure(http_error))
                 }
             } catch {
-                print("Failed to decode PullContentResponse")
+                print("Failed to decode DownloadContentResponse")
                 completionHandler(.failure(.decodingError))
             }
         }
     }
     
-        
+
     // MARK: Core Functionality
 
     func getAsync(endpoint: String, completionHandler: @escaping (Result<Data, HTTPError>) -> Void) async {
