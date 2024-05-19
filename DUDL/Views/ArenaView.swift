@@ -19,7 +19,7 @@ struct ArenaView: View {
     @Binding var currentView: ViewFinder
     @Binding var restController: RestController
     
-    private let roundDuration: TimeInterval = 10
+    private let roundDuration: TimeInterval = 30
     private let timeStep: TimeInterval = 0.5
     @State private var timeElapsed: TimeInterval = 0
 
@@ -73,7 +73,7 @@ struct ArenaView: View {
        var body: some View {
            let ar = ArenaView(gameCode: .constant("happy-hippo"), nRounds: .constant(2), currentView: $vf, restController: $rc)
            ar.onAppear {
-               Task.detached {
+               Task {
                    await ar.debug()
                }
            }

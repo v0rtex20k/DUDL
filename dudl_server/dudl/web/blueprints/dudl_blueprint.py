@@ -101,12 +101,13 @@ class GetAllActivePlayerProfiles(MethodView):
         game_code: str = abort_if_missing(request, "gameCode")
 
         profiles = collection.get_all_active_profiles_in_game(game_code=game_code)
-        current_app.logger.debug(f"Returning all active players in Game \"{game_code}\": {profiles}")
+        # uncomment as needed
+        # current_app.logger.debug(f"Returning all active players in Game \"{game_code}\": {profiles}")
 
         active_profiles = []
         for p in profiles.values() or []:
             try:
-                active_profiles.append(p.as_dict())
+                active_profiles.append(p.as_dict() | dict(game_code=game_code))
             except:
                 pass
         
@@ -119,8 +120,9 @@ class GameStatus(MethodView):
         game_code: str = abort_if_missing(request, "gameCode")
 
         try:
-            is_started = collection.games[game_code].started
-            current_app.logger.debug(f"Game \"{game_code}\" has{'' if is_started else ' NOT'} started!")
+            # is_started = collection.games[game_code].started
+            # FIXME: uncomment as needed
+            # current_app.logger.debug(f"Game \"{game_code}\" has{'' if is_started else ' NOT'} started!")
             return dict(started=collection.games[game_code].started), status.HTTP_200_OK
         except Exception as e:
             log_and_abort(status.HTTP_404_NOT_FOUND, f"Could not retrieve the status of Game \"{game_code}\": {e}")

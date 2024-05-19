@@ -125,7 +125,7 @@ struct ProfileView : View {
                             Spacer()
                             Button {
                                 if !nickname.isEmpty{
-                                    Task.detached {
+                                    Task {
                                         await updateProfile()
                                     }
                                 }

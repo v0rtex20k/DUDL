@@ -10,7 +10,7 @@ import UIKit
 import PencilKit
 
 struct DrawFromPromptView: View {
-    @StateObject var stateMachine : StateMachine = StateMachine()
+    @ObservedObject var stateMachine : StateMachine
     
     @Environment(\.undoManager) private var undoManager
     

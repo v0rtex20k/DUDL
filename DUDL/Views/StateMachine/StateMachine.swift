@@ -13,29 +13,31 @@ enum GameState {
     case notset, initialPrompt, drawFromPrompt, promptFromDrawing
 }
 
+@MainActor
 class StateMachine: ObservableObject {
-    var gameCode: String = ""
-    @Published var nRounds: Int = 0
+    private var gameCode: String = ""
+    private var nRounds: Int = 0
+    private var timeStep: TimeInterval = 0
+    private var roundDuration: TimeInterval = 0
+    private var restController: RestController? = nil
+    
+    
     @Published var roundCount: Int = 0
     @Published var timer: AnyCancellable? = nil
-    @Published var roundDuration: TimeInterval = 0
-    @Published var timeStep: TimeInterval = 0
     @Published var secondsElapsed: TimeInterval = 0
     @Published var secondsRemaining: TimeInterval = 0
-    var restController: RestController? = nil
-    
     @Published public var isDone: Bool = false
     @Published public var stateContent: AnyView = AnyView(EmptyView())
     
-    @Published private var state: GameState = .notset
     @Published var downloadedData: String = ""
     @Published var dataToUpload: String = ""
+    @Published private var state: GameState = .notset
     
-    
-    @Published private var alertMessage: String = ""
-    @Published private var shouldShowAlert: Bool = false
-    @Published private var shouldShowContent: Bool = true
-    let alertTitle = "Unable to Submit Your Work"
+    @State private var alertMessage: String = ""
+    @State private var shouldShowAlert: Bool = false
+    @State private var shouldShowContent: Bool = true
+
+    private let alertTitle = "Unable to Submit Your Work"
     
     init() {
         print("Initialized the StateMachine")
@@ -66,8 +68,9 @@ class StateMachine: ObservableObject {
 
     
     func download() async {
-        await self.restController?.downloadContent(code: self.gameCode, roundIndex: self.roundCount) { result in
-            switch result {
+        if let download_result = await self.restController?.downloadContent(code: self.gameCode, roundIndex: self.roundCount) {
+            await MainActor.run {
+                switch download_result {
                 case .success(let content):
                     self.downloadedData = content
                 case .failure(let error):
@@ -79,24 +82,28 @@ class StateMachine: ObservableObject {
                     }
                     self.shouldShowAlert = true
                     print(error.localizedDescription)
+                }
             }
         }
     }
     
+    
     func upload() async {
-        await self.restController?.uploadContent(code: self.gameCode, data: self.dataToUpload, roundIndex: self.roundCount) { result in
-            switch result {
-            case .success:
-                self.dataToUpload.removeAll()
-            case .failure(let error):
-                switch error {
-                    case .serviceUnavailable:
-                        self.alertMessage = "Failed to connect to server \n Please check your internet connection"
-                    default:
-                        self.alertMessage = "Something went wrong \n Please try again later"
+        if let download_result = await self.restController?.uploadContent(code: self.gameCode, data: self.dataToUpload, roundIndex: self.roundCount) {
+            await MainActor.run {
+                switch download_result {
+                    case .success(_):
+                        self.dataToUpload.removeAll()  // clear it for the next round
+                    case .failure(let error):
+                        switch error {
+                            case .serviceUnavailable:
+                                self.alertMessage = "Failed to connect to server \n Please check your internet connection"
+                            default:
+                                self.alertMessage = "Something went wrong \n Please try again later"
+                        }
+                        self.shouldShowAlert = true
+                        print(error.localizedDescription)
                 }
-                self.shouldShowAlert = true
-                print(error.localizedDescription)
             }
         }
     }
@@ -150,7 +157,7 @@ class StateMachine: ObservableObject {
                 print("IP --> DFP w/ \(self.downloadedData) / \(self.dataToUpload)")
 
                 self.state = .drawFromPrompt
-                self.stateContent =  AnyView(DrawFromPromptView())
+                self.stateContent =  AnyView(DrawFromPromptView(stateMachine: self))
             case .drawFromPrompt:
                 print("DFP --> PFD w/ \(self.downloadedData) / \(self.dataToUpload)")
 
@@ -160,7 +167,7 @@ class StateMachine: ObservableObject {
                 print("PFD --> DFP w/ \(self.downloadedData) / \(self.dataToUpload)")
 
                 self.state = .drawFromPrompt
-                self.stateContent = AnyView(DrawFromPromptView())
+                self.stateContent = AnyView(DrawFromPromptView(stateMachine: self))
         }
     }
 }

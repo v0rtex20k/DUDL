@@ -20,7 +20,7 @@ class Game:
     def start(self):
         if not self.started:
             n_players = len(self.player_profiles or [])
-            if n_players > 0: # FIXME: REMOVE
+            if n_players > 0:
                 self.started = True
 
                 batting_order = deepcopy(list(self.player_profiles.keys()))
@@ -66,8 +66,6 @@ class Game:
         self.results[player_id][round_idx] = content
 
     def download_content(self, player_id: str, round_idx: int)-> str:
-        # return self.results[self.player_profiles[player_id].source][round_idx]
-        # FIXME: REMOVE
-        return self.results[self.player_profiles[player_id]][round_idx]
+        return self.results[self.player_profiles[player_id].source][round_idx]
                 
                 

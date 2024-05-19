@@ -62,6 +62,7 @@ struct LobbyView : View {
         await restController.removePlayer(code: gameCode) { result in
             switch result {
             case .success:
+                timer.upstream.connect().cancel()
                 currentView = .lobby
                 print("Successfully left \(gameCode)")
             case .failure(let error):
@@ -84,6 +85,7 @@ struct LobbyView : View {
             switch result {
                 case .success:
                     playerProfiles = playerProfiles.filter(){p in p.playerId == pid}
+                    timer.upstream.connect().cancel()
                     print("Removed \(pid) --> Remaining Players: \(dump(playerProfiles))")
                 case .failure(let error):
                     switch error {
@@ -100,14 +102,15 @@ struct LobbyView : View {
     
     func pollGameStatus() {
         // you can't play by yourself :)
-        if !gameCode.isEmpty && playerProfiles.count > 0 { // FIXME: REMOVE
-            Task.detached {
+        if !gameCode.isEmpty && playerProfiles.count > 1 {
+            Task {
                 await restController.gameStatus(code: gameCode) { result in
                     switch result {
                     case .success(let gsr):
                         if gsr.started {
                             print("LET THE GAMES BEGIN")
                             playerCount = playerProfiles.count
+                            timer.upstream.connect().cancel()
                             currentView = .arena
                         } else {
                             print("Still waiting for the game to start ...")
@@ -130,11 +133,12 @@ struct LobbyView : View {
     
     func startGame() async {
         // you can't play by yourself :)
-        if playerProfiles.count > 0 { // FIXME: REMOVE
+        if playerProfiles.count > 1 {
             await restController.startGame(code: gameCode) { result in
                 switch result {
                     case .success:
                         playerCount = playerProfiles.count
+                        timer.upstream.connect().cancel()
                         currentView = .arena
                         print("THE GAME HAS BEEN STARTED")
                     case .failure(let error):
@@ -166,7 +170,7 @@ struct LobbyView : View {
                                         if selfSelect || isHost {
                                             Button(role: .destructive) {
                                                 print("\(deviceUUID) VS \(profile.playerId)")
-                                                Task.detached {
+                                                Task {
                                                     await selfSelect ? leaveGame() : eject(profile.playerId)
                                                 }
                                                 let impact = UIImpactFeedbackGenerator(style: .medium)
@@ -217,7 +221,7 @@ struct LobbyView : View {
                         ToolbarItem(placement: .bottomBar) {
                             if isHost {
                                 Button {
-                                    Task.detached {
+                                    Task {
                                         await startGame()
                                     }
                                 } label : {

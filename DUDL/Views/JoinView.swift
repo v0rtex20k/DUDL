@@ -50,7 +50,7 @@ struct JoinView : View {
         if isValidGameCode(code) {
             print("Attempting to join Game \"\(code)\"...")
             shouldShowContent = false
-            Task.detached {
+            Task {
                 await joinGame()
             }
         } else {
