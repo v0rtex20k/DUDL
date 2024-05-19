@@ -35,7 +35,7 @@ struct RestController {
         // add more as needed
     }
     
-    init(host: String = "192.168.1.7", port: Int = 8001, maxRetryCount: Int = 1, retryDelay: TimeInterval = 5, requestTimeout: TimeInterval = 10) {
+    init(host: String = "192.168.1.7", port: Int = 8001, maxRetryCount: Int = 3, retryDelay: TimeInterval = 1, requestTimeout: TimeInterval = 5) {
         self._host = host
         self._port = port
         self._maxRetryCount = maxRetryCount
@@ -364,19 +364,20 @@ struct RestController {
         return await self._performRequest(endpoint: endpoint, type: .POST, uploadData: uploadData, completionHandler: completionHandler)
     }
 
-    func _performRequest(endpoint: String, type: RequestType, uploadData: Data?, completionHandler: @escaping (Result<Data, HTTPError>) -> Void) async {
+    func _performRequest(endpoint: String, type: RequestType, uploadData: Data?, failOnEmpty: Bool = false, completionHandler: @escaping (Result<Data, HTTPError>) -> Void) async {
             
             var status_code: Int = 0
+            var returnedData: Data = Data()
             
             let url_str = "http://\(self._host):\(self._port)/\(endpoint)"
             let url = URL(string: url_str)
             
-            for _ in 0..<self._maxRetryCount {
+            retryLoop : for _ in 0..<self._maxRetryCount {
                 do {
                     switch type {
                         case .POST:
                             print("POST-ing to \(url_str) ...")
-                        var request = URLRequest(url: url!,
+                            var request = URLRequest(url: url!,
                                                  cachePolicy: .useProtocolCachePolicy,
                                                  timeoutInterval: self._requestTimeout)
                             request.httpMethod = "POST"
@@ -395,13 +396,18 @@ struct RestController {
                             if let httpResponse = response as? HTTPURLResponse {
                                 status_code = httpResponse.statusCode
                             }
+                        
+                            returnedData = responseData
                             
-                            completionHandler(.success(responseData))
-                            return
+                            if 200..<300 ~= status_code {
+                                break retryLoop // if you've got something, run w/ it
+                            }
                             
                         case .GET:
                             print("GET-ing from \(url_str) ...")
                             let (responseData, response) = try await URLSession.shared.data(from: url!)
+                        
+                            returnedData = responseData
                             
                             guard let httpResponse = response as? HTTPURLResponse else {
                                 completionHandler(.failure(.invalidResponse))
@@ -410,8 +416,9 @@ struct RestController {
                         
                             status_code = httpResponse.statusCode
                             
-                            completionHandler(.success(responseData))
-                            return
+                            if 200..<300 ~= status_code {
+                                break retryLoop // if you've got something, run w/ it
+                            }
                         default:
                             print("Unable to handle \"\(url_str)\" request ...")
                             completionHandler(.failure(.invalidRequest))
@@ -429,7 +436,7 @@ struct RestController {
                 case 0:
                     completionHandler(.failure(.unidentifiedUser))
                 case 200..<300:
-                    completionHandler(.failure(.invalidResponse))
+                    completionHandler(failOnEmpty && status_code == 204 ? .failure(.emptyResponse) : .success(returnedData))
                 case 300..<500:
                     completionHandler(.failure(.invalidRequest))
                 case 500...:

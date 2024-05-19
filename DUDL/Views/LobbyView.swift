@@ -100,7 +100,7 @@ struct LobbyView : View {
     
     func pollGameStatus() {
         // you can't play by yourself :)
-        if !gameCode.isEmpty && playerProfiles.count > 1 {
+        if !gameCode.isEmpty && playerProfiles.count > 0 { // FIXME: REMOVE
             Task.detached {
                 await restController.gameStatus(code: gameCode) { result in
                     switch result {
@@ -130,7 +130,7 @@ struct LobbyView : View {
     
     func startGame() async {
         // you can't play by yourself :)
-        if playerProfiles.count > 1 {
+        if playerProfiles.count > 0 { // FIXME: REMOVE
             await restController.startGame(code: gameCode) { result in
                 switch result {
                     case .success:
@@ -191,6 +191,9 @@ struct LobbyView : View {
                     }
                     .onReceive(timer) { _ in
                         pollGameStatus()
+                        Task.detached{
+                            await loadAllPlayerProfiles()
+                        }
                     }
                     .onDisappear {
                         timer.upstream.connect().cancel()

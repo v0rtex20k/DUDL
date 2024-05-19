@@ -23,7 +23,7 @@ struct ArenaView: View {
     private let timeStep: TimeInterval = 0.5
     @State private var timeElapsed: TimeInterval = 0
 
-    @StateObject var stateMachine : StateMachine = StateMachine()
+    @ObservedObject var stateMachine : StateMachine = StateMachine()
     
     func debug() async {
         await self.restController.debug(code: self.gameCode) { result in
@@ -48,7 +48,8 @@ struct ArenaView: View {
             Color.black.ignoresSafeArea(edges: .all)
             VStack {
                 Spacer()
-                stateMachine.stateContent.onChange(of: stateMachine.isDone) {
+                stateMachine.stateContent
+                .onChange(of: stateMachine.isDone) {
                     print("The \(gameCode) Game is complete")
                     currentView = .end
                 }

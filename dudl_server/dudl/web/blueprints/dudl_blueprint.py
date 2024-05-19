@@ -20,13 +20,16 @@ class Debug(MethodView):
         # NOTE: FOR DEBUG PURPOSES ONLY!!
         game_code, player_id = abort_if_missing(request, "gameCode", "playerId")
 
-        fake_uuid = "F01959E7-CA61-42FA-B4C2-BA5775F7D146"
+        fake_uuid_1 = "F01959E7-CA61-42FA-B4C2-BA5775F7D146"
+        fake_uuid_2 = "CC4B4E2E-5CEB-4007-8C4E-B3C1B8113182"
         collection.add_game(host_id=player_id, game_code=game_code)
         
-        collection.add_player_to_game(game_code=game_code, player_id=fake_uuid)
+        collection.add_player_to_game(game_code=game_code, player_id=fake_uuid_1)
+        collection.add_player_to_game(game_code=game_code, player_id=fake_uuid_2)
 
         collection.update_player_profile_in_game(game_code=game_code, player_id=player_id, nickname="Yoda", rgba=dict(r=0, g=255, b=0, a=0.5))
-        collection.update_player_profile_in_game(game_code=game_code, player_id=fake_uuid, nickname="Darth Vader", rgba=dict(r=255, g=0, b=0, a=0.5))
+        collection.update_player_profile_in_game(game_code=game_code, player_id=fake_uuid_1, nickname="Darth Vader", rgba=dict(r=255, g=0, b=0, a=0.5))
+        collection.update_player_profile_in_game(game_code=game_code, player_id=fake_uuid_2, nickname="Obi-Wan Kenobi", rgba=dict(r=0, g=0, b=255, a=0.5))
 
         collection.games[game_code].start()
 
@@ -162,6 +165,10 @@ class DownloadContent(MethodView):
             content = collection.games[game_code].download_content(player_id=player_id, round_idx=round_idx)
             current_app.logger.debug(f"Downloading Player <{player_id}>'s content for Round {round_idx} of Game \"{game_code}\":\t\"{content}\" ...")
             
-            return dict(content=content), status.HTTP_200_OK if content else status.HTTP_204_NO_CONTENT
+            if content:
+                return dict(content=content), status.HTTP_200_OK
+            else:
+                current_app.logger.warning(f"Got null content for Player <{player_id}>'s content for Round {round_idx} of Game \"{game_code}\"")
+                return {}, status.HTTP_204_NO_CONTENT
         except Exception as e:
             log_and_abort(status.HTTP_404_NOT_FOUND, f"Failed to download Player <{player_id}>'s content for Round {round_idx} of Game \"{game_code}\": {e}")

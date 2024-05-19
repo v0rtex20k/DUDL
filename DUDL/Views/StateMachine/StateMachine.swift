@@ -15,20 +15,21 @@ enum GameState {
 
 class StateMachine: ObservableObject {
     var gameCode: String = ""
-    var nRounds: Int = 0
-    var roundCount: Int = 0
-    var timer: AnyCancellable? = nil
-    var roundDuration: TimeInterval = 0
-    var timeStep: TimeInterval = 0
-    var secondsElapsed: TimeInterval = 0
+    @Published var nRounds: Int = 0
+    @Published var roundCount: Int = 0
+    @Published var timer: AnyCancellable? = nil
+    @Published var roundDuration: TimeInterval = 0
+    @Published var timeStep: TimeInterval = 0
+    @Published var secondsElapsed: TimeInterval = 0
+    @Published var secondsRemaining: TimeInterval = 0
     var restController: RestController? = nil
     
     @Published public var isDone: Bool = false
     @Published public var stateContent: AnyView = AnyView(EmptyView())
     
     @Published private var state: GameState = .notset
-    @Published var downloadData: String = ""
-    @Published var uploadData: String = ""
+    @Published var downloadedData: String = ""
+    @Published var dataToUpload: String = ""
     
     
     @Published private var alertMessage: String = ""
@@ -68,7 +69,7 @@ class StateMachine: ObservableObject {
         await self.restController?.downloadContent(code: self.gameCode, roundIndex: self.roundCount) { result in
             switch result {
                 case .success(let content):
-                    self.downloadData = content
+                    self.downloadedData = content
                 case .failure(let error):
                     switch error {
                         case .serviceUnavailable:
@@ -83,10 +84,10 @@ class StateMachine: ObservableObject {
     }
     
     func upload() async {
-        await self.restController?.uploadContent(code: self.gameCode, data: self.uploadData, roundIndex: self.roundCount) { result in
+        await self.restController?.uploadContent(code: self.gameCode, data: self.dataToUpload, roundIndex: self.roundCount) { result in
             switch result {
             case .success:
-                self.uploadData.removeAll()
+                self.dataToUpload.removeAll()
             case .failure(let error):
                 switch error {
                     case .serviceUnavailable:
@@ -101,31 +102,21 @@ class StateMachine: ObservableObject {
     }
     
     func update() {
-        print("\t \(self.roundDuration - self.secondsElapsed) seconds left in ROUND \(self.roundCount + 1)/\(self.nRounds)")
-        self.secondsElapsed += self.timeStep
+        print("\t \(roundDuration - secondsElapsed) seconds left in ROUND \(roundCount + 1)/\(nRounds)")
+        secondsElapsed += timeStep
         
-        if self.secondsElapsed >= self.roundDuration {
-            print("\tROUND \(self.roundCount + 1)/\(self.nRounds) HAS ENDED")
-            self.secondsElapsed = 0
-            self.step()
+        if secondsElapsed >= roundDuration {
+            print("\tROUND \(roundCount + 1)/\(nRounds) HAS ENDED")
+            secondsElapsed = 0
+            step()
         }
         
         
     }
 
     func step() {
-        let downloadDataBinding = Binding<String>(
-            get: {self.downloadData},
-            set: {self.downloadData = $0}
-        )
-
-        let uploadDataBinding = Binding<String>(
-            get: {self.uploadData},
-            set: {self.uploadData = $0}
-        )
-        
         if self.state != .notset {
-            // print("[\(self.state)] UPLOADING \(self.uploadData) ...")
+             print("[\(self.state)] UPLOADING \(self.dataToUpload) ...")
             
             Task.detached {
                 await self.upload()     // UPload what YOU did this round
@@ -142,7 +133,7 @@ class StateMachine: ObservableObject {
                                         // TODO: retry on failure / no content?
             }
             
-            // print("[\(self.state)] DOWNLOADED \(self.downloadData) ...")
+             print("[\(self.state)] DOWNLOADED \(self.downloadedData) ...")
             
             print("SWITCHING ROUNDS: \(self.roundCount) --> \(self.roundCount + 1)")
             self.roundCount += 1
@@ -151,25 +142,25 @@ class StateMachine: ObservableObject {
         
         switch self.state {
             case.notset:
-                print("NS --> IP")
+                print("NS --> IP w/ \(self.downloadedData) / \(self.dataToUpload)")
 
                 self.state = .initialPrompt
-                self.stateContent = AnyView(InitialPromptView(prompt: uploadDataBinding))
+                self.stateContent = AnyView(InitialPromptView(stateMachine: self))
             case .initialPrompt:
-                print("IP --> DFP w/ \(self.downloadData) / \(downloadDataBinding.wrappedValue)")
+                print("IP --> DFP w/ \(self.downloadedData) / \(self.dataToUpload)")
 
                 self.state = .drawFromPrompt
-                self.stateContent =  AnyView(DrawFromPromptView(prompt: downloadDataBinding, drawing: uploadDataBinding))
+                self.stateContent =  AnyView(DrawFromPromptView())
             case .drawFromPrompt:
-                print("DFP --> PFD w/ \(self.downloadData) / \(downloadDataBinding.wrappedValue)")
+                print("DFP --> PFD w/ \(self.downloadedData) / \(self.dataToUpload)")
 
                 self.state = .promptFromDrawing
-                self.stateContent = AnyView(PromptFromDrawingView(drawing: downloadDataBinding, prompt: uploadDataBinding))
+                self.stateContent = AnyView(PromptFromDrawingView())
             case .promptFromDrawing :
-                print("PFD --> DFP w/ \(self.downloadData) / \(downloadDataBinding.wrappedValue)")
+                print("PFD --> DFP w/ \(self.downloadedData) / \(self.dataToUpload)")
 
                 self.state = .drawFromPrompt
-                self.stateContent = AnyView(DrawFromPromptView(prompt: downloadDataBinding, drawing: uploadDataBinding))
+                self.stateContent = AnyView(DrawFromPromptView())
         }
     }
 }
