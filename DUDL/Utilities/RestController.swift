@@ -35,7 +35,7 @@ struct RestController {
         // add more as needed
     }
     
-    init(host: String, port: Int, maxRetryCount: Int = 10, retryDelay: TimeInterval = 1, requestTimeout: TimeInterval = 5) {
+    init(host: String, port: Int, maxRetryCount: Int = 5, retryDelay: TimeInterval = 1, requestTimeout: TimeInterval = 5) {
         self._host = host
         self._port = port
         self._maxRetryCount = maxRetryCount

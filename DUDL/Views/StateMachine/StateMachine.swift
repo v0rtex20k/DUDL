@@ -93,7 +93,7 @@ class StateMachine: ObservableObject {
             await MainActor.run {
                 switch download_result {
                     case .success(_):
-                        self.dataToUpload.removeAll()  // clear it for the next round
+                        self.dataToUpload.removeAll()
                     case .failure(let error):
                         switch error {
                             case .serviceUnavailable:
@@ -127,7 +127,6 @@ class StateMachine: ObservableObject {
             
             Task.detached {
                 await self.upload()     // UPload what YOU did this round
-                                        // TODO: retry on failure / no content?
             }
             
             if (self.roundCount + 1) >= self.nRounds {
@@ -135,6 +134,7 @@ class StateMachine: ObservableObject {
                 return
             }
             
+            self.downloadedData.removeAll()
             Task.detached {
                 await self.download()   // DOWNload what your friend did this round
                                         // TODO: retry on failure / no content?
@@ -162,7 +162,7 @@ class StateMachine: ObservableObject {
                 print("DFP --> PFD w/ \(self.downloadedData) / \(self.dataToUpload)")
 
                 self.state = .promptFromDrawing
-                self.stateContent = AnyView(PromptFromDrawingView())
+                self.stateContent = AnyView(PromptFromDrawingView(stateMachine: self))
             case .promptFromDrawing :
                 print("PFD --> DFP w/ \(self.downloadedData) / \(self.dataToUpload)")
 

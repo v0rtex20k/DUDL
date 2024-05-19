@@ -12,7 +12,7 @@ import PencilKit
 struct PromptFromDrawingView: View {
     private let maxLen = 50 // just to prevent some type of crazy long string
 
-    @StateObject var stateMachine : StateMachine = StateMachine()
+    @ObservedObject var stateMachine : StateMachine
         
     @State var canvasView = PKCanvasView()
     
@@ -39,7 +39,7 @@ struct PromptFromDrawingView: View {
                             .lineLimit(5)
                             .textInputAutocapitalization(.never)
                             .disableAutocorrection(true)
-                            .onReceive(Just(stateMachine.dataToUpload)) { _ in
+                            .onChange(of: stateMachine.dataToUpload) {
                                 limitText()
                             }
                             .foregroundStyle(.black)
@@ -48,7 +48,7 @@ struct PromptFromDrawingView: View {
                             .frame(width: 0.8 * geo.size.width)
                             .fixedSize(horizontal: false, vertical: true)
                             .font(Font.custom("Galvji", size: 24))
-                        Text("\($stateMachine.dataToUpload.wrappedValue.count) / \(maxLen)")
+                        Text("\(stateMachine.dataToUpload.count) / \(maxLen)")
                             .padding()
                             .foregroundStyle(Color(primary_color))
                             .font(Font.custom("Galvji", size: 16))
@@ -72,12 +72,12 @@ struct PromptFromDrawingView: View {
                         Spacer()
                         
                     }
-                }.onAppear {
+                }.onChange(of: stateMachine.downloadedData) {
                     do {
                         canvasView.drawing = try PKDrawing(base64Encoded: stateMachine.downloadedData)
                     } catch {
                         canvasView.drawing = PKDrawing()
-                        print("Error info: \(error)")
+                        print("[PFD] Failed to render drawing: \(error)")
                     }
                 }
             }

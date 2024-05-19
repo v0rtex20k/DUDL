@@ -31,7 +31,6 @@ struct InitialPromptView: View {
                         Spacer()
                         Text("Say something funny")
                             .padding()
-                            .border(Color.green)
                             .foregroundStyle(Color(primary_color))
                             .font(Font.custom("Galvji", size: 18))
                         TextField("something-funny", text: $stateMachine.dataToUpload, axis: .vertical)
