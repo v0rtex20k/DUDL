@@ -34,10 +34,26 @@ struct ProfileView : View {
     }
     
     func updateProfile() async {
-        let c = playerColor.resolve(in: env)
+        var rgba: RGBA? = nil
+        if #available(iOS 17.0, *) {
+            let c = playerColor.resolve(in: env)
+            rgba = RGBA(r: c.red, g: c.green, b: c.blue, a: c.opacity)
+        } else {
+            var red: CGFloat = 0
+            var green: CGFloat = 0
+            var blue: CGFloat = 0
+            var alpha: CGFloat = 0
+
+            UIColor(playerColor).getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+            
+            rgba = RGBA(r: Float(red), g: Float(green), b: Float(blue), a: Float(alpha))
+        }
+        
+        
+        
+        
         shouldShowContent = false
-        print("Attempting to Update Player Profile \"\(nickname)\" in \(gameCode) : \(c.description) ...")
-        await restController.updatePlayerProfile(code: gameCode, nickname: nickname, rgba: RGBA(r: c.red, g: c.green, b: c.blue, a: c.opacity)) { result in
+        await restController.updatePlayerProfile(code: gameCode, nickname: nickname, rgba: rgba!) { result in
             wasSubmitted = true
             switch result {
             case .success(let uppr):
@@ -97,17 +113,29 @@ struct ProfileView : View {
                                     } label: {
                                         ZStack {
                                             RoundedRectangle(cornerRadius: 5)
-                                                .fill(Color.white.gradient)
+                                                .apply {
+                                                    if #available(iOS 16.0, *) {
+                                                        $0.fill(Color.white.gradient)
+                                                    } else {
+                                                        $0.fill(Color.white)
+                                                    }
+                                                }
                                                 .frame(width: minDim * 0.55, height: 45, alignment: .center)
                                                 .shadow(radius: 3)
                                                 .zIndex(1)
                                             RoundedRectangle(cornerRadius: 10)
-                                                .fill(playerColor.gradient)
+                                                .apply {
+                                                    if #available(iOS 16.0, *) {
+                                                        $0.fill(playerColor.gradient)
+                                                    } else {
+                                                        $0.fill(playerColor)
+                                                    }
+                                                }
                                                 .frame(width: minDim * 0.75, height: minDim * 0.75, alignment: .center)
                                                 .shadow(radius: 3)
-                                                .shadow(color: Color(playerColor), radius: 10)
-                                                .shadow(color: Color(playerColor), radius: 20)
-                                                .shadow(color: Color(playerColor), radius: 30)
+                                                .shadow(color: playerColor, radius: 10)
+                                                .shadow(color: playerColor, radius: 20)
+                                                .shadow(color: playerColor, radius: 30)
                                             ColorPicker("", selection: $playerColor, supportsOpacity: true).labelsHidden().opacity(0.015)
                                         }
                                     }

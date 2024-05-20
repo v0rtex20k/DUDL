@@ -159,31 +159,50 @@ struct LobbyView : View {
     var body: some View {
         BlackDraggableZStack(currentView: $currentView, dragToView: .profile, onDragEndFunc: nil) {
             RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent, contentValue: $gameCode) { code in
-                NavigationStack {
+                AvailableNavigationStack {
                     GeometryReader { geo in
                         ScrollView(.vertical) {
                             ForEach(playerProfiles, id: \.playerId) {profile in
                                 let selfSelect = deviceUUID == profile.playerId
                                 ProfileCardView(size: geo.size, playerProfile: profile)
                                     .contentShape(.contextMenuPreview, RoundedRectangle(cornerRadius: 10))
-                                    .contextMenu {
-                                        if selfSelect || isHost {
-                                            Button(role: .destructive) {
-                                                print("\(deviceUUID) VS \(profile.playerId)")
-                                                Task {
-                                                    await selfSelect ? leaveGame() : eject(profile.playerId)
+                                    .apply {
+                                        if #available(iOS 16, *) {
+                                            $0.contextMenu {
+                                                if selfSelect || isHost {
+                                                    Button(role: .destructive) {
+                                                        print("\(deviceUUID) VS \(profile.playerId)")
+                                                        Task {
+                                                            await selfSelect ? leaveGame() : eject(profile.playerId)
+                                                        }
+                                                        let impact = UIImpactFeedbackGenerator(style: .medium)
+                                                        impact.impactOccurred()
+                                                    } label: {
+                                                        Label(selfSelect ? "Leave Game" : "Remove \"\(profile.nickname)\" from Game", systemImage: selfSelect ? "arrow.turn.up.left" : "xmark.octagon.fill")
+                                                    }
                                                 }
-                                                let impact = UIImpactFeedbackGenerator(style: .medium)
-                                                impact.impactOccurred()
-                                            } label: {
-                                                Label(selfSelect ? "Leave Game" : "Remove \"\(profile.nickname)\" from Game", systemImage: selfSelect ? "arrow.turn.up.left" : "xmark.octagon.fill")
+                                            }
+                                            preview: {
+                                                ProfileCardView(size: geo.size, playerProfile: profile)
+                                                    .background(Color.black).ignoresSafeArea(.all)
+                                                
+                                            }
+                                        } else {
+                                            $0.contextMenu {
+                                                if selfSelect || isHost {
+                                                    Button(role: .destructive) {
+                                                        print("\(deviceUUID) VS \(profile.playerId)")
+                                                        Task {
+                                                            await selfSelect ? leaveGame() : eject(profile.playerId)
+                                                        }
+                                                        let impact = UIImpactFeedbackGenerator(style: .medium)
+                                                        impact.impactOccurred()
+                                                    } label: {
+                                                        Label(selfSelect ? "Leave Game" : "Remove \"\(profile.nickname)\" from Game", systemImage: selfSelect ? "arrow.turn.up.left" : "xmark.octagon.fill")
+                                                    }
+                                                }
                                             }
                                         }
-                                    }
-                                    preview: {
-                                        ProfileCardView(size: geo.size, playerProfile: profile)
-                                            .background(Color.black).ignoresSafeArea(.all)
-                                        
                                     }
                                 Spacer()
                             }
@@ -234,12 +253,24 @@ struct LobbyView : View {
                             }
                         }
                     }
-                    .toolbarBackground(.hidden, for: .navigationBar)
-                    .toolbarBackground(.hidden, for: .bottomBar)
+                    .apply {
+                        if #available(iOS 16.0, *) {
+                            $0
+                                .toolbarBackground(.hidden, for: .navigationBar)
+                                .toolbarBackground(.hidden, for: .bottomBar)
+                        } else {
+                            // ignore
+                        }
+                    }
 
                 }
-                .toolbarBackground(.hidden)
-
+                .apply {
+                    if #available(iOS 16.0, *) {
+                        $0.toolbarBackground(.hidden)
+                    } else {
+                        // ignore
+                    }
+                }
             }
         }
     }

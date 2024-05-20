@@ -15,6 +15,26 @@ struct TextWrapper: Identifiable {
     let text: String
 }
 
+struct AvailableShareLink : View {
+    var gameCode: String
+    var code: Binding<String>
+
+    var body: some View {
+        
+        let t = Text(code.wrappedValue)
+                .font(Font.custom("Galvji", size: 24))
+                .foregroundColor(Color(primary_color))
+                .shadow(color: Color(primary_color), radius: 20)
+                .shadow(color: Color(primary_color), radius: 30)
+        
+        if #available(iOS 16, *) {
+            ShareLink(item: "Let's DÜDL: \(gameCode)") { t }
+        } else {
+            t
+        }
+    }
+}
+
 struct CreateView : View {
     @State private var shouldShowContent: Bool = false
     @State private var shouldShowAlert: Bool = false
@@ -49,13 +69,7 @@ struct CreateView : View {
         BlackDraggableZStack(currentView: $currentView, dragToView: .home, onDragEndFunc: nil) {
             RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent, contentValue: $gameCode) { code in
                     VStack{
-                        ShareLink(item: "Let's DÜDL: \(gameCode)") {
-                            Text(code.wrappedValue)
-                                .font(Font.custom("Galvji", size: 24))
-                                .foregroundColor(Color(primary_color))
-                                .shadow(color: Color(primary_color), radius: 20)
-                                .shadow(color: Color(primary_color), radius: 30)
-                        }
+                        AvailableShareLink(gameCode: gameCode, code: code)
                         Text("Tap the code to share")
                             .padding()
                             .foregroundColor(Color(primary_color))

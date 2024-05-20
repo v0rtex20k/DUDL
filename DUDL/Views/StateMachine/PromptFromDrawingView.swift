@@ -9,6 +9,34 @@ import SwiftUI
 import Combine
 import PencilKit
 
+struct AvailableNavigationStack<Content>: View where Content: View {
+    @ViewBuilder var content: () -> Content
+    
+    var body: some View {
+        if #available(iOS 16, *) {
+            NavigationStack(root: content)
+        } else {
+            ZStack(content: content)
+        }
+    }
+}
+
+struct AvailableTextField: View {
+    var defaultText: String
+    var bodyText: Binding<String>
+    
+    var body: some View {
+        if #available(iOS 16, *) {
+            TextField(defaultText, text: bodyText, axis: .vertical)
+        } else {
+            TextField(defaultText, text: bodyText)
+        }
+    }
+    
+}
+
+
+
 struct PromptFromDrawingView: View {
     private let maxLen = 50 // just to prevent some type of crazy long string
 
@@ -25,7 +53,7 @@ struct PromptFromDrawingView: View {
     }
     
     var body: some View {
-        NavigationStack {
+        AvailableNavigationStack {
             GeometryReader { geo in
                 ZStack {
                     Color.black.edgesIgnoringSafeArea(.all)
@@ -35,12 +63,20 @@ struct PromptFromDrawingView: View {
                             .padding()
                             .foregroundStyle(Color(primary_color))
                             .font(Font.custom("Galvji", size: 18))
-                        TextField("image-description", text: $stateMachine.dataToUpload, axis: .vertical)
+                            AvailableTextField(defaultText: "image-description", bodyText: $stateMachine.dataToUpload)
                             .lineLimit(5)
                             .textInputAutocapitalization(.never)
                             .disableAutocorrection(true)
-                            .onChange(of: stateMachine.dataToUpload) {
-                                limitText()
+                            .apply {
+                                if #available(iOS 17.0, *) {
+                                    $0.onChange(of: stateMachine.dataToUpload) {
+                                        limitText()
+                                    }
+                                } else {
+                                    $0.onChange(of: stateMachine.dataToUpload) { _ in
+                                        limitText()
+                                    }
+                                }
                             }
                             .foregroundStyle(.black)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -72,12 +108,26 @@ struct PromptFromDrawingView: View {
                         Spacer()
                         
                     }
-                }.onChange(of: stateMachine.downloadedData) {
-                    do {
-                        canvasView.drawing = try PKDrawing(base64Encoded: stateMachine.downloadedData)
-                    } catch {
-                        canvasView.drawing = PKDrawing()
-                        print("[PFD] Failed to render drawing: \(error)")
+                }
+                .apply {
+                    if #available(iOS 17.0, *) {
+                        $0.onChange(of: stateMachine.downloadedData) {
+                            do {
+                                canvasView.drawing = try PKDrawing(base64Encoded: stateMachine.downloadedData)
+                            } catch {
+                                canvasView.drawing = PKDrawing()
+                                print("[PFD] Failed to render drawing: \(error)")
+                            }
+                        }
+                    } else {
+                        $0.onChange(of: stateMachine.downloadedData) { ddata in
+                            do {
+                                canvasView.drawing = try PKDrawing(base64Encoded: ddata)
+                            } catch {
+                                canvasView.drawing = PKDrawing()
+                                print("[PFD] Failed to render drawing: \(error)")
+                            }
+                        }
                     }
                 }
             }
@@ -91,7 +141,13 @@ struct PromptFromDrawingView: View {
                     }
                 }
             }
-            .toolbarBackground(.hidden, for: .automatic)
+            .apply {
+                if #available(iOS 16.0, *) {
+                    $0.toolbarBackground(.hidden, for: .automatic)
+                } else {
+                    // ignore
+                }
+            }
             .onTapGesture {
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }

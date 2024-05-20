@@ -14,6 +14,11 @@ extension Color {
     }
 }
 
+extension View {
+    func apply<V: View>(@ViewBuilder _ block: (Self) -> V) -> V { return block(self) }
+}
+
+
 
 class UIColorWellHelper: NSObject {
     static let helper = UIColorWellHelper()

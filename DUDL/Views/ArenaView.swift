@@ -49,9 +49,20 @@ struct ArenaView: View {
             VStack {
                 Spacer()
                 stateMachine.stateContent
-                .onChange(of: stateMachine.isDone) {
-                    print("The \(gameCode) Game is complete")
-                    currentView = .end
+                .apply {
+                    if #available(iOS 17.0, *) {
+                        $0.onChange(of: stateMachine.isDone) {
+                            print("The \(gameCode) Game is complete")
+                            currentView = .end
+                        }
+                    } else {
+                        $0.onChange(of: stateMachine.isDone) { d in
+                            if d {
+                                print("The \(gameCode) Game is complete")
+                                currentView = .end
+                            }
+                        }
+                    }
                 }
             }
             Spacer()

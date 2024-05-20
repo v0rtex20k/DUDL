@@ -23,18 +23,17 @@ struct ProfileCardView : View {
                 .multilineTextAlignment(.center)
                 .font(Font.custom("Galvji", size: 14))
                 .background {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color(primary_color).gradient)
-                        .shadow(radius: 3)
-                        .zIndex(1)
-                        .frame(width: dim * 0.55, height: dim * 0.125, alignment: .center)
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color(red: Double(playerProfile.rgba.r),
-                                    green: Double(playerProfile.rgba.g),
-                                    blue: Double(playerProfile.rgba.b),
-                                    opacity: Double(playerProfile.rgba.a))
-                            .gradient)
-                        .frame(width: dim * 0.75, height: dim * 0.18, alignment: .center)
+                RoundedRectangle(cornerRadius: 10)
+                    .apply {
+                        if #available(iOS 16.0, *) {
+                            $0.fill(Color(primary_color).gradient)
+                        } else {
+                            $0.fill(Color(primary_color))
+                        }
+                    }
+                    .shadow(radius: 3)
+                    .zIndex(1)
+                    .frame(width: dim * 0.55, height: dim * 0.125, alignment: .center)
                 }
                 .frame(width: dim, alignment: .center)
                 .frame(height: dim * 0.225)

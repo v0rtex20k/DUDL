@@ -23,7 +23,7 @@ struct InitialPromptView: View {
     }
     
     var body: some View {
-        NavigationStack {
+        AvailableNavigationStack {
             GeometryReader { geo in
                 ZStack {
                     Color.black.edgesIgnoringSafeArea(.all)
@@ -33,12 +33,20 @@ struct InitialPromptView: View {
                             .padding()
                             .foregroundStyle(Color(primary_color))
                             .font(Font.custom("Galvji", size: 18))
-                        TextField("something-funny", text: $stateMachine.dataToUpload, axis: .vertical)
+                        AvailableTextField(defaultText: "something-funny", bodyText: $stateMachine.dataToUpload)
                             .lineLimit(5)
                             .textInputAutocapitalization(.never)
                             .disableAutocorrection(true)
-                            .onChange(of: stateMachine.dataToUpload) {
-                                limitText()
+                            .apply {
+                                if #available(iOS 17.0, *) {
+                                    $0.onChange(of: stateMachine.dataToUpload) {
+                                        limitText()
+                                    }
+                                } else {
+                                    $0.onChange(of: stateMachine.dataToUpload) { _ in
+                                        limitText()
+                                    }
+                                }
                             }
                             .foregroundStyle(.black)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -65,7 +73,14 @@ struct InitialPromptView: View {
                     }
                 }
             }
-            .toolbarBackground(.hidden, for: .automatic)
+            
+            .apply {
+                if #available(iOS 16.0, *) {
+                    $0.toolbarBackground(.hidden, for: .automatic)
+                } else {
+                    // ignore
+                }
+            }
             .onTapGesture {
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }

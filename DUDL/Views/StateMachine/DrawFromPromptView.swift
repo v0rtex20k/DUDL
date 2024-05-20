@@ -56,7 +56,7 @@ struct DrawFromPromptView: View {
     
     
      var body: some View {
-         NavigationStack {
+         AvailableNavigationStack {
              GeometryReader { geo in
                  ZStack {
                      Color.black.edgesIgnoringSafeArea(.all)
@@ -99,7 +99,13 @@ struct DrawFromPromptView: View {
                      }
                  }
              }
-             .toolbarBackground(.hidden, for: .automatic)
+             .apply {
+                 if #available(iOS 16.0, *) {
+                     $0.toolbarBackground(.hidden, for: .automatic)
+                 } else {
+                     // ignore
+                 }
+             }
              .onTapGesture {
                  UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
              }

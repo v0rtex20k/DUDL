@@ -9,6 +9,17 @@ import Foundation
 import UIKit
 import SwiftUI
 
+
+extension Data {
+    var prettyPrintedJSONString: NSString? { /// NSString gives us a nice sanitized debugDescription
+        guard let object = try? JSONSerialization.jsonObject(with: self, options: []),
+              let data = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]),
+              let prettyPrintedString = NSString(data: data, encoding: String.Encoding.utf8.rawValue) else { return nil }
+
+        return prettyPrintedString
+    }
+}
+
 struct FailableDecodable<Base : Decodable> : Decodable {
 
     let base: Base?
@@ -337,7 +348,7 @@ struct RestController {
                 do {
                     switch type {
                         case .POST:
-                            print("POST-ing to \(url_str) ...")
+                            print("POST-ing to \(url_str) w \(data ?? Data()) ...")
                             var request = URLRequest(url: url!,
                                                  cachePolicy: .useProtocolCachePolicy,
                                                  timeoutInterval: self._requestTimeout)
