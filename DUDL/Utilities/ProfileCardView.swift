@@ -11,7 +11,7 @@ import SwiftUI
 struct ProfileCardView : View {
     @State var size: CGSize
     @State var playerProfile: PlayerProfile
-    
+
     var body : some View {
         ZStack {
             Color.clear.edgesIgnoringSafeArea(.all)

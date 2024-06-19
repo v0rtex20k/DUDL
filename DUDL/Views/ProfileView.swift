@@ -15,7 +15,7 @@ struct ProfileView : View {
     @Binding var currentView: ViewFinder
     @Binding var restController: RestController
     
-    private let maxLen = 15
+    private let maxLen = 20
     private let alertTitle = "Unable to create Player Profile"
     
     @State var nickname: String = ""
@@ -89,7 +89,7 @@ struct ProfileView : View {
                                 .multilineTextAlignment(.center)
                                 .padding()
                                 .allowsTightening(true)
-                                .font(Font.custom("Galvji", size: 14))
+                                .font(Font.custom("Galvji", size: 13))
                                 .foregroundColor(.gray)
                                 .background(
                                     Button {

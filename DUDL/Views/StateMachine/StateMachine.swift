@@ -24,7 +24,6 @@ class StateMachine: ObservableObject {
     
     @Published var roundCount: Int = 0
     @Published var timer: AnyCancellable? = nil
-    @Published var secondsElapsed: TimeInterval = 0
     @Published var secondsRemaining: TimeInterval = 0
     @Published public var isDone: Bool = false
     @Published public var stateContent: AnyView = AnyView(EmptyView())
@@ -49,6 +48,8 @@ class StateMachine: ObservableObject {
         self.timeStep = timeStep
         self.gameCode = gameCode
         self.restController = restController!
+        
+        self.secondsRemaining = roundDuration // initially, start at max
     
         print("STARTING THE TIMER!")
         
@@ -109,12 +110,12 @@ class StateMachine: ObservableObject {
     }
     
     func update() {
-        print("\t \(roundDuration - secondsElapsed) seconds left in ROUND \(roundCount + 1)/\(nRounds)")
-        secondsElapsed += timeStep
+        print("\t \(secondsRemaining) seconds left in ROUND \(roundCount + 1)/\(nRounds)")
+        secondsRemaining -= timeStep
         
-        if secondsElapsed >= roundDuration {
+        if secondsRemaining <= 0 {
             print("\tROUND \(roundCount + 1)/\(nRounds) HAS ENDED")
-            secondsElapsed = 0
+            secondsRemaining = roundDuration
             step()
         }
         

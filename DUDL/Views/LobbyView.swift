@@ -14,19 +14,19 @@ struct LobbyView : View {
     @Binding var playerCount: Int
     @Binding var currentView: ViewFinder
     @Binding var restController: RestController
-    
+
     @State private var shouldShowContent: Bool = true
-    
+
     @State private var shouldShowAlert: Bool = false
     @State private var alertMessage: String = ""
     let alertTitle = "Connection Lost"
-    
+
     @State private var playerProfiles: [PlayerProfile] = []
     @State private var deviceUUID: String = ""
     @State private var isHost: Bool = false
-    
+
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    
+
     func loadAllPlayerProfiles() async {
         if !gameCode.isEmpty {
             await restController.allPlayerProfiles(code: gameCode) { result in

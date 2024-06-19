@@ -9,7 +9,7 @@ import SwiftUI
 import Combine
 
 struct InitialPromptView: View {
-    private let maxLen = 50 // just to prevent some type of crazy long string
+    private let maxLen = 25 // just to prevent some type of crazy long string
     
     @ObservedObject var stateMachine : StateMachine
     

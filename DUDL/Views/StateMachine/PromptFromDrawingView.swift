@@ -10,7 +10,7 @@ import Combine
 import PencilKit
 
 struct PromptFromDrawingView: View {
-    private let maxLen = 50 // just to prevent some type of crazy long string
+    private let maxLen = 25 // just to prevent some type of crazy long string
 
     @ObservedObject var stateMachine : StateMachine
         
@@ -47,7 +47,7 @@ struct PromptFromDrawingView: View {
                             .multilineTextAlignment(.center)
                             .frame(width: 0.8 * geo.size.width)
                             .fixedSize(horizontal: false, vertical: true)
-                            .font(Font.custom("Galvji", size: 24))
+                            .font(Font.custom("Galvji", size: 20))
                         Text("\(stateMachine.dataToUpload.count) / \(maxLen)")
                             .padding()
                             .foregroundStyle(Color(primary_color))
