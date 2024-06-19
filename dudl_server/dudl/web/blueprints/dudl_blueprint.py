@@ -74,7 +74,6 @@ class LeaveGame(MethodView):
         was_removed = False
 
         if isinstance(collection.get_all_active_profiles_in_game(game_code=game_code).get(player_id), PlayerProfile):
-            existing_player = True
             current_app.logger.debug(f"Attempting to remove Player {player_id} from Game {game_code}...")
             rem = collection.remove_player_from_game(player_id=player_id, game_code=game_code)
             was_removed = (rem is not None)
@@ -142,8 +141,24 @@ class StartGame(MethodView):
         except Exception as e:
             log_and_abort(status.HTTP_404_NOT_FOUND, f"Could not start Game \"{game_code}\": {e}")
 
+@dudl_blueprint.route('end-game')
+class EndGame(MethodView):
+    def put(self)-> Tuple[PlayerProfile, int]:
+        game_code, player_id = abort_if_missing(request, "gameCode", "playerId")
+        try:
+            collection.games[game_code].end()
+            if not collection.games[game_code].started:
+                current_app.logger.debug(f"Manually Ended Game \"{game_code}\"!")
+                return {}, status.HTTP_200_OK
+            else:
+                current_app.logger.warning(f"Failed to start Game \"{game_code}\"!")
+                return {}, status.HTTP_412_PRECONDITION_FAILED
+        except Exception as e:
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"Could not start Game \"{game_code}\": {e}")
 
-#### GAME DYNAMICS ### 
+
+
+#### GAME DYNAMICS ####
 
 @dudl_blueprint.route('upload-content')
 class UploadContent(MethodView):

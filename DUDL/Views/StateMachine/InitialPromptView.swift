@@ -59,9 +59,10 @@ struct InitialPromptView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     VStack {
-                        Text("\(Int(ceil(stateMachine.secondsRemaining)))")
+                        let r = Int(ceil(stateMachine.secondsRemaining))
+                        Text("\(r))")
                             .font(.subheadline)
-                            .foregroundStyle(Color(primary_color))
+                            .foregroundStyle(r <= 10 ? Color.red : Color(primary_color))
                     }
                 }
             }
