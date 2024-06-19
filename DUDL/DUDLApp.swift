@@ -45,7 +45,7 @@ struct DUDLApp: App {
                 case .profile : ProfileView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
                 case .lobby: LobbyView(gameCode: $gameCode, playerCount: $playerCount, currentView: $currentView, restController: $restController)
                 case .arena: ArenaView(gameCode: $gameCode, nRounds: $playerCount, currentView: $currentView, restController: $restController)
-                case .end: EndView()
+                case .end: EndView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
                 // default:
                 //     DrawFromPromptView(prompt: $initialPrompt, drawing: $drawing)
                 //     PromptFromDrawingView(drawing: drawing2, prompt: $initialPrompt)

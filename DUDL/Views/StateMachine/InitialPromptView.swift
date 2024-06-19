@@ -60,7 +60,7 @@ struct InitialPromptView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     VStack {
                         let r = Int(ceil(stateMachine.secondsRemaining))
-                        Text("\(r))")
+                        Text("\(r)")
                             .font(.subheadline)
                             .foregroundStyle(r <= 10 ? Color.red : Color(primary_color))
                     }

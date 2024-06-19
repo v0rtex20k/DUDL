@@ -313,7 +313,34 @@ struct RestController {
         }
 
     }
-
+    
+    func getAllSubmissions(_ code: String, completionHandler: @escaping (Result<[PlayerSubmission], HTTPError>) -> Void) async {
+        guard let uploadData = await self.encodeRequest(GetSubmissionsRequest(gameCode: code, playerId: await deviceId())) else {
+            completionHandler(.failure(.unidentifiedUser))
+            return
+        }
+        
+        do {
+            switch await postAsync(endpoint: "load-results", postData: uploadData) {
+                case .success(let post_data):
+                    let decoded_result = try JSONDecoder()
+                    .decode([FailableDecodable<PlayerSubmission>].self, from: post_data)
+                    .compactMap { $0.base }
+                    
+                    completionHandler(.success(decoded_result))
+                    return
+                    
+                case .failure(let http_error):
+                    completionHandler(.failure(http_error))
+            }
+        }
+        catch {
+            
+            print("Failed to decode GetAllSubmissionsResponse")
+            completionHandler(.failure(.decodingError))
+        }
+        
+    }
     // MARK: Core Functionality
 
     func getAsync(endpoint: String, failOnEmpty: Bool = false) async -> Result<Data, HTTPError> {

@@ -133,3 +133,16 @@ struct DebugContentRequest: Encodable  {
     let gameCode: String
     let playerId: String
 }
+
+// MARK: load final results
+
+struct GetSubmissionsRequest: Encodable {
+    let gameCode: String
+    let playerId: String
+}
+
+struct PlayerSubmission: Decodable {
+    let playerNickname: String
+    let playerColor: RGBA
+    let playerData: String
+}
