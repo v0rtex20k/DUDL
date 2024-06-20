@@ -53,14 +53,22 @@ struct RGBA : Encodable, Decodable, Equatable, Hashable {
     }
 }
 
-struct PlayerProfile: Encodable, Decodable, Equatable, Hashable {
+struct PlayerProfile: Encodable, Decodable, Equatable, Hashable, Identifiable {
     // NOTE: server must enforce that players can only join one game at a time,
     // keyed by the gameCode they previously entered
     let gameCode: String?
-    let playerId: String
+    var playerId: String
     let nickname: String
     let isHost: Bool?
     let rgba: RGBA
+    
+    var id: String {
+        get {
+            return playerId
+        } set {
+            playerId = newValue
+        }
+    }
     
     init(gameCode: String?, playerId: String, nickname: String, rgba: RGBA, isHost: Bool? = false) {
         self.gameCode = gameCode
@@ -141,8 +149,15 @@ struct GetSubmissionsRequest: Encodable {
     let playerId: String
 }
 
-struct PlayerSubmission: Decodable {
-    let playerNickname: String
-    let playerColor: RGBA
-    let playerData: String
+struct PlayerSubmission: Decodable, Identifiable, Equatable {
+    var playerProfile: PlayerProfile
+    let content: String
+    
+    var id: String {
+        get {
+            return playerProfile.id
+        } set {
+            playerProfile.id = newValue
+        }
+    }
 }

@@ -18,7 +18,9 @@ struct EndView : View {
     @State private var shouldShowAlert: Bool = false
     @State private var shouldShowContent: Bool = true
     
-    @State private var submissions: [PlayerSubmission] = []
+    @State private var submissions: [PlayerSubmission] = [
+        PlayerSubmission(playerProfile: PlayerProfile(gameCode: "happy-hippo", playerId: "123", nickname: "ghost", rgba: RGBA(r: 100, g: 0, b: 100, a: 1)), content: "hello")
+    ]
     @State var currentIndex: Int = 0
     
     func getAllSubmissions() async {

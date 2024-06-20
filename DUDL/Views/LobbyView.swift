@@ -21,7 +21,9 @@ struct LobbyView : View {
     @State private var alertMessage: String = ""
     let alertTitle = "Connection Lost"
 
-    @State private var playerProfiles: [PlayerProfile] = []
+    @State private var playerProfiles: [PlayerProfile] = [
+    PlayerProfile(gameCode: "happy-hippo", playerId: "123", nickname: "ghost", rgba: RGBA(r: 0, g: 0, b: 0, a: 0))
+    ]
     @State private var deviceUUID: String = ""
     @State private var isHost: Bool = false
 
@@ -33,7 +35,7 @@ struct LobbyView : View {
                 playerProfiles.removeAll()
                 switch result {
                 case .success(let ps):
-                    //                    playerProfiles = [PlayerProfile(gameCode: gameCode, playerId: "fakeId", nickname: "Ghost", rgba: RGBA(r: 255, g: 255, b: 255, a: 1) )]
+                                        playerProfiles = [PlayerProfile(gameCode: gameCode, playerId: "fakeId", nickname: "Ghost", rgba: RGBA(r: 0, g: 0, b: 0, a: 1) )]
                     playerProfiles.append(contentsOf: ps)
                     
                     for p in playerProfiles {
