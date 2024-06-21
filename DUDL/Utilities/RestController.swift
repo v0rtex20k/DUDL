@@ -314,8 +314,8 @@ struct RestController {
 
     }
     
-    func getAllSubmissions(_ code: String, completionHandler: @escaping (Result<[PlayerSubmission], HTTPError>) -> Void) async {
-        guard let uploadData = await self.encodeRequest(GetSubmissionsRequest(gameCode: code, playerId: await deviceId())) else {
+    func getGlyphs(_ code: String, completionHandler: @escaping (Result<[Glyph], HTTPError>) -> Void) async {
+        guard let uploadData = await self.encodeRequest(GetGlyphsRequest(gameCode: code, playerId: await deviceId())) else {
             completionHandler(.failure(.unidentifiedUser))
             return
         }
@@ -324,7 +324,7 @@ struct RestController {
             switch await postAsync(endpoint: "load-results", postData: uploadData) {
                 case .success(let post_data):
                     let decoded_result = try JSONDecoder()
-                    .decode([FailableDecodable<PlayerSubmission>].self, from: post_data)
+                    .decode([FailableDecodable<Glyph>].self, from: post_data)
                     .compactMap { $0.base }
                     
                     completionHandler(.success(decoded_result))
@@ -336,7 +336,7 @@ struct RestController {
         }
         catch {
             
-            print("Failed to decode GetAllSubmissionsResponse")
+            print("Failed to decode GetGlyphsRequest")
             completionHandler(.failure(.decodingError))
         }
         

@@ -10,11 +10,7 @@
 		57369D172B70ACA200918CF5 /* ProfileCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57369D162B70ACA200918CF5 /* ProfileCardView.swift */; };
 		576F15C42B963BEB00058DE1 /* DrawingUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576F15C32B963BEB00058DE1 /* DrawingUtils.swift */; };
 		576F15C62B963F9900058DE1 /* Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576F15C52B963F9900058DE1 /* Poster.swift */; };
-		577815092C22978000A91FB0 /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577815082C22978000A91FB0 /* Tab.swift */; };
-		5778150E2C22998B00A91FB0 /* CustomCorner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5778150A2C22998B00A91FB0 /* CustomCorner.swift */; };
-		5778150F2C22998B00A91FB0 /* InfiniteCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5778150B2C22998B00A91FB0 /* InfiniteCarouselView.swift */; };
-		577815102C22998B00A91FB0 /* CustomCardShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5778150C2C22998B00A91FB0 /* CustomCardShape.swift */; };
-		577815112C22998B00A91FB0 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5778150D2C22998B00A91FB0 /* Home.swift */; };
+		577815132C251B6500A91FB0 /* GlyphController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577815122C251B6500A91FB0 /* GlyphController.swift */; };
 		579714C32B82CB3B007F5CB5 /* StateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C22B82CB3B007F5CB5 /* StateMachine.swift */; };
 		579714C52B82CFCF007F5CB5 /* InitialPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C42B82CFCF007F5CB5 /* InitialPromptView.swift */; };
 		579714C82B82D052007F5CB5 /* DrawFromPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C72B82D052007F5CB5 /* DrawFromPromptView.swift */; };
@@ -63,11 +59,7 @@
 		57369D162B70ACA200918CF5 /* ProfileCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCardView.swift; sourceTree = "<group>"; };
 		576F15C32B963BEB00058DE1 /* DrawingUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingUtils.swift; sourceTree = "<group>"; };
 		576F15C52B963F9900058DE1 /* Poster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Poster.swift; sourceTree = "<group>"; };
-		577815082C22978000A91FB0 /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
-		5778150A2C22998B00A91FB0 /* CustomCorner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomCorner.swift; path = ../../../../../Downloads/InfiniteCarousel/Shared/View/CustomCorner.swift; sourceTree = "<group>"; };
-		5778150B2C22998B00A91FB0 /* InfiniteCarouselView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfiniteCarouselView.swift; path = ../../../../../Downloads/InfiniteCarousel/Shared/View/InfiniteCarouselView.swift; sourceTree = "<group>"; };
-		5778150C2C22998B00A91FB0 /* CustomCardShape.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomCardShape.swift; path = ../../../../../Downloads/InfiniteCarousel/Shared/View/CustomCardShape.swift; sourceTree = "<group>"; };
-		5778150D2C22998B00A91FB0 /* Home.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Home.swift; path = ../../../../../Downloads/InfiniteCarousel/Shared/View/Home.swift; sourceTree = "<group>"; };
+		577815122C251B6500A91FB0 /* GlyphController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GlyphController.swift; path = "../../../../../Downloads/Infinite Carousel/Infinite Carousel/View/GlyphController.swift"; sourceTree = "<group>"; };
 		579714C22B82CB3B007F5CB5 /* StateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateMachine.swift; sourceTree = "<group>"; };
 		579714C42B82CFCF007F5CB5 /* InitialPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialPromptView.swift; sourceTree = "<group>"; };
 		579714C72B82D052007F5CB5 /* DrawFromPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawFromPromptView.swift; sourceTree = "<group>"; };
@@ -129,12 +121,8 @@
 		577814FF2C22965200A91FB0 /* End */ = {
 			isa = PBXGroup;
 			children = (
+				577815122C251B6500A91FB0 /* GlyphController.swift */,
 				57A01ED62BF131C100C347E3 /* EndView.swift */,
-				5778150C2C22998B00A91FB0 /* CustomCardShape.swift */,
-				5778150D2C22998B00A91FB0 /* Home.swift */,
-				5778150A2C22998B00A91FB0 /* CustomCorner.swift */,
-				5778150B2C22998B00A91FB0 /* InfiniteCarouselView.swift */,
-				577815082C22978000A91FB0 /* Tab.swift */,
 			);
 			path = End;
 			sourceTree = "<group>";
@@ -389,19 +377,15 @@
 				57CE50EC2B6EA0230071E806 /* LobbyView.swift in Sources */,
 				57B6E7A72B961FB700A19258 /* DudlCanvas.swift in Sources */,
 				57C3AC312B65BF180058AE5F /* Scribble.swift in Sources */,
-				577815092C22978000A91FB0 /* Tab.swift in Sources */,
 				57C3AC052B65B2FB0058AE5F /* DUDLApp.swift in Sources */,
 				57C3AC3C2B668F970058AE5F /* CreateView.swift in Sources */,
 				57D2873D2B732E2D00FE2280 /* BlackDraggableZStack.swift in Sources */,
-				5778150E2C22998B00A91FB0 /* CustomCorner.swift in Sources */,
-				577815102C22998B00A91FB0 /* CustomCardShape.swift in Sources */,
 				57369D172B70ACA200918CF5 /* ProfileCardView.swift in Sources */,
 				57D287402B73318100FE2280 /* RestfulGroup.swift in Sources */,
-				577815112C22998B00A91FB0 /* Home.swift in Sources */,
 				579714CA2B82D05D007F5CB5 /* PromptFromDrawingView.swift in Sources */,
 				57C3AC482B68340C0058AE5F /* Errors.swift in Sources */,
+				577815132C251B6500A91FB0 /* GlyphController.swift in Sources */,
 				576F15C62B963F9900058DE1 /* Poster.swift in Sources */,
-				5778150F2C22998B00A91FB0 /* InfiniteCarouselView.swift in Sources */,
 				579714C32B82CB3B007F5CB5 /* StateMachine.swift in Sources */,
 				57C3AC542B68BE620058AE5F /* JoinView.swift in Sources */,
 				57C3AC4E2B6864DB0058AE5F /* RestController.swift in Sources */,

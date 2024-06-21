@@ -24,28 +24,17 @@ struct ProfileCardView : View {
                 .font(Font.custom("Galvji", size: 14))
                 .background {
                     RoundedRectangle(cornerRadius: 10)
-//                        .foregroundStyle(
-//                            LinearGradient(
-//                                colors: [Color(primary_color), .white],
-//                                startPoint: .leading,
-//                                endPoint: .trailing
-//                            )
-//                        )
+                        .fill(Color(primary_color).gradient)
                         .shadow(radius: 3)
                         .zIndex(1)
                         .border(Color.green)
                         .frame(width: dim * 0.55, height: dim * 0.125, alignment: .center)
                     RoundedRectangle(cornerRadius: 10)
-//                        .foregroundStyle(
-//                            LinearGradient(
-//                                colors: [Color(red: Double(playerProfile.rgba.r),
-//                                               green: Double(playerProfile.rgba.g),
-//                                               blue: Double(playerProfile.rgba.b),
-//                                               opacity: Double(playerProfile.rgba.a)), .white],
-//                                startPoint: .leading,
-//                                endPoint: .trailing
-//                            )
-//                        )
+                        .fill(Color(red: Double(playerProfile.rgba.r),
+                                                            green: Double(playerProfile.rgba.g),
+                                                            blue: Double(playerProfile.rgba.b),
+                                                            opacity: Double(playerProfile.rgba.a))
+                                                    .gradient)
                         .frame(width: dim * 0.75, height: dim * 0.18, alignment: .center)
                 }
                 .frame(width: dim, alignment: .center)

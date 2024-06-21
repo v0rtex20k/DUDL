@@ -51,24 +51,21 @@ struct RGBA : Encodable, Decodable, Equatable, Hashable {
         hasher.combine(b)
         hasher.combine(a)
     }
+    
+    var color: Color {
+        return Color(UIColor(red: CGFloat(self.r), green: CGFloat(self.g), blue: CGFloat(self.b), alpha: CGFloat(self.a)))
+    }
 }
 
-struct PlayerProfile: Encodable, Decodable, Equatable, Hashable, Identifiable {
+struct PlayerProfile: Encodable, Decodable, Equatable, Hashable {
     // NOTE: server must enforce that players can only join one game at a time,
     // keyed by the gameCode they previously entered
     let gameCode: String?
-    var playerId: String
+    let playerId: String
     let nickname: String
     let isHost: Bool?
     let rgba: RGBA
     
-    var id: String {
-        get {
-            return playerId
-        } set {
-            playerId = newValue
-        }
-    }
     
     init(gameCode: String?, playerId: String, nickname: String, rgba: RGBA, isHost: Bool? = false) {
         self.gameCode = gameCode
@@ -144,20 +141,14 @@ struct DebugContentRequest: Encodable  {
 
 // MARK: load final results
 
-struct GetSubmissionsRequest: Encodable {
+struct GetGlyphsRequest: Encodable {
     let gameCode: String
     let playerId: String
 }
 
-struct PlayerSubmission: Decodable, Identifiable, Equatable {
-    var playerProfile: PlayerProfile
-    let content: String
+struct Glyph: Decodable, Equatable, Identifiable {
+    var id = UUID()
     
-    var id: String {
-        get {
-            return playerProfile.id
-        } set {
-            playerProfile.id = newValue
-        }
-    }
+    let content: String
+    let creator: PlayerProfile
 }
