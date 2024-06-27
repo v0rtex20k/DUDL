@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import PencilKit
 
 
 struct EndView : View {
@@ -45,6 +46,48 @@ struct EndView : View {
         }
     }
     
+    struct PKCanvasRepresentation: UIViewRepresentable {
+        var drawing: PKDrawing
+
+        func makeUIView(context: Context) -> PKCanvasView {
+            let canvasView = PKCanvasView()
+            canvasView.drawing = drawing
+            canvasView.isUserInteractionEnabled = false // disable user interaction
+            return canvasView
+        }
+
+        func updateUIView(_ uiView: PKCanvasView, context: Context) {
+            uiView.drawing = drawing
+        }
+    }
+    
+    struct CanvasView: View {
+        var drawing: PKDrawing
+
+        var body: some View {
+            PKCanvasRepresentation(drawing: drawing)
+                .background(Color.white)
+        }
+    }
+    
+    
+    func buildResultView(content: String) -> some View {
+        if let data = Data(base64Encoded: content),
+           let drawing = try? PKDrawing(data: data) {
+            return AnyView(
+                CanvasView(drawing: drawing)
+                    .padding()
+            )
+        } else {
+            return AnyView(
+                Text(content)
+                    .foregroundStyle(Color.black)
+                    .font(Font.custom("Galvji", size: 26))
+                    .padding()
+            )
+        }
+    }
+    
     var body: some View {
         GeometryReader { geo in
             Color.black.edgesIgnoringSafeArea(.all)
@@ -55,26 +98,36 @@ struct EndView : View {
                     .font(Font.custom("Galvji", size: 26))
                 TabView(selection: $currGlyphID, content: {
                     ForEach(glyphs) { glyph in
-                        Group {
+                        VStack {
+                            Spacer()
+                            Spacer()
+                            Capsule(style: .continuous)
+                                .fill(glyph.creator.rgba.color)
+                                .frame(width: geo.size.width * 0.5, height: geo.size.width * 0.1)
+                                .padding()
+                                .overlay {
+                                    Text(glyph.creator.nickname)
+                                        .padding()
+                                        .font(Font.custom("Galvji", size: 18))
+                                }
+                            Spacer()
                             RoundedRectangle(cornerRadius: 25, style: .continuous)
-                                .fill(
-                                    glyph.creator.rgba.color
-                                )
+                                .fill(.red)
                                 .opacity(0.5)
+                                .padding()
                                 .frame(width: geo.size.width * 0.85, height:  geo.size.width)
                                 .tag(glyph.id.uuidString)
-                                .overlay(alignment: .top) {
-                                    Capsule(style: .continuous)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 25)
+                                        .stroke(.white, lineWidth: 4)
                                         .fill(.white)
-                                        .frame(width: geo.size.width * 0.5, height: geo.size.width * 0.1)
-                                        .padding()
-                                        .overlay {
-                                            Text(glyph.creator.nickname)
-                                                .padding()
-                                                .font(Font.custom("Galvji", size: 18))
-                                        }
-                                        .offset(y:-geo.size.width * 0.2)
-                                }
+                                )
+                                .overlay (
+                                    buildResultView(content: glyph.content)
+                                )
+                            Spacer()
+                            Spacer()
+                            Spacer()
                         }
                     }
                 })
