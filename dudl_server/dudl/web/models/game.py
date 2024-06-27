@@ -69,13 +69,13 @@ class Game:
         return self.results[self.player_profiles[player_id].source][round_idx]
     
     def load_player_results(self, head_player_id: str)-> List[Dict[str, str | PlayerProfile]]:
-        player_source_chain: List[PlayerProfile] = []
+        player_source_chain: List[str] = []
 
         curr_pid: str = head_player_id
 
-        while curr_pid not in player_source_chain:
+        for _ in range(len(self.player_profiles)):
             if (curr := self.player_profiles.get(curr_pid, None)) is None:
-                log_and_abort(status.HTTP_404_NOT_FOUND, f"Refusing to load results for nonexistant Player \"{head_player_id}\"")
+                log_and_abort(status.HTTP_404_NOT_FOUND, f"Refusing to load results for nonexistent Player \"{head_player_id}\"")
                 return []
             
             curr_pid = curr.source
@@ -85,7 +85,7 @@ class Game:
 
         return [
             dict(
-                creator=self.player_profiles[pid],
+                creator=self.player_profiles[pid].as_dict() | dict(game_code=self.code),
                 content=self.results[pid][i]
-            ) for i, pid in enumerate(player_source_chain[::-1])
+            ) for i, pid in enumerate(player_source_chain[::-1]) if self.results[pid][i] is not None
         ]

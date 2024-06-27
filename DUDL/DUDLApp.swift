@@ -28,7 +28,7 @@ struct DUDLApp: App {
     @State var gameCode: String = ""
     @State var playerCount: Int = 0
     @State var currentView: ViewFinder = .home
-    @State var restController: RestController = RestController(host: "127.0.0.1", // "192.168.1.7",
+    @State var restController: RestController = RestController(host: "192.168.1.9",
                                                                port: 8001)
     
 //    @State var initialPrompt = ""
@@ -46,9 +46,6 @@ struct DUDLApp: App {
                 case .lobby: LobbyView(gameCode: $gameCode, playerCount: $playerCount, currentView: $currentView, restController: $restController)
                 case .arena: ArenaView(gameCode: $gameCode, nRounds: $playerCount, currentView: $currentView, restController: $restController)
                 case .end: EndView(gameCode: $gameCode, currentView: $currentView, restController: $restController)
-                // default:
-                //     DrawFromPromptView(prompt: $initialPrompt, drawing: $drawing)
-                //     PromptFromDrawingView(drawing: drawing2, prompt: $initialPrompt)
             }
         }
     }

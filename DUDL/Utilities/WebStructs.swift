@@ -149,6 +149,6 @@ struct GetGlyphsRequest: Encodable {
 struct Glyph: Decodable, Equatable, Identifiable {
     var id = UUID()
     
-    let content: String
+    let content: String?
     let creator: PlayerProfile
 }

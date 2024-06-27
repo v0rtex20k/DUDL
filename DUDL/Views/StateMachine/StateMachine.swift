@@ -18,9 +18,10 @@ class StateMachine: ObservableObject {
     private var gameCode: String = ""
     private var nRounds: Int = 0
     private var timeStep: TimeInterval = 0
-    private var roundDuration: TimeInterval = 0
+    private var roundDurations: [GameState: TimeInterval] = [GameState: TimeInterval]()
     private var restController: RestController? = nil
     
+    private let defaultRoundDuration: TimeInterval = 30
     
     @Published var roundCount: Int = 0
     @Published var timer: AnyCancellable? = nil
@@ -42,14 +43,14 @@ class StateMachine: ObservableObject {
         print("Initialized the StateMachine")
     }
     
-    func start(gameCode: String, restController: RestController?, nRounds: Int, timeStep: TimeInterval, roundDuration: TimeInterval) {
+    func start(gameCode: String, restController: RestController?, nRounds: Int, timeStep: TimeInterval, roundDurations: [GameState: TimeInterval]) {
         self.nRounds = nRounds
-        self.roundDuration = roundDuration
+        self.roundDurations = roundDurations
         self.timeStep = timeStep
         self.gameCode = gameCode
         self.restController = restController!
         
-        self.secondsRemaining = roundDuration // initially, start at max
+        self.secondsRemaining = self.roundDurations[self.state, default: defaultRoundDuration]
     
         print("STARTING THE TIMER!")
         
@@ -115,7 +116,6 @@ class StateMachine: ObservableObject {
         
         if secondsRemaining <= 0 {
             print("\tROUND \(roundCount + 1)/\(nRounds) HAS ENDED")
-            secondsRemaining = roundDuration
             step()
         }
         
@@ -170,5 +170,7 @@ class StateMachine: ObservableObject {
                 self.state = .drawFromPrompt
                 self.stateContent = AnyView(DrawFromPromptView(stateMachine: self))
         }
+        
+        secondsRemaining = self.roundDurations[self.state, default: defaultRoundDuration]
     }
 }

@@ -321,7 +321,7 @@ struct RestController {
         }
         
         do {
-            switch await postAsync(endpoint: "load-results", postData: uploadData) {
+            switch await postAsync(endpoint: "load-results", postData: uploadData, failOnEmpty: true) {
                 case .success(let post_data):
                     let decoded_result = try JSONDecoder()
                     .decode([FailableDecodable<Glyph>].self, from: post_data)
