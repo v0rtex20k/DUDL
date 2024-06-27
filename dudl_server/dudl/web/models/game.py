@@ -2,7 +2,7 @@ import random
 from copy import deepcopy
 from flask_api import status
 from flask import current_app
-from typing import Any, List, Dict, Optional
+from typing import Any, List, Dict, Optional, Union
 
 from dudl.web.utils import log_and_abort
 from dudl.web.models.playerprofile import PlayerProfile
@@ -41,7 +41,7 @@ class Game:
 
     def update_player_profile(self, player_id: str, nickname: str, rgba: Dict[str, Any]):
         try:
-            if (profile := self.player_profiles.get(player_id)) is not None:
+            if (profile := self.player_profiles.get(player_id, None)) is not None:
                 if isinstance(profile, bool):
                     is_host = profile
                 elif isinstance(profile, PlayerProfile):
@@ -67,5 +67,25 @@ class Game:
 
     def download_content(self, player_id: str, round_idx: int)-> str:
         return self.results[self.player_profiles[player_id].source][round_idx]
-                
-                
+    
+    def load_player_results(self, head_player_id: str)-> List[Dict[str, str | PlayerProfile]]:
+        player_source_chain: List[PlayerProfile] = []
+
+        curr_pid: str = head_player_id
+
+        while curr_pid not in player_source_chain:
+            if (curr := self.player_profiles.get(curr_pid, None)) is None:
+                log_and_abort(status.HTTP_404_NOT_FOUND, f"Refusing to load results for nonexistant Player \"{head_player_id}\"")
+                return []
+            
+            curr_pid = curr.source
+
+            # NOTE: this adds player ids in REVERSE order
+            player_source_chain.append(curr_pid)
+
+        return [
+            dict(
+                creator=self.player_profiles[pid],
+                content=self.results[pid][i]
+            ) for i, pid in enumerate(player_source_chain[::-1])
+        ]

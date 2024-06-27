@@ -189,3 +189,23 @@ class DownloadContent(MethodView):
                 return {}, status.HTTP_204_NO_CONTENT
         except Exception as e:
             log_and_abort(status.HTTP_404_NOT_FOUND, f"Failed to download Player <{player_id}>'s content for Round {round_idx} of Game \"{game_code}\": {e}")
+
+
+#### GAME RESULTS ####
+
+@dudl_blueprint.route('load-results')
+class LoadResults(MethodView):
+    def post(self)-> List[Dict[str, str | PlayerProfile]]:
+        game_code, player_id = abort_if_missing(request, "gameCode", "playerId")
+
+        try:
+            results = collection.games[game_code].load_player_results(head_player_id=player_id)
+            current_app.logger.debug(f"Loading Player <{player_id}>'s Results in Game \"{game_code}\":\t\"{results}\" ...")
+            
+            if results:
+                return results, status.HTTP_200_OK
+            else:
+                current_app.logger.warning(f"No results found for Player <{player_id}>'s in Game \"{game_code}\"")
+                return [], status.HTTP_204_NO_CONTENT
+        except Exception as e:
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"Failed to load Player <{player_id}>'s results in Game \"{game_code}\": {e}")

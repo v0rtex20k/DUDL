@@ -14,7 +14,7 @@ class PlayerProfile:
         self.is_host = True
 
     @property
-    def source(self):
+    def source(self)-> str:
         return self.__source_player_id
     
     @source.setter
