@@ -151,4 +151,16 @@ struct Glyph: Decodable, Equatable, Identifiable {
     
     let content: String?
     let creator: PlayerProfile
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = UUID() // Generate a new UUID if not present in JSON
+        self.content = try container.decode(String.self, forKey: .content)
+        self.creator = try container.decode(PlayerProfile.self, forKey: .creator)
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case content
+        case creator
+    }
 }

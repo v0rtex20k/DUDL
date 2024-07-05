@@ -24,16 +24,38 @@ class Debug(MethodView):
         fake_uuid_2 = "CC4B4E2E-5CEB-4007-8C4E-B3C1B8113182"
         collection.add_game(host_id=player_id, game_code=game_code)
         
+        # ADD PLAYERS
         collection.add_player_to_game(game_code=game_code, player_id=fake_uuid_1)
         collection.add_player_to_game(game_code=game_code, player_id=fake_uuid_2)
 
+        # UPDATE PROFILES
         collection.update_player_profile_in_game(game_code=game_code, player_id=player_id, nickname="Yoda", rgba=dict(r=0, g=255, b=0, a=0.5))
         collection.update_player_profile_in_game(game_code=game_code, player_id=fake_uuid_1, nickname="Darth Vader", rgba=dict(r=255, g=0, b=0, a=0.5))
         collection.update_player_profile_in_game(game_code=game_code, player_id=fake_uuid_2, nickname="Obi-Wan Kenobi", rgba=dict(r=0, g=0, b=255, a=0.5))
 
+        # START GAME
         collection.games[game_code].start()
-
         assert collection.games[game_code].started
+
+        # ROUND 0: Initial Prompt
+        collection.games[game_code].upload_content(content="Try you must", player_id=player_id, round_idx=0)
+        collection.games[game_code].upload_content(content="I am your father", player_id=fake_uuid_1, round_idx=0)
+        collection.games[game_code].upload_content(content="I have the high ground", player_id=fake_uuid_2, round_idx=0)
+        
+        random_drawing: str = "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"
+
+        # ROUND 1: DrawFromPrompt
+        collection.games[game_code].upload_content(content=random_drawing, player_id=player_id, round_idx=1)
+        collection.games[game_code].upload_content(content=random_drawing, player_id=fake_uuid_1, round_idx=1)
+        collection.games[game_code].upload_content(content=random_drawing, player_id=fake_uuid_2, round_idx=1)
+        
+        # ROUND 2: PromptFromDrawing
+        collection.games[game_code].upload_content(content="green lightsaber", player_id=player_id, round_idx=2)
+        collection.games[game_code].upload_content(content="red lightsaber", player_id=fake_uuid_1, round_idx=2)
+        collection.games[game_code].upload_content(content="blue lightsaber", player_id=fake_uuid_2, round_idx=2)
+
+        # END GAME
+        collection.games[game_code].end()
 
         return {}, status.HTTP_200_OK
 
@@ -155,8 +177,6 @@ class EndGame(MethodView):
                 return {}, status.HTTP_412_PRECONDITION_FAILED
         except Exception as e:
             log_and_abort(status.HTTP_404_NOT_FOUND, f"Could not start Game \"{game_code}\": {e}")
-
-
 
 #### GAME DYNAMICS ####
 

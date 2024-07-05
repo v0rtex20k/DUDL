@@ -36,6 +36,10 @@ class Game:
         else:
             current_app.logger.debug(f"Game {self.code} was already started")
 
+    def end(self):
+        self.started = False
+        current_app.logger.debug(f"Game {self.code} has been ended")
+
     def get_player_profile(self, player_id: str)-> Optional[PlayerProfile]:
         return self.player_profiles.get(player_id)
 

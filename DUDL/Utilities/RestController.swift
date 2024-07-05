@@ -9,6 +9,10 @@ import Foundation
 import UIKit
 import SwiftUI
 
+func str(_ data: Data) -> String? {
+    return String(data: data, encoding: .utf8)
+}
+
 struct FailableDecodable<Base : Decodable> : Decodable {
 
     let base: Base?
@@ -277,7 +281,7 @@ struct RestController {
         guard let uploadData = await self.encodeRequest(UploadContentRequest(gameCode: code, playerId: await deviceId(), content: data, roundIdx: roundIndex)) else {
             return .failure(.unidentifiedUser)
         }
-
+            
         switch await postAsync(endpoint: "upload-content", postData: uploadData) {
             case .success:
                 print("Sucessfully posted UploadContent")
@@ -300,7 +304,7 @@ struct RestController {
                     let decoded_result = try JSONDecoder().decode(DownloadContentResponse.self, from: post_data)
 
                     print("Sucessfully pulled DownloadContentResponse!")
-                    print("DOWNLOADED ROUND \(roundIndex + 1) CONTENT \(decoded_result.content) from Game \(code) ...")
+//                    print("DOWNLOADED ROUND \(roundIndex + 1) CONTENT \(decoded_result.content) from Game \(code) ...")
                     return .success(decoded_result.content)
 
                 case .failure(let http_error):
@@ -308,7 +312,7 @@ struct RestController {
                     return .failure(http_error)
             }
         } catch {
-            print("Failed to decode DownloadContentResponse")
+            print("Failed to decode DownloadContentResponse \(error)")
             return .failure(.decodingError)
         }
 
@@ -323,20 +327,19 @@ struct RestController {
         do {
             switch await postAsync(endpoint: "load-results", postData: uploadData, failOnEmpty: true) {
                 case .success(let post_data):
-                    let decoded_result = try JSONDecoder()
-                    .decode([FailableDecodable<Glyph>].self, from: post_data)
-                    .compactMap { $0.base }
+                    
+                    let decoded_result = try JSONDecoder().decode([Glyph].self, from: post_data)
                     
                     completionHandler(.success(decoded_result))
                     return
                     
                 case .failure(let http_error):
+                    print("Failed to process GetGlyphs!")
                     completionHandler(.failure(http_error))
             }
         }
         catch {
-            
-            print("Failed to decode GetGlyphsRequest")
+            print("Failed to decode GetGlyphsRequest: \(error)")
             completionHandler(.failure(.decodingError))
         }
         
@@ -387,7 +390,7 @@ struct RestController {
                             returnedData = responseData
                             
                             if 200..<300 ~= status_code && !returnedData.isEmpty {
-                                print("[\(endpoint)] RUNNING w/ \(returnedData)")
+                                print("[\(endpoint)] POST RUNNING w/ \(String(describing: str(returnedData)))")
                                 break retryLoop // if you've got something, run w/ it
                             }
                             
@@ -404,7 +407,7 @@ struct RestController {
                             status_code = httpResponse.statusCode
                             
                             if 200..<300 ~= status_code && !returnedData.isEmpty {
-                                print("RUNNING w/ \(returnedData)")
+                                print("GET RUNNING w/ \(String(describing: str(returnedData)))")
                                 break retryLoop // if you've got something, run w/ it
                             }
                         default:

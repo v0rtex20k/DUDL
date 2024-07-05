@@ -67,13 +67,3 @@ struct CreateView : View {
         }
     }
 }
-
-//#Preview {
-//   struct PreviewWrapper: View {
-//       @State var rc: RestController = RestController(host: "192.168.1.7", port:8001)
-//       var body: some View {
-//           CreateView(gameCode: .constant("happy-lizard"), currentView: .constant("HomeView"), restController: $rc)
-//       }
-//   }
-//   return PreviewWrapper()
-//}
