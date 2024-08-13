@@ -2,7 +2,7 @@ import random
 from copy import deepcopy
 from flask_api import status
 from flask import current_app
-from typing import Any, List, Dict, Optional, Union
+from typing import Any, List, Dict, Optional
 
 from dudl.web.utils import log_and_abort
 from dudl.web.models.playerprofile import PlayerProfile
@@ -28,7 +28,8 @@ class Game:
 
                 for i, pid in enumerate(batting_order):
                     self.results[pid] = [None] * n_players
-                    self.player_profiles[pid].source = batting_order[((i-1) % n_players)]
+                    self.player_profiles[pid].parent = batting_order[((i-1) % n_players)]
+                    self.player_profiles[batting_order[((i-1) % n_players)]].child = self.player_profiles[pid].player_id
 
                 current_app.logger.debug(f"Game {self.code} has started w/ BO {batting_order}")
             else:
@@ -67,29 +68,34 @@ class Game:
         self.player_profiles[player_id] = is_host
 
     def upload_content(self, content: str, player_id: str, round_idx: int):
-        self.results[player_id][round_idx] = content
+        if content:
+            self.results[player_id][round_idx] = content
 
     def download_content(self, player_id: str, round_idx: int)-> str:
-        return self.results[self.player_profiles[player_id].source][round_idx]
+        return self.results[self.player_profiles[player_id].parent][round_idx]
     
     def load_player_results(self, head_player_id: str)-> List[Dict[str, str | PlayerProfile]]:
-        player_source_chain: List[str] = []
+        npp = len(self.player_profiles)
+        player_results_chain: List[str] = []
 
-        curr_pid: str = head_player_id
-
-        for _ in range(len(self.player_profiles)):
-            if (curr := self.player_profiles.get(curr_pid, None)) is None:
+        def get_child(pid: str)-> str:
+            if (profile := self.player_profiles.get(pid, None)) is None:
                 log_and_abort(status.HTTP_404_NOT_FOUND, f"Refusing to load results for nonexistent Player \"{head_player_id}\"")
-                return []
+                return None
             
-            curr_pid = curr.source
+            return profile.child
 
-            # NOTE: this adds player ids in REVERSE order
-            player_source_chain.append(curr_pid)
+        i = 0
+        curr_pid = head_player_id
+
+        while i < npp:
+            player_results_chain.append((curr_pid, self.results[curr_pid][i]))
+            curr_pid = get_child(curr_pid)
+            i += 1
 
         return [
             dict(
                 creator=self.player_profiles[pid].as_dict() | dict(game_code=self.code),
-                content=self.results[pid][i]
-            ) for i, pid in enumerate(player_source_chain[::-1]) if self.results[pid][i] is not None
+                content=content
+            ) for pid, content in player_results_chain if content is not None
         ]

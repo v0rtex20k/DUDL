@@ -62,7 +62,7 @@ struct ArenaView: View {
             stateMachine.start(gameCode: gameCode, restController: restController, nRounds: nRounds, timeStep: timeStep, roundDurations: [
                 .notset : 0,
                 .initialPrompt: 30,
-                .drawFromPrompt: 90,
+                .drawFromPrompt: 30,
                 .promptFromDrawing: 30
             ])
         }

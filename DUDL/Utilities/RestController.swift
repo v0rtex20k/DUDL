@@ -318,6 +318,31 @@ struct RestController {
 
     }
     
+    func getPlayerCount(_ code: String, completionHandler: @escaping (Result<Int, HTTPError>) -> Void) async {
+        guard let uploadData = await self.encodeRequest(PlayerCountRequest(gameCode: code)) else {
+            completionHandler(.failure(.unidentifiedUser))
+            return
+        }
+        
+        do {
+            switch await postAsync(endpoint: "get-player-count", postData: uploadData) {
+                case .success(let post_data):
+                    dump(post_data)
+                    let decoded_result = try JSONDecoder().decode(PlayerCountResponse.self, from: post_data)
+                    
+                    completionHandler(.success(decoded_result.playerCount))
+                    
+                case .failure(let http_error):
+                    completionHandler(.failure(http_error))
+            }
+        }
+        catch {
+            
+            print("Failed to decode PlayerCountResponse")
+            completionHandler(.failure(.decodingError))
+        }
+    }
+    
     func getGlyphs(_ code: String, completionHandler: @escaping (Result<[Glyph], HTTPError>) -> Void) async {
         guard let uploadData = await self.encodeRequest(GetGlyphsRequest(gameCode: code, playerId: await deviceId())) else {
             completionHandler(.failure(.unidentifiedUser))
@@ -327,11 +352,22 @@ struct RestController {
         do {
             switch await postAsync(endpoint: "load-results", postData: uploadData, failOnEmpty: true) {
                 case .success(let post_data):
-                    
+                
+                retryLoop : for _ in 0..<self._maxRetryCount {
+                    var playerCount = 0
                     let decoded_result = try JSONDecoder().decode([Glyph].self, from: post_data)
-                    
-                    completionHandler(.success(decoded_result))
-                    return
+                    await getPlayerCount(code) { result in
+                        switch result {
+                        case .success(let c):
+                            playerCount = c
+                        case .failure(_):
+                            break
+                        }
+                    }
+                    if (decoded_result.count == playerCount) {
+                        return completionHandler(.success(decoded_result))
+                    }
+                }
                     
                 case .failure(let http_error):
                     print("Failed to process GetGlyphs!")

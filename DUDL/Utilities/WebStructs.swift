@@ -111,6 +111,14 @@ struct GameStatusResponse: Decodable  {
     let started: Bool
 }
 
+struct PlayerCountRequest: Encodable  {
+    let gameCode: String
+}
+
+struct PlayerCountResponse: Decodable  {
+    let playerCount: Int
+}
+
 struct StartGameRequest: Encodable  {
     let gameCode: String
 }

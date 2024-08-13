@@ -124,27 +124,27 @@ class StateMachine: ObservableObject {
 
     func step() {
         if self.state != .notset {
-             print("[\(self.state)] UPLOADING \(self.dataToUpload) ...")
-            
-            Task.detached {
-                await self.upload()     // UPload what YOU did this round
+            Task {
+                print("[\(self.state)] UPLOADING \(self.dataToUpload) ...")
+                await self.upload()
+                
+                Task { @MainActor in
+                    if (self.roundCount + 1) >= self.nRounds {
+                        self.stop()
+                        return
+                    }
+                }
+                
+                await self.download()
+                
+                print("[\(self.state)] DOWNLOADED \(self.downloadedData) ...")
+                
+                Task { @MainActor in
+                    print("SWITCHING ROUNDS: \(self.roundCount) --> \(self.roundCount + 1)")
+                    self.roundCount += 1
+                }
+                
             }
-            
-            if (self.roundCount + 1) >= self.nRounds {
-                self.stop()
-                return
-            }
-            
-            self.downloadedData.removeAll()
-            Task.detached {
-                await self.download()   // DOWNload what your friend did this round
-                                        // TODO: retry on failure / no content?
-            }
-            
-             print("[\(self.state)] DOWNLOADED \(self.downloadedData) ...")
-            
-            print("SWITCHING ROUNDS: \(self.roundCount) --> \(self.roundCount + 1)")
-            self.roundCount += 1
         }
 
         
