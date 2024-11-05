@@ -30,6 +30,7 @@ struct ArenaView: View {
             switch result {
                 case .success:
                     // print("DEBUG MODE ACTIVATED")
+                    break
                 case .failure(let error):
                     switch error {
                         case .serviceUnavailable:

@@ -19,6 +19,7 @@
 		57A01ED72BF131C100C347E3 /* EndView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A01ED62BF131C100C347E3 /* EndView.swift */; };
 		57B6E7A72B961FB700A19258 /* DudlCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57B6E7A62B961FB700A19258 /* DudlCanvas.swift */; };
 		57BEFCDA2CD9A98200D483E1 /* RoundedRectangleWithGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57BEFCD92CD9A98200D483E1 /* RoundedRectangleWithGrid.swift */; };
+		57BEFCDB2CD9BE8F00D483E1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 57C3AC082B65B2FC0058AE5F /* Assets.xcassets */; };
 		57C3AC052B65B2FB0058AE5F /* DUDLApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC042B65B2FB0058AE5F /* DUDLApp.swift */; };
 		57C3AC162B65B2FC0058AE5F /* DUDLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC152B65B2FC0058AE5F /* DUDLTests.swift */; };
 		57C3AC202B65B2FC0058AE5F /* DUDLUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC1F2B65B2FC0058AE5F /* DUDLUITests.swift */; };
@@ -71,7 +72,7 @@
 		57BEFCD92CD9A98200D483E1 /* RoundedRectangleWithGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedRectangleWithGrid.swift; sourceTree = "<group>"; };
 		57C3AC012B65B2FB0058AE5F /* DUDL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DUDL.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		57C3AC042B65B2FB0058AE5F /* DUDLApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DUDLApp.swift; sourceTree = "<group>"; };
-		57C3AC082B65B2FC0058AE5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		57C3AC082B65B2FC0058AE5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = DUDL/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		57C3AC0B2B65B2FC0058AE5F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		57C3AC112B65B2FC0058AE5F /* DUDLTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DUDLTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		57C3AC152B65B2FC0058AE5F /* DUDLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DUDLTests.swift; sourceTree = "<group>"; };
@@ -342,6 +343,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				57BEFCDB2CD9BE8F00D483E1 /* Assets.xcassets in Resources */,
 				57C3AC382B668BE50058AE5F /* Galvji.ttc in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -553,6 +555,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"DUDL/Preview Content\"";
@@ -560,9 +563,11 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DUDL/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DUDL;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -583,6 +588,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"DUDL/Preview Content\"";
@@ -590,9 +596,11 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DUDL/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DUDL;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (

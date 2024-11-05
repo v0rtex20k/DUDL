@@ -455,7 +455,8 @@ struct RestController {
                     try? await Task<Never, Never>.sleep(nanoseconds: delay)
                     continue  // try again
                     
-                } catch (let e) {
+                } catch {
+                    ()
                     // print("Failed to complete \(type) Request @ \(endpoint): \(e)")
                 }
             }
