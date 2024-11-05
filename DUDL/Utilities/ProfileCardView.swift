@@ -27,7 +27,6 @@ struct ProfileCardView : View {
                         .fill(Color(primary_color).gradient)
                         .shadow(radius: 3)
                         .zIndex(1)
-                        .border(Color.green)
                         .frame(width: dim * 0.55, height: dim * 0.125, alignment: .center)
                     RoundedRectangle(cornerRadius: 10)
                         .fill(Color(red: Double(playerProfile.rgba.r),

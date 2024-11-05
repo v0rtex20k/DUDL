@@ -19,7 +19,7 @@ struct ArenaView: View {
     @Binding var currentView: ViewFinder
     @Binding var restController: RestController
     
-    private let roundDuration: TimeInterval = 30
+    private let roundDuration: TimeInterval = 45
     private let timeStep: TimeInterval = 0.5
     @State private var timeElapsed: TimeInterval = 0
 
