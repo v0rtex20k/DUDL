@@ -43,7 +43,7 @@ struct SettingsView : View {
                         .disableAutocorrection(true)
                         .onSubmit {
                             if isValidIP(host) {
-                                print("Updated RC.host to \(host)")
+                                // print("Updated RC.host to \(host)")
                                 restController.update_host(host: host)
                                 status = .updateSuceeded
                                 Task {
@@ -53,7 +53,7 @@ struct SettingsView : View {
                                 }
                             } else {
                                 status = .updateFailed
-                                print("Ignoring invalid host \(host)")
+                                // print("Ignoring invalid host \(host)")
                             }
                         }
                         .foregroundStyle(status == .updateSuceeded ? .green : (status == .updateFailed ? .red : .black))

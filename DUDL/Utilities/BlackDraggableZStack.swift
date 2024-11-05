@@ -37,7 +37,7 @@ struct BlackDraggableZStack<Content: View>: BDZSContainerView {
                 if abs(h) > abs(v) {
 
                     if let onDragEndFunc = onDragEndFunc {
-                        Task.detached {
+                        Task {
                             await onDragEndFunc()
                         }
                     }

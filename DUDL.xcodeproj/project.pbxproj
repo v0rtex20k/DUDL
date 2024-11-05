@@ -10,13 +10,16 @@
 		57369D172B70ACA200918CF5 /* ProfileCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57369D162B70ACA200918CF5 /* ProfileCardView.swift */; };
 		576F15C42B963BEB00058DE1 /* DrawingUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576F15C32B963BEB00058DE1 /* DrawingUtils.swift */; };
 		576F15C62B963F9900058DE1 /* Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576F15C52B963F9900058DE1 /* Poster.swift */; };
-		579714C12B785351007F5CB5 /* InitialPromptView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C02B785351007F5CB5 /* InitialPromptView2.swift */; };
+		577815132C251B6500A91FB0 /* GlyphController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577815122C251B6500A91FB0 /* GlyphController.swift */; };
 		579714C32B82CB3B007F5CB5 /* StateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C22B82CB3B007F5CB5 /* StateMachine.swift */; };
 		579714C52B82CFCF007F5CB5 /* InitialPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C42B82CFCF007F5CB5 /* InitialPromptView.swift */; };
 		579714C82B82D052007F5CB5 /* DrawFromPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C72B82D052007F5CB5 /* DrawFromPromptView.swift */; };
 		579714CA2B82D05D007F5CB5 /* PromptFromDrawingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C92B82D05D007F5CB5 /* PromptFromDrawingView.swift */; };
 		579714CE2B82FAFB007F5CB5 /* ArenaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714CD2B82FAFB007F5CB5 /* ArenaView.swift */; };
+		57A01ED72BF131C100C347E3 /* EndView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A01ED62BF131C100C347E3 /* EndView.swift */; };
 		57B6E7A72B961FB700A19258 /* DudlCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57B6E7A62B961FB700A19258 /* DudlCanvas.swift */; };
+		57BEFCDA2CD9A98200D483E1 /* RoundedRectangleWithGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57BEFCD92CD9A98200D483E1 /* RoundedRectangleWithGrid.swift */; };
+		57BEFCDB2CD9BE8F00D483E1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 57C3AC082B65B2FC0058AE5F /* Assets.xcassets */; };
 		57C3AC052B65B2FB0058AE5F /* DUDLApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC042B65B2FB0058AE5F /* DUDLApp.swift */; };
 		57C3AC162B65B2FC0058AE5F /* DUDLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC152B65B2FC0058AE5F /* DUDLTests.swift */; };
 		57C3AC202B65B2FC0058AE5F /* DUDLUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC1F2B65B2FC0058AE5F /* DUDLUITests.swift */; };
@@ -58,16 +61,18 @@
 		57369D162B70ACA200918CF5 /* ProfileCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCardView.swift; sourceTree = "<group>"; };
 		576F15C32B963BEB00058DE1 /* DrawingUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingUtils.swift; sourceTree = "<group>"; };
 		576F15C52B963F9900058DE1 /* Poster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Poster.swift; sourceTree = "<group>"; };
-		579714C02B785351007F5CB5 /* InitialPromptView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialPromptView2.swift; sourceTree = "<group>"; };
+		577815122C251B6500A91FB0 /* GlyphController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GlyphController.swift; path = "../../../../../Downloads/Infinite Carousel/Infinite Carousel/View/GlyphController.swift"; sourceTree = "<group>"; };
 		579714C22B82CB3B007F5CB5 /* StateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateMachine.swift; sourceTree = "<group>"; };
 		579714C42B82CFCF007F5CB5 /* InitialPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialPromptView.swift; sourceTree = "<group>"; };
 		579714C72B82D052007F5CB5 /* DrawFromPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawFromPromptView.swift; sourceTree = "<group>"; };
 		579714C92B82D05D007F5CB5 /* PromptFromDrawingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptFromDrawingView.swift; sourceTree = "<group>"; };
 		579714CD2B82FAFB007F5CB5 /* ArenaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArenaView.swift; sourceTree = "<group>"; };
+		57A01ED62BF131C100C347E3 /* EndView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndView.swift; sourceTree = "<group>"; };
 		57B6E7A62B961FB700A19258 /* DudlCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DudlCanvas.swift; sourceTree = "<group>"; };
+		57BEFCD92CD9A98200D483E1 /* RoundedRectangleWithGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedRectangleWithGrid.swift; sourceTree = "<group>"; };
 		57C3AC012B65B2FB0058AE5F /* DUDL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DUDL.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		57C3AC042B65B2FB0058AE5F /* DUDLApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DUDLApp.swift; sourceTree = "<group>"; };
-		57C3AC082B65B2FC0058AE5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		57C3AC082B65B2FC0058AE5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = DUDL/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		57C3AC0B2B65B2FC0058AE5F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		57C3AC112B65B2FC0058AE5F /* DUDLTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DUDLTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		57C3AC152B65B2FC0058AE5F /* DUDLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DUDLTests.swift; sourceTree = "<group>"; };
@@ -116,6 +121,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		577814FF2C22965200A91FB0 /* End */ = {
+			isa = PBXGroup;
+			children = (
+				577815122C251B6500A91FB0 /* GlyphController.swift */,
+				57A01ED62BF131C100C347E3 /* EndView.swift */,
+				57BEFCD92CD9A98200D483E1 /* RoundedRectangleWithGrid.swift */,
+			);
+			path = End;
+			sourceTree = "<group>";
+		};
 		579714C62B82CFD6007F5CB5 /* StateMachine */ = {
 			isa = PBXGroup;
 			children = (
@@ -199,7 +214,6 @@
 				57C3AC4D2B6864DB0058AE5F /* RestController.swift */,
 				57D2873C2B732E2D00FE2280 /* BlackDraggableZStack.swift */,
 				57D2873F2B73318100FE2280 /* RestfulGroup.swift */,
-				579714C02B785351007F5CB5 /* InitialPromptView2.swift */,
 				576F15C32B963BEB00058DE1 /* DrawingUtils.swift */,
 			);
 			path = Utilities;
@@ -208,6 +222,7 @@
 		57D287412B733FB800FE2280 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				577814FF2C22965200A91FB0 /* End */,
 				579714C62B82CFD6007F5CB5 /* StateMachine */,
 				57C3AC392B668F4F0058AE5F /* HomeView.swift */,
 				57C3AC4F2B68B54E0058AE5F /* SettingsView.swift */,
@@ -328,6 +343,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				57BEFCDB2CD9BE8F00D483E1 /* Assets.xcassets in Resources */,
 				57C3AC382B668BE50058AE5F /* Galvji.ttc in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -355,9 +371,9 @@
 			files = (
 				57C3AC562B69E57F0058AE5F /* ProfileView.swift in Sources */,
 				57C3AC3E2B6697EE0058AE5F /* WebStructs.swift in Sources */,
-				579714C12B785351007F5CB5 /* InitialPromptView2.swift in Sources */,
 				579714C82B82D052007F5CB5 /* DrawFromPromptView.swift in Sources */,
 				57C3AC502B68B54E0058AE5F /* SettingsView.swift in Sources */,
+				57A01ED72BF131C100C347E3 /* EndView.swift in Sources */,
 				57CE50EA2B69F2030071E806 /* ColorUtils.swift in Sources */,
 				57C3AC3A2B668F4F0058AE5F /* HomeView.swift in Sources */,
 				579714C52B82CFCF007F5CB5 /* InitialPromptView.swift in Sources */,
@@ -370,9 +386,11 @@
 				57C3AC3C2B668F970058AE5F /* CreateView.swift in Sources */,
 				57D2873D2B732E2D00FE2280 /* BlackDraggableZStack.swift in Sources */,
 				57369D172B70ACA200918CF5 /* ProfileCardView.swift in Sources */,
+				57BEFCDA2CD9A98200D483E1 /* RoundedRectangleWithGrid.swift in Sources */,
 				57D287402B73318100FE2280 /* RestfulGroup.swift in Sources */,
 				579714CA2B82D05D007F5CB5 /* PromptFromDrawingView.swift in Sources */,
 				57C3AC482B68340C0058AE5F /* Errors.swift in Sources */,
+				577815132C251B6500A91FB0 /* GlyphController.swift in Sources */,
 				576F15C62B963F9900058DE1 /* Poster.swift in Sources */,
 				579714C32B82CB3B007F5CB5 /* StateMachine.swift in Sources */,
 				57C3AC542B68BE620058AE5F /* JoinView.swift in Sources */,
@@ -537,6 +555,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"DUDL/Preview Content\"";
@@ -544,9 +563,11 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DUDL/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DUDL;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -567,6 +588,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"DUDL/Preview Content\"";
@@ -574,9 +596,11 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DUDL/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DUDL;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (

@@ -61,12 +61,12 @@ def override_config_with_runtime_env(runtime_env: Dict[str, Any]):
 def auto_register_blueprints(api: Api, blueprint_dir: str = "dudl.web.blueprints"):
     """ Utility function to reigster all Flask blueprints. This allows us to
     delay blueprint imports, which in turn allows us to push the app context to
-    enable proper logigng statements.
+    enable proper logging statements.
     
     NOTE: This function makes three implicit assumptions:
-        1. All blueprint fiels are located within blueprint_dir, which the user can specify
-        2. Each blueprint fiel follows the naming convention *_blueprint.py
-        3. Each blueprint fiel contains a Blueprint initialzied with a name identical to
+        1. All blueprint files are located within blueprint_dir, which the user can specify
+        2. Each blueprint file follows the naming convention *_blueprint.py
+        3. Each blueprint file contains a Blueprint initialzied with a name identical to
         the blueprint file name. In other words, the file "my_blueprint.py" must contain "my_blueprint = Blueprint(...".    
     """
 
@@ -114,11 +114,6 @@ def build_app(runtime_env: Dict[str, Any]):
     app.creation_time = time.time()
 
     return app
-
-# TODO: make this work
-# def build_database():
-#     client = MongoClient()
-
 
 def start_server():
     runtime_env = load_runtime_environment()

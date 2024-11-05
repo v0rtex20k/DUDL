@@ -5,6 +5,7 @@
 //  Created by V on 2/18/24.
 //
 
+import Combine
 import Foundation
 import SwiftUI
 
@@ -12,36 +13,68 @@ enum GameState {
     case notset, initialPrompt, drawFromPrompt, promptFromDrawing
 }
 
+@MainActor
 class StateMachine: ObservableObject {
-    var gameCode: String = ""
-    var restController: RestController? = nil
+    private var gameCode: String = ""
+    private var nRounds: Int = 0
+    private var timeStep: TimeInterval = 0
+    private var roundDurations: [GameState: TimeInterval] = [GameState: TimeInterval]()
+    private var restController: RestController? = nil
+    
+    private let defaultRoundDuration: TimeInterval = 30
+    
+    @Published var roundCount: Int = 0
+    @Published var timer: AnyCancellable? = nil
+    @Published var secondsRemaining: TimeInterval = 0
+    @Published public var isDone: Bool = false
     @Published public var stateContent: AnyView = AnyView(EmptyView())
     
-    
+    @Published var downloadedData: String = ""
+    @Published var dataToUpload: String = ""
     @Published private var state: GameState = .notset
-    @Published var inputData: String = ""
-    @Published var outputData: String = ""
     
-    
-    @Published private var alertMessage: String = ""
-    @Published private var shouldShowAlert: Bool = false
-    @Published private var shouldShowContent: Bool = true
-    let alertTitle = "Unable to Submit Your Work"
+    @State private var alertMessage: String = ""
+    @State private var shouldShowAlert: Bool = false
+    @State private var shouldShowContent: Bool = true
+
+    private let alertTitle = "Unable to Submit Your Work"
     
     init() {
-        print("Initialized the StateMachine")
+        // print("Initialized the StateMachine")
     }
     
-    func attach(gameCode: String, restController: RestController?) {
+    func start(gameCode: String, restController: RestController?, nRounds: Int, timeStep: TimeInterval, roundDurations: [GameState: TimeInterval]) {
+        self.nRounds = nRounds
+        self.roundDurations = roundDurations
+        self.timeStep = timeStep
         self.gameCode = gameCode
         self.restController = restController!
+        
+        self.secondsRemaining = self.roundDurations[self.state, default: defaultRoundDuration]
+    
+        // print("STARTING THE TIMER!")
+        
+        self.step()
+        self.timer = Timer.publish(every: self.timeStep, on: .main, in: .common).autoconnect().sink {_ in
+            // print("UPDATING THE SM!")
+            self.update()
+        }
+        
     }
     
-    func pull() async {
-        await self.restController?.pull(code: self.gameCode) { result in
-            switch result {
-                case .success(let jgr):
-                    self.inputData = jgr.content
+    func stop() {
+        // print("STOPPING THE TIMER!")
+        self.timer!.cancel()
+        self.isDone = true
+    }
+
+    
+    func download() async {
+        if let download_result = await self.restController?.downloadContent(code: self.gameCode, roundIndex: self.roundCount) {
+            await MainActor.run {
+                switch download_result {
+                case .success(let content):
+                    self.downloadedData = content
                 case .failure(let error):
                     switch error {
                         case .serviceUnavailable:
@@ -51,68 +84,93 @@ class StateMachine: ObservableObject {
                     }
                     self.shouldShowAlert = true
                     print(error.localizedDescription)
+                }
             }
         }
     }
     
-    func push() async {
-        await self.restController?.push(code: self.gameCode, out: self.outputData) { result in
-            switch result {
-            case .success:
-                self.outputData.removeAll()
-            case .failure(let error):
-                switch error {
-                    case .serviceUnavailable:
-                        self.alertMessage = "Failed to connect to server \n Please check your internet connection"
-                    default:
-                        self.alertMessage = "Something went wrong \n Please try again later"
+    
+    func upload() async {
+        if let download_result = await self.restController?.uploadContent(code: self.gameCode, data: self.dataToUpload, roundIndex: self.roundCount) {
+            await MainActor.run {
+                switch download_result {
+                    case .success(_):
+                        self.dataToUpload.removeAll()
+                    case .failure(let error):
+                        switch error {
+                            case .serviceUnavailable:
+                                self.alertMessage = "Failed to connect to server \n Please check your internet connection"
+                            default:
+                                self.alertMessage = "Something went wrong \n Please try again later"
+                        }
+                        self.shouldShowAlert = true
+                        print(error.localizedDescription)
                 }
-                self.shouldShowAlert = true
-                print(error.localizedDescription)
             }
         }
     }
+    
+    func update() {
+        // print("\t \(secondsRemaining) seconds left in ROUND \(roundCount + 1)/\(nRounds)")
+        secondsRemaining -= timeStep
+        
+        if secondsRemaining <= 0 {
+            // print("\tROUND \(roundCount + 1)/\(nRounds) HAS ENDED")
+            step()
+        }
+        
+        
+    }
 
-    func next() {
-        let inputDataBinding = Binding<String>(
-            get: { self.inputData },
-            set: {self.inputData = $0 }
-        )
+    func step() {
+        if self.state != .notset {
+            Task {
+                // print("[\(self.state)] UPLOADING \(self.dataToUpload) ...")
+                await self.upload()
+                
+                Task { @MainActor in
+                    if (self.roundCount + 1) >= self.nRounds {
+                        self.stop()
+                        return
+                    }
+                }
+                
+                await self.download()
+                
+                // print("[\(self.state)] DOWNLOADED \(self.downloadedData) ...")
+                
+                Task { @MainActor in
+                    // print("SWITCHING ROUNDS: \(self.roundCount) --> \(self.roundCount + 1)")
+                    self.roundCount += 1
+                }
+                
+            }
+        }
 
-        let outputDataBinding = Binding<String>(
-            get: {self.outputData },
-            set: {self.outputData = $0 }
-        )
         
         switch self.state {
             case.notset:
-                print("NS --> IP")
+                // print("NS --> IP w/ \(self.downloadedData) / \(self.dataToUpload)")
+
                 self.state = .initialPrompt
-                self.stateContent = AnyView(InitialPromptView(prompt: outputDataBinding))
+                self.stateContent = AnyView(InitialPromptView(stateMachine: self))
             case .initialPrompt:
-                print("IP --> DFP w/ \(self.inputData) / \(inputDataBinding.wrappedValue)")
-                Task.detached {
-                    await self.push()
-                }
-            
+                // print("IP --> DFP w/ \(self.downloadedData) / \(self.dataToUpload)")
+
                 self.state = .drawFromPrompt
-                self.stateContent =  AnyView(DrawFromPromptView(prompt: inputDataBinding, drawing: outputDataBinding))
+                self.stateContent =  AnyView(DrawFromPromptView(stateMachine: self))
             case .drawFromPrompt:
-                print("DFP --> PFD")
-                Task.detached {
-                    await self.pull()
-                    await self.push()
-                }
+                // print("DFP --> PFD w/ \(self.downloadedData) / \(self.dataToUpload)")
+
                 self.state = .promptFromDrawing
-            self.stateContent = AnyView(PromptFromDrawingView(drawing: inputDataBinding.wrappedValue, prompt: outputDataBinding))
+                self.stateContent = AnyView(PromptFromDrawingView(stateMachine: self))
             case .promptFromDrawing :
-                print("PFD --> DFP")
-                Task.detached {
-                    await self.pull()
-                    await self.push()
-                }
+                // print("PFD --> DFP w/ \(self.downloadedData) / \(self.dataToUpload)")
+
                 self.state = .drawFromPrompt
-            self.stateContent = AnyView(DrawFromPromptView(prompt: inputDataBinding, drawing: outputDataBinding))
+                self.stateContent = AnyView(DrawFromPromptView(stateMachine: self))
         }
+        
+        secondsRemaining = self.roundDurations[self.state, default: defaultRoundDuration]
     }
 }

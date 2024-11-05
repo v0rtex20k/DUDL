@@ -31,7 +31,7 @@ struct JoinView : View {
     @State private var shouldShowContent: Bool = true
     let alertTitle = "Unable to Join Game"
     
-    private let maxLen = 50 // just to prevent some type of crazy long string
+    private let maxLen = 25 // just to prevent some type of crazy long string
     
     @Binding var gameCode: String
     @Binding var currentView: ViewFinder
@@ -48,13 +48,13 @@ struct JoinView : View {
     
     func joinWrapper(_ code: String) {
         if isValidGameCode(code) {
-            print("Attempting to join Game \"\(code)\"...")
+            // print("Attempting to join Game \"\(code)\"...")
             shouldShowContent = false
-            Task.detached {
+            Task {
                 await joinGame()
             }
         } else {
-            print("Ignoring invalid game code \(code)")
+            // print("Ignoring invalid game code \(code)")
         }
     }
     
@@ -64,7 +64,7 @@ struct JoinView : View {
             case .success(let jgr):
                 currentView = jgr.existingPlayer ? .lobby : .profile
                 shouldShowContent = false
-                print("Joined Game \(jgr.playerId)")
+                // print("Joined Game \(jgr.playerId)")
             case .failure(let error):
                 switch error {
                     case .serviceUnavailable:
@@ -111,7 +111,7 @@ struct JoinView : View {
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .multilineTextAlignment(.center)
                                 .frame(width: geo.size.width * 0.85)
-                                .font(Font.custom("Galvji", size: 20))
+                                .font(Font.custom("Galvji", size: 18))
                         }
                     }
                     Spacer()

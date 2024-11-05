@@ -9,67 +9,81 @@ import SwiftUI
 import Combine
 
 struct ArenaView: View {
-    @State var startDate: Date = Date.now
     @State private var alertMessage: String = ""
     @State private var shouldShowAlert: Bool = false
     @State private var shouldShowContent: Bool = true
     let alertTitle = "Unable to Join Game"
     
     @Binding var gameCode: String
+    @Binding var nRounds: Int
     @Binding var currentView: ViewFinder
     @Binding var restController: RestController
     
-    private let DURATION = 6
-    @State private var timeElapsed = 0
-    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    private let roundDuration: TimeInterval = 30
+    private let timeStep: TimeInterval = 0.5
+    @State private var timeElapsed: TimeInterval = 0
+
+    @ObservedObject var stateMachine : StateMachine = StateMachine()
     
-    
-    @StateObject var stateMachine : StateMachine = StateMachine()
+    func debug() async {
+        await self.restController.debug(code: self.gameCode) { result in
+            switch result {
+                case .success:
+                    // print("DEBUG MODE ACTIVATED")
+                    break
+                case .failure(let error):
+                    switch error {
+                        case .serviceUnavailable:
+                            self.alertMessage = "Failed to connect to server \n Please check your internet connection"
+                        default:
+                            self.alertMessage = "Something went wrong \n Please try again later"
+                    }
+                    self.shouldShowAlert = true
+                    print(error.localizedDescription)
+            }
+        }
+    }
     
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea(edges: .all)
             VStack {
                 Spacer()
-//                RestfulGroup(currentView: $currentView, gameCode: $gameCode, shouldShowAlert: $shouldShowAlert, alertTitle: alertTitle, alertMessage: alertMessage, shouldShowContent: $shouldShowContent, contentValue: .constant("")) {data in
-//                    stateMachine.view
                 stateMachine.stateContent
-                }.onReceive(timer) { firedDate in
-                    timeElapsed = Int(firedDate.timeIntervalSince(startDate)) // seconds
-                    print("\t \(DURATION - timeElapsed) seconds left in ROUND")
-                    if timeElapsed >= DURATION {
-                        print("\t ROUND IS OVER")
-                        startDate = Date.now
-                        timeElapsed = 0
-                        stateMachine.next()
-                    }
-                }
-                Spacer()
-                Spacer()
-//            }
-        }
-        .onAppear() {
-            stateMachine.attach(gameCode: gameCode, restController: restController)
-            stateMachine.next()
-        }
-        .onDisappear {
-            timer.upstream.connect().cancel()
-        }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                VStack {
-                    Text("\(DURATION - timeElapsed)")
-                        .font(.headline)
-                        .foregroundStyle(Color(primary_color))
-                        .padding()
-                        .border(.red)
+                .onChange(of: stateMachine.isDone) {
+                    // print("The \(gameCode) Game is complete")
+                    currentView = .end
                 }
             }
+            Spacer()
+            Spacer()
+        }
+        .onAppear {
+            // print("STARTED! :)")
+            stateMachine.start(gameCode: gameCode, restController: restController, nRounds: nRounds, timeStep: timeStep, roundDurations: [
+                .notset : 0,
+                .initialPrompt: 30,
+                .drawFromPrompt: 30,
+                .promptFromDrawing: 30
+            ])
         }
     }
 }
 
 
-//#Preview {
-//    ArenaView()
-//}
+#Preview {
+   struct PreviewWrapper: View {
+       @State var rc: RestController = RestController(host: "192.168.1.10", port:8001)
+       @State var vf: ViewFinder = .arena
+       
+       var body: some View {
+           let ar = ArenaView(gameCode: .constant("happy-hippo"), nRounds: .constant(2), currentView: $vf, restController: $rc)
+           ar.onAppear {
+               Task {
+                   await ar.debug()
+               }
+           }
+       }
+   }
+   return PreviewWrapper()
+}

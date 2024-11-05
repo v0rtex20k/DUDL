@@ -15,7 +15,7 @@ struct ProfileView : View {
     @Binding var currentView: ViewFinder
     @Binding var restController: RestController
     
-    private let maxLen = 15
+    private let maxLen = 20
     private let alertTitle = "Unable to create Player Profile"
     
     @State var nickname: String = ""
@@ -36,13 +36,13 @@ struct ProfileView : View {
     func updateProfile() async {
         let c = playerColor.resolve(in: env)
         shouldShowContent = false
-        print("Attempting to Update Player Profile \"\(nickname)\" in \(gameCode) : \(c.description) ...")
+        // print("Attempting to Update Player Profile \"\(nickname)\" in \(gameCode) : \(c.description) ...")
         await restController.updatePlayerProfile(code: gameCode, nickname: nickname, rgba: RGBA(r: c.red, g: c.green, b: c.blue, a: c.opacity)) { result in
             wasSubmitted = true
             switch result {
-            case .success(let uppr):
+            case .success:
                 currentView = .lobby
-                print("Updated \(uppr.playerId)'s Profile")
+                // print("Updated \(uppr.playerId)'s Profile")
             case .failure(let error):
                 switch error {
                 case .serviceUnavailable:
@@ -61,7 +61,7 @@ struct ProfileView : View {
             switch result {
             case .success:
                 currentView = .home
-                print("Successfully left \(gameCode)")
+                // print("Successfully left \(gameCode)")
             case .failure(let error):
                 switch error {
                 case .serviceUnavailable:
@@ -89,7 +89,7 @@ struct ProfileView : View {
                                 .multilineTextAlignment(.center)
                                 .padding()
                                 .allowsTightening(true)
-                                .font(Font.custom("Galvji", size: 14))
+                                .font(Font.custom("Galvji", size: 13))
                                 .foregroundColor(.gray)
                                 .background(
                                     Button {
@@ -125,7 +125,7 @@ struct ProfileView : View {
                             Spacer()
                             Button {
                                 if !nickname.isEmpty{
-                                    Task.detached {
+                                    Task {
                                         await updateProfile()
                                     }
                                 }

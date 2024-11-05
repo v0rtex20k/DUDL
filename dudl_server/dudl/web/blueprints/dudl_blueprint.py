@@ -1,3 +1,4 @@
+import json
 from typing import Dict, List, Tuple
 from flasgger import swag_from
 from flask_api import status
@@ -13,6 +14,102 @@ from dudl.web.models.gamecollection import GameCollection
 collection: GameCollection = GameCollection()
 
 dudl_blueprint = Blueprint("dudl", __name__, url_prefix='/', description="DUDL REST Endpoints")
+
+@dudl_blueprint.route('debug')
+class Debug(MethodView):
+    def post(self):
+        # NOTE: FOR DEBUG PURPOSES ONLY!!
+        game_code, player1_id = abort_if_missing(request, "gameCode", "playerId")
+
+        player2_id = "F01959E7-CA61-42FA-B4C2-BA5775F7D146"
+        player3_id = "CC4B4E2E-5CEB-4007-8C4E-B3C1B8113182"
+        collection.add_game(host_id=player1_id, game_code=game_code)
+        
+        # ADD PLAYERS
+        collection.add_player_to_game(game_code=game_code, player_id=player2_id)
+        collection.add_player_to_game(game_code=game_code, player_id=player3_id)
+
+        # UPDATE PROFILES
+        collection.update_player_profile_in_game(game_code=game_code, player_id=player1_id, nickname="Yoda", rgba=dict(r=0, g=255, b=0, a=0.5))
+        collection.update_player_profile_in_game(game_code=game_code, player_id=player2_id, nickname="Darth Vader", rgba=dict(r=255, g=0, b=0, a=0.5))
+        collection.update_player_profile_in_game(game_code=game_code, player_id=player3_id, nickname="Obi-Wan Kenobi", rgba=dict(r=0, g=0, b=255, a=0.5))
+
+        # START GAME
+        collection.games[game_code].start()
+        assert collection.games[game_code].started
+
+        # ROUND 0: Initial Prompt
+        player1_upload_content_0 = "Try you must"
+        collection.games[game_code].upload_content(content=player1_upload_content_0, player_id=player1_id, round_idx=0)
+        
+        player2_upload_content_0 = "I am your father"
+        collection.games[game_code].upload_content(content=player2_upload_content_0, player_id=player2_id, round_idx=0)
+
+        player3_upload_content_0 = "I have the high ground"
+        collection.games[game_code].upload_content(content=player3_upload_content_0, player_id=player3_id, round_idx=0)
+
+        # ROUND 1: DrawFromPrompt
+
+        player1_download_content_0 = collection.games[game_code].download_content(player_id=player1_id, round_idx=0)
+        assert (
+            player1_download_content_0 is not None and
+            player1_download_content_0 != player1_upload_content_0
+        )
+
+        player2_download_content_0 = collection.games[game_code].download_content(player_id=player2_id, round_idx=0)
+        assert (
+            player2_download_content_0 is not None and
+            player2_download_content_0 != player2_upload_content_0
+        )
+
+        player3_download_content_0 = collection.games[game_code].download_content(player_id=player3_id, round_idx=0)
+        assert (
+            player3_download_content_0 is not None and
+            player3_download_content_0 != player3_upload_content_0
+        )
+        
+        player1_upload_content_1: str = "DRAWING:" + player1_download_content_0.split(' ')[-1]
+        player2_upload_content_1: str = "DRAWING:" + player2_download_content_0.split(' ')[-1]
+        player3_upload_content_1: str = "DRAWING:" + player3_download_content_0.split(' ')[-1]
+
+        collection.games[game_code].upload_content(content=player1_upload_content_1, player_id=player1_id, round_idx=1)
+        collection.games[game_code].upload_content(content=player2_upload_content_1, player_id=player2_id, round_idx=1)
+        collection.games[game_code].upload_content(content=player3_upload_content_1, player_id=player3_id, round_idx=1)
+        
+        # ROUND 2: PromptFromDrawing
+
+        player1_download_content_1 = collection.games[game_code].download_content(player_id=player1_id, round_idx=1)
+        assert (
+            player1_download_content_1 is not None and
+            player1_download_content_1 != player1_upload_content_1
+        )
+
+        player2_download_content_1 = collection.games[game_code].download_content(player_id=player2_id, round_idx=1)
+        assert (
+            player2_download_content_1 is not None and
+            player2_download_content_1 != player2_upload_content_1
+        )
+
+        player3_download_content_1 = collection.games[game_code].download_content(player_id=player3_id, round_idx=1)
+        assert (
+            player3_download_content_1 is not None and
+            player3_download_content_1 != player3_upload_content_1
+        )
+
+        player1_upload_content_2: str = player1_download_content_1.split(":")[-1] + "_ONE"
+        player2_upload_content_2: str = player2_download_content_1.split(":")[-1] + "_TWO"
+        player3_upload_content_2: str = player3_download_content_1.split(":")[-1] + "_THREE"
+
+        collection.games[game_code].upload_content(content=player1_upload_content_2, player_id=player1_id,  round_idx=2)
+        collection.games[game_code].upload_content(content=player2_upload_content_2, player_id=player2_id, round_idx=2)
+        collection.games[game_code].upload_content(content=player3_upload_content_2, player_id=player3_id, round_idx=2)
+
+        # END GAME
+        collection.games[game_code].end()
+
+        results = collection.games[game_code].load_player_results(head_player_id=player1_id)
+
+        return results, status.HTTP_200_OK
 
 @dudl_blueprint.route('create-game')
 class CreateGame(MethodView):
@@ -51,7 +148,6 @@ class LeaveGame(MethodView):
         was_removed = False
 
         if isinstance(collection.get_all_active_profiles_in_game(game_code=game_code).get(player_id), PlayerProfile):
-            existing_player = True
             current_app.logger.debug(f"Attempting to remove Player {player_id} from Game {game_code}...")
             rem = collection.remove_player_from_game(player_id=player_id, game_code=game_code)
             was_removed = (rem is not None)
@@ -71,6 +167,19 @@ class UpdatePlayerProfile(MethodView):
 
         return dict(playerId=player_id), status.HTTP_200_OK
 
+
+@dudl_blueprint.route('get-player-count')
+class GetPlayerCount(MethodView):
+    def post(self)-> Tuple[int, int]:
+        """ DUDL is up and running """
+        game_code: str = abort_if_missing(request, "gameCode")
+
+        n_players = 0
+        if game_code in collection.games:
+            n_players = len(collection.games[game_code].player_profiles)
+
+        return dict(playerCount=n_players), status.HTTP_200_OK
+
 @dudl_blueprint.route('get-all-active-player-profiles')
 class GetAllActivePlayerProfiles(MethodView):
     def post(self)-> Tuple[List[PlayerProfile], int]:
@@ -78,12 +187,13 @@ class GetAllActivePlayerProfiles(MethodView):
         game_code: str = abort_if_missing(request, "gameCode")
 
         profiles = collection.get_all_active_profiles_in_game(game_code=game_code)
-        current_app.logger.debug(f"Returning all active players in Game \"{game_code}\": {profiles}")
+        # uncomment as needed
+        # current_app.logger.debug(f"Returning all active players in Game \"{game_code}\": {profiles}")
 
         active_profiles = []
         for p in profiles.values() or []:
             try:
-                active_profiles.append(p.as_dict())
+                active_profiles.append(p.as_dict() | dict(game_code=game_code))
             except:
                 pass
         
@@ -91,13 +201,14 @@ class GetAllActivePlayerProfiles(MethodView):
 
 @dudl_blueprint.route('game-status')
 class GameStatus(MethodView):
-    def post(self)-> Tuple[PlayerProfile, int]:
+    def post(self)-> Tuple[bool, int]:
         """ DUDL is up and running """
         game_code: str = abort_if_missing(request, "gameCode")
 
         try:
-            is_started = collection.games[game_code].started
-            current_app.logger.debug(f"Game \"{game_code}\" has{'' if is_started else ' NOT'} started!")
+            # is_started = collection.games[game_code].started
+            # FIXME: uncomment as needed
+            # current_app.logger.debug(f"Game \"{game_code}\" has{'' if is_started else ' NOT'} started!")
             return dict(started=collection.games[game_code].started), status.HTTP_200_OK
         except Exception as e:
             log_and_abort(status.HTTP_404_NOT_FOUND, f"Could not retrieve the status of Game \"{game_code}\": {e}")
@@ -105,7 +216,6 @@ class GameStatus(MethodView):
 @dudl_blueprint.route('start-game')
 class StartGame(MethodView):
     def post(self)-> Tuple[PlayerProfile, int]:
-        """ DUDL is up and running """
         game_code: str = abort_if_missing(request, "gameCode")
         try:
             collection.games[game_code].start()
@@ -118,30 +228,73 @@ class StartGame(MethodView):
         except Exception as e:
             log_and_abort(status.HTTP_404_NOT_FOUND, f"Could not start Game \"{game_code}\": {e}")
 
+@dudl_blueprint.route('end-game')
+class EndGame(MethodView):
+    def put(self)-> Tuple[PlayerProfile, int]:
+        game_code, player_id = abort_if_missing(request, "gameCode", "playerId")
+        try:
+            collection.games[game_code].end()
+            if not collection.games[game_code].started:
+                current_app.logger.debug(f"Manually Ended Game \"{game_code}\"!")
+                return {}, status.HTTP_200_OK
+            else:
+                current_app.logger.warning(f"Failed to start Game \"{game_code}\"!")
+                return {}, status.HTTP_412_PRECONDITION_FAILED
+        except Exception as e:
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"Could not start Game \"{game_code}\": {e}")
 
-@dudl_blueprint.route('pull-content')
-class PullContent(MethodView):
-    def post(self)-> Tuple[Dict[str, str], int]:
+#### GAME DYNAMICS ####
+
+@dudl_blueprint.route('upload-content')
+class UploadContent(MethodView):
+    def post(self)-> Tuple[PlayerProfile, int]:
+        game_code, player_id, content, round_idx = abort_if_missing(request, "gameCode", "playerId", "content", "roundIdx")
+
+        try:
+            current_app.logger.debug(f"Uploading Player <{player_id}>'s content for Round {round_idx} of Game \"{game_code}\": \"{content}\" ...")
+            collection.games[game_code].upload_content(content=content, player_id=player_id, round_idx=round_idx)
+            
+            return {}, status.HTTP_200_OK
+        except Exception as e:
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"Failed to upload Player <{player_id}>'s content for Round {round_idx} of Game \"{game_code}\": {e}")
+
+@dudl_blueprint.route('download-content')
+class DownloadContent(MethodView):
+    def post(self)-> Tuple[PlayerProfile, int]:
+        game_code, player_id, round_idx = abort_if_missing(request, "gameCode", "playerId", "roundIdx")
+
+        try:
+            content = collection.games[game_code].download_content(player_id=player_id, round_idx=round_idx)
+            current_app.logger.debug(f"Downloading Player <{player_id}>'s content for Round {round_idx} of Game \"{game_code}\":\t\"{content}\" ...")
+            
+            if content:
+                return dict(content=content), status.HTTP_200_OK
+            else:
+                current_app.logger.warning(f"Got null content for Player <{player_id}>'s content for Round {round_idx} of Game \"{game_code}\"")
+                return {}, status.HTTP_204_NO_CONTENT
+        except Exception as e:
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"Failed to download Player <{player_id}>'s content for Round {round_idx} of Game \"{game_code}\": {e}")
+
+
+#### GAME RESULTS ####
+
+@dudl_blueprint.route('load-results')
+class LoadResults(MethodView):
+    def post(self)-> List[Dict[str, str | PlayerProfile]]:
         game_code, player_id = abort_if_missing(request, "gameCode", "playerId")
 
         try:
-            current_app.logger.debug(f"Pulling Player <{player_id}>'s content for Game \"{game_code}\" ...")
-            content = collection.games[game_code].pull_content(player_id=player_id)
-            current_app.logger.debug(f"\t--> \"{content}\"")
-            return dict(content=content), status.HTTP_200_OK
+            results = collection.games[game_code].load_player_results(head_player_id=player_id)
+            current_app.logger.debug(f"Loading Player <{player_id}>'s Results in Game \"{game_code}\":\t\"{results}\" ...")
+            
+            import uuid
+            with open(f'{game_code}_{player_id}_{uuid.uuid4()}_results.json', 'w+') as fp:
+                json.dump(results, fp)
+
+            if len(results) == len(collection.games[game_code].player_profiles):
+                return results, status.HTTP_200_OK
+            else:
+                current_app.logger.warning(f"No results found for Player <{player_id}>'s in Game \"{game_code}\"")
+                return [], status.HTTP_204_NO_CONTENT
         except Exception as e:
-            log_and_abort(status.HTTP_404_NOT_FOUND, f"Failed to pull Player <{player_id}>'s content for Game \"{game_code}\": {e}")
-
-
-@dudl_blueprint.route('push-content')
-class PushContent(MethodView):
-    def post(self)-> Tuple[PlayerProfile, int]:
-        game_code, player_id, content = abort_if_missing(request, "gameCode", "playerId", "content")
-
-        try:
-            current_app.logger.debug(f"Pushing Player <{player_id}>'s content for Game \"{game_code}\" \n\t--> {content} ...")
-            content = collection.games[game_code].push_content(player_id=player_id, content=content)
-            return {}, status.HTTP_200_OK
-        except Exception as e:
-            log_and_abort(status.HTTP_404_NOT_FOUND, f"Failed to push Player <{player_id}>'s content for Game \"{game_code}\": {e}")
-
+            log_and_abort(status.HTTP_404_NOT_FOUND, f"Failed to load Player <{player_id}>'s results in Game \"{game_code}\": {e}")
