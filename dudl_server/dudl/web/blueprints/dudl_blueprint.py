@@ -1,3 +1,4 @@
+import json
 from typing import Dict, List, Tuple
 from flasgger import swag_from
 from flask_api import status
@@ -286,7 +287,11 @@ class LoadResults(MethodView):
             results = collection.games[game_code].load_player_results(head_player_id=player_id)
             current_app.logger.debug(f"Loading Player <{player_id}>'s Results in Game \"{game_code}\":\t\"{results}\" ...")
             
-            if results:
+            import uuid
+            with open(f'{game_code}_{player_id}_{uuid.uuid4()}_results.json', 'w+') as fp:
+                json.dump(results, fp)
+
+            if len(results) == len(collection.games[game_code].player_profiles):
                 return results, status.HTTP_200_OK
             else:
                 current_app.logger.warning(f"No results found for Player <{player_id}>'s in Game \"{game_code}\"")

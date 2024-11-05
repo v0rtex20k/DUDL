@@ -18,6 +18,7 @@
 		579714CE2B82FAFB007F5CB5 /* ArenaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714CD2B82FAFB007F5CB5 /* ArenaView.swift */; };
 		57A01ED72BF131C100C347E3 /* EndView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A01ED62BF131C100C347E3 /* EndView.swift */; };
 		57B6E7A72B961FB700A19258 /* DudlCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57B6E7A62B961FB700A19258 /* DudlCanvas.swift */; };
+		57BEFCDA2CD9A98200D483E1 /* RoundedRectangleWithGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57BEFCD92CD9A98200D483E1 /* RoundedRectangleWithGrid.swift */; };
 		57C3AC052B65B2FB0058AE5F /* DUDLApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC042B65B2FB0058AE5F /* DUDLApp.swift */; };
 		57C3AC162B65B2FC0058AE5F /* DUDLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC152B65B2FC0058AE5F /* DUDLTests.swift */; };
 		57C3AC202B65B2FC0058AE5F /* DUDLUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3AC1F2B65B2FC0058AE5F /* DUDLUITests.swift */; };
@@ -67,6 +68,7 @@
 		579714CD2B82FAFB007F5CB5 /* ArenaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArenaView.swift; sourceTree = "<group>"; };
 		57A01ED62BF131C100C347E3 /* EndView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndView.swift; sourceTree = "<group>"; };
 		57B6E7A62B961FB700A19258 /* DudlCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DudlCanvas.swift; sourceTree = "<group>"; };
+		57BEFCD92CD9A98200D483E1 /* RoundedRectangleWithGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedRectangleWithGrid.swift; sourceTree = "<group>"; };
 		57C3AC012B65B2FB0058AE5F /* DUDL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DUDL.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		57C3AC042B65B2FB0058AE5F /* DUDLApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DUDLApp.swift; sourceTree = "<group>"; };
 		57C3AC082B65B2FC0058AE5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 			children = (
 				577815122C251B6500A91FB0 /* GlyphController.swift */,
 				57A01ED62BF131C100C347E3 /* EndView.swift */,
+				57BEFCD92CD9A98200D483E1 /* RoundedRectangleWithGrid.swift */,
 			);
 			path = End;
 			sourceTree = "<group>";
@@ -381,6 +384,7 @@
 				57C3AC3C2B668F970058AE5F /* CreateView.swift in Sources */,
 				57D2873D2B732E2D00FE2280 /* BlackDraggableZStack.swift in Sources */,
 				57369D172B70ACA200918CF5 /* ProfileCardView.swift in Sources */,
+				57BEFCDA2CD9A98200D483E1 /* RoundedRectangleWithGrid.swift in Sources */,
 				57D287402B73318100FE2280 /* RestfulGroup.swift in Sources */,
 				579714CA2B82D05D007F5CB5 /* PromptFromDrawingView.swift in Sources */,
 				57C3AC482B68340C0058AE5F /* Errors.swift in Sources */,

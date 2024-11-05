@@ -30,7 +30,7 @@ struct DUDLApp: App {
     @State var currentView: ViewFinder = .home
     @State var restController: RestController = RestController(host:
                                                                 "127.0.0.1",
-//                                                               "192.168.1.34",
+//                                                               "192.168.1.37",
                                                                port: 8001)
     
 //    @State var initialPrompt = ""
