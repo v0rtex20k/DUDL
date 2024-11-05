@@ -287,9 +287,9 @@ class LoadResults(MethodView):
             results = collection.games[game_code].load_player_results(head_player_id=player_id)
             current_app.logger.debug(f"Loading Player <{player_id}>'s Results in Game \"{game_code}\":\t\"{results}\" ...")
             
-            import uuid
-            with open(f'{game_code}_{player_id}_{uuid.uuid4()}_results.json', 'w+') as fp:
-                json.dump(results, fp)
+            # import uuid
+            # with open(f'{game_code}_{player_id}_{uuid.uuid4()}_results.json', 'w+') as fp:
+            #     json.dump(results, fp)
 
             if len(results) == len(collection.games[game_code].player_profiles):
                 return results, status.HTTP_200_OK
