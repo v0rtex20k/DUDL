@@ -17,7 +17,7 @@ struct PromptFromDrawingView: View {
     @State var canvasView = PKCanvasView()
     
     func limitText() {
-        print("LIMITING TEXT: \(stateMachine.dataToUpload.count) vs \(maxLen)")
+        // print("LIMITING TEXT: \(stateMachine.dataToUpload.count) vs \(maxLen)")
         stateMachine.dataToUpload = stateMachine.dataToUpload.replacingOccurrences(of: "[^\\S ]+", with: "", options: .regularExpression)
         if stateMachine.dataToUpload.count > maxLen {
             stateMachine.dataToUpload = String(stateMachine.dataToUpload.prefix(maxLen))
@@ -77,7 +77,7 @@ struct PromptFromDrawingView: View {
                         canvasView.drawing = try PKDrawing(base64Encoded: stateMachine.downloadedData)
                     } catch {
                         canvasView.drawing = PKDrawing()
-                        print("[PFD] Failed to render drawing: \(error)")
+                        // print("[PFD] Failed to render drawing: \(error)")
                     }
                 }
             }

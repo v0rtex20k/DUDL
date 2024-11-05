@@ -29,7 +29,7 @@ struct ArenaView: View {
         await self.restController.debug(code: self.gameCode) { result in
             switch result {
                 case .success:
-                    print("DEBUG MODE ACTIVATED")
+                    // print("DEBUG MODE ACTIVATED")
                 case .failure(let error):
                     switch error {
                         case .serviceUnavailable:
@@ -50,7 +50,7 @@ struct ArenaView: View {
                 Spacer()
                 stateMachine.stateContent
                 .onChange(of: stateMachine.isDone) {
-                    print("The \(gameCode) Game is complete")
+                    // print("The \(gameCode) Game is complete")
                     currentView = .end
                 }
             }
@@ -58,7 +58,7 @@ struct ArenaView: View {
             Spacer()
         }
         .onAppear {
-            print("STARTED! :)")
+            // print("STARTED! :)")
             stateMachine.start(gameCode: gameCode, restController: restController, nRounds: nRounds, timeStep: timeStep, roundDurations: [
                 .notset : 0,
                 .initialPrompt: 30,

@@ -97,7 +97,7 @@ struct RestController {
             }
         }
         catch {
-            print("Failed to decode NewGameResponse")
+            // print("Failed to decode NewGameResponse")
             completionHandler(.failure(.decodingError))
         }
             
@@ -123,7 +123,7 @@ struct RestController {
         }
         catch {
             
-            print("Failed to decode JoinGameResponse")
+            // print("Failed to decode JoinGameResponse")
             completionHandler(.failure(.decodingError))
         }
         
@@ -150,7 +150,7 @@ struct RestController {
             }
         }
         catch {
-            print("Failed to decode UpdatePlayerProfileResponse")
+            // print("Failed to decode UpdatePlayerProfileResponse")
             completionHandler(.failure(.decodingError))
         }
             
@@ -186,7 +186,7 @@ struct RestController {
         }
         catch {
             
-            print("Failed to decode list of PlayerProfiles")
+            // print("Failed to decode list of PlayerProfiles")
             completionHandler(.failure(.decodingError))
         }
         
@@ -236,7 +236,7 @@ struct RestController {
         }
         catch {
             
-            print("Failed to decode GameStatusResponse")
+            // print("Failed to decode GameStatusResponse")
             completionHandler(.failure(.decodingError))
         }
     }
@@ -249,11 +249,11 @@ struct RestController {
 
         switch await postAsync(endpoint: "start-game", postData: uploadData) {
             case .success:
-                print("Sucessfully processed StartGame Response!")
+                // print("Sucessfully processed StartGame Response!")
                 completionHandler(.success(true))
                 
             case .failure(let http_error):
-                print("Failed to process StartGame Response!")
+                // print("Failed to process StartGame Response!")
                 completionHandler(.failure(http_error))
         }
 
@@ -267,28 +267,28 @@ struct RestController {
 
         switch await postAsync(endpoint: "debug", postData: uploadData) {
             case .success:
-                print("Sucessfully processed Debug Response!")
+                // print("Sucessfully processed Debug Response!")
                 completionHandler(.success(true))
                 
             case .failure(let http_error):
-                print("Failed to process Debug Response!")
+                // print("Failed to process Debug Response!")
                 completionHandler(.failure(http_error))
         }
     }
     
     func uploadContent(code: String, data: String, roundIndex: Int) async -> Result<Bool, HTTPError> {
-        print("UPLOADING ROUND \(roundIndex + 1) CONTENT \"\(data)\" to Game \(code) ...")
+        // print("UPLOADING ROUND \(roundIndex + 1) CONTENT \"\(data)\" to Game \(code) ...")
         guard let uploadData = await self.encodeRequest(UploadContentRequest(gameCode: code, playerId: await deviceId(), content: data, roundIdx: roundIndex)) else {
             return .failure(.unidentifiedUser)
         }
             
         switch await postAsync(endpoint: "upload-content", postData: uploadData) {
             case .success:
-                print("Sucessfully posted UploadContent")
+                // print("Sucessfully posted UploadContent")
                 return .success(true)
                 
             case .failure(let http_error):
-                print("Failed to post UploadContent")
+                // print("Failed to post UploadContent")
                 return .failure(http_error)
         }
     }
@@ -303,16 +303,16 @@ struct RestController {
                 case .success(let post_data):
                     let decoded_result = try JSONDecoder().decode(DownloadContentResponse.self, from: post_data)
 
-                    print("Sucessfully pulled DownloadContentResponse!")
-//                    print("DOWNLOADED ROUND \(roundIndex + 1) CONTENT \(decoded_result.content) from Game \(code) ...")
+                    // print("Sucessfully pulled DownloadContentResponse!")
+//                    // print("DOWNLOADED ROUND \(roundIndex + 1) CONTENT \(decoded_result.content) from Game \(code) ...")
                     return .success(decoded_result.content)
 
                 case .failure(let http_error):
-                    print("Failed to process DownloadContentResponse!")
+                    // print("Failed to process DownloadContentResponse!")
                     return .failure(http_error)
             }
         } catch {
-            print("Failed to decode DownloadContentResponse \(error)")
+            // print("Failed to decode DownloadContentResponse \(error)")
             return .failure(.decodingError)
         }
 
@@ -338,7 +338,7 @@ struct RestController {
         }
         catch {
             
-            print("Failed to decode PlayerCountResponse")
+            // print("Failed to decode PlayerCountResponse")
             completionHandler(.failure(.decodingError))
         }
     }
@@ -370,12 +370,12 @@ struct RestController {
                 }
                     
                 case .failure(let http_error):
-                    print("Failed to process GetGlyphs!")
+                    // print("Failed to process GetGlyphs!")
                     completionHandler(.failure(http_error))
             }
         }
         catch {
-            print("Failed to decode GetGlyphsRequest: \(error)")
+            // print("Failed to decode GetGlyphsRequest: \(error)")
             completionHandler(.failure(.decodingError))
         }
         
@@ -399,11 +399,11 @@ struct RestController {
             let url = URL(string: url_str)
             
             retryLoop : for _ in 0..<self._maxRetryCount {
-                print("RETRYING \(type) Request @ \(endpoint) \(status_code) ...")
+                // print("RETRYING \(type) Request @ \(endpoint) \(status_code) ...")
                 do {
                     switch type {
                         case .POST:
-                            print("POST-ing to \(url_str) ...")
+                            // print("POST-ing to \(url_str) ...")
                             var request = URLRequest(url: url!,
                                                  cachePolicy: .useProtocolCachePolicy,
                                                  timeoutInterval: self._requestTimeout)
@@ -426,12 +426,12 @@ struct RestController {
                             returnedData = responseData
                             
                             if 200..<300 ~= status_code && !returnedData.isEmpty {
-                                print("[\(endpoint)] POST RUNNING w/ \(String(describing: str(returnedData)))")
+                                // print("[\(endpoint)] POST RUNNING w/ \(String(describing: str(returnedData)))")
                                 break retryLoop // if you've got something, run w/ it
                             }
                             
                         case .GET:
-                            print("GET-ing from \(url_str) ...")
+                            // print("GET-ing from \(url_str) ...")
                             let (responseData, response) = try await URLSession.shared.data(from: url!)
                         
                             returnedData = responseData
@@ -443,11 +443,11 @@ struct RestController {
                             status_code = httpResponse.statusCode
                             
                             if 200..<300 ~= status_code && !returnedData.isEmpty {
-                                print("GET RUNNING w/ \(String(describing: str(returnedData)))")
+                                // print("GET RUNNING w/ \(String(describing: str(returnedData)))")
                                 break retryLoop // if you've got something, run w/ it
                             }
                         default:
-                            print("Unable to handle \"\(url_str)\" request ...")
+                            // print("Unable to handle \"\(url_str)\" request ...")
                             return .failure(.invalidRequest)
                     }
                     
@@ -456,7 +456,7 @@ struct RestController {
                     continue  // try again
                     
                 } catch (let e) {
-                    print("Failed to complete \(type) Request @ \(endpoint): \(e)")
+                    // print("Failed to complete \(type) Request @ \(endpoint): \(e)")
                 }
             }
             

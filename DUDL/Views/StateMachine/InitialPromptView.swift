@@ -15,7 +15,7 @@ struct InitialPromptView: View {
     
 
     func limitText() {
-        print("LIMITING TEXT: \(stateMachine.dataToUpload.count) vs \(maxLen)")
+        // print("LIMITING TEXT: \(stateMachine.dataToUpload.count) vs \(maxLen)")
         stateMachine.dataToUpload = stateMachine.dataToUpload.replacingOccurrences(of: "[^\\S ]+", with: "", options: .regularExpression)
         if stateMachine.dataToUpload.count > maxLen {
             stateMachine.dataToUpload = String(stateMachine.dataToUpload.prefix(maxLen))

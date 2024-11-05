@@ -31,7 +31,7 @@ struct CreateView : View {
                 case .success(let g):
                     gameCode = g.gameCode
                     shouldShowContent = true
-                    print("Started a new game \(gameCode)")
+                    // print("Started a new game \(gameCode)")
                 case .failure(let error):
                     switch error {
                         case .serviceUnavailable:

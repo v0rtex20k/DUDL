@@ -42,7 +42,8 @@ struct EndView : View {
         await self.restController.debug(code: self.gameCode) { result in
             switch result {
                 case .success:
-                    print("DEBUG MODE ACTIVATED")
+                    // print("DEBUG MODE ACTIVATED")
+                    break
                 case .failure(let error):
                     switch error {
                         case .serviceUnavailable:
@@ -62,9 +63,9 @@ struct EndView : View {
             switch result {
             case .success(let gs):
                 glyphs = gs
-                print("GOT GLYPHS: \(gs)")
+                // print("GOT GLYPHS: \(gs)")
             case .failure(let error):
-                print("FAILURE")
+                // print("FAILURE")
                 switch error {
                 case .serviceUnavailable:
                     alertMessage = "Failed to connect to server \n Please check your internet connection"

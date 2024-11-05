@@ -40,7 +40,7 @@ class StateMachine: ObservableObject {
     private let alertTitle = "Unable to Submit Your Work"
     
     init() {
-        print("Initialized the StateMachine")
+        // print("Initialized the StateMachine")
     }
     
     func start(gameCode: String, restController: RestController?, nRounds: Int, timeStep: TimeInterval, roundDurations: [GameState: TimeInterval]) {
@@ -52,18 +52,18 @@ class StateMachine: ObservableObject {
         
         self.secondsRemaining = self.roundDurations[self.state, default: defaultRoundDuration]
     
-        print("STARTING THE TIMER!")
+        // print("STARTING THE TIMER!")
         
         self.step()
         self.timer = Timer.publish(every: self.timeStep, on: .main, in: .common).autoconnect().sink {_ in
-            print("UPDATING THE SM!")
+            // print("UPDATING THE SM!")
             self.update()
         }
         
     }
     
     func stop() {
-        print("STOPPING THE TIMER!")
+        // print("STOPPING THE TIMER!")
         self.timer!.cancel()
         self.isDone = true
     }
@@ -111,11 +111,11 @@ class StateMachine: ObservableObject {
     }
     
     func update() {
-        print("\t \(secondsRemaining) seconds left in ROUND \(roundCount + 1)/\(nRounds)")
+        // print("\t \(secondsRemaining) seconds left in ROUND \(roundCount + 1)/\(nRounds)")
         secondsRemaining -= timeStep
         
         if secondsRemaining <= 0 {
-            print("\tROUND \(roundCount + 1)/\(nRounds) HAS ENDED")
+            // print("\tROUND \(roundCount + 1)/\(nRounds) HAS ENDED")
             step()
         }
         
@@ -125,7 +125,7 @@ class StateMachine: ObservableObject {
     func step() {
         if self.state != .notset {
             Task {
-                print("[\(self.state)] UPLOADING \(self.dataToUpload) ...")
+                // print("[\(self.state)] UPLOADING \(self.dataToUpload) ...")
                 await self.upload()
                 
                 Task { @MainActor in
@@ -137,10 +137,10 @@ class StateMachine: ObservableObject {
                 
                 await self.download()
                 
-                print("[\(self.state)] DOWNLOADED \(self.downloadedData) ...")
+                // print("[\(self.state)] DOWNLOADED \(self.downloadedData) ...")
                 
                 Task { @MainActor in
-                    print("SWITCHING ROUNDS: \(self.roundCount) --> \(self.roundCount + 1)")
+                    // print("SWITCHING ROUNDS: \(self.roundCount) --> \(self.roundCount + 1)")
                     self.roundCount += 1
                 }
                 
@@ -150,22 +150,22 @@ class StateMachine: ObservableObject {
         
         switch self.state {
             case.notset:
-                print("NS --> IP w/ \(self.downloadedData) / \(self.dataToUpload)")
+                // print("NS --> IP w/ \(self.downloadedData) / \(self.dataToUpload)")
 
                 self.state = .initialPrompt
                 self.stateContent = AnyView(InitialPromptView(stateMachine: self))
             case .initialPrompt:
-                print("IP --> DFP w/ \(self.downloadedData) / \(self.dataToUpload)")
+                // print("IP --> DFP w/ \(self.downloadedData) / \(self.dataToUpload)")
 
                 self.state = .drawFromPrompt
                 self.stateContent =  AnyView(DrawFromPromptView(stateMachine: self))
             case .drawFromPrompt:
-                print("DFP --> PFD w/ \(self.downloadedData) / \(self.dataToUpload)")
+                // print("DFP --> PFD w/ \(self.downloadedData) / \(self.dataToUpload)")
 
                 self.state = .promptFromDrawing
                 self.stateContent = AnyView(PromptFromDrawingView(stateMachine: self))
             case .promptFromDrawing :
-                print("PFD --> DFP w/ \(self.downloadedData) / \(self.dataToUpload)")
+                // print("PFD --> DFP w/ \(self.downloadedData) / \(self.dataToUpload)")
 
                 self.state = .drawFromPrompt
                 self.stateContent = AnyView(DrawFromPromptView(stateMachine: self))

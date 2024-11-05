@@ -44,7 +44,7 @@ struct LobbyView : View {
                         }
                     }
                     
-                    print("Active Players: \(dump(playerProfiles))")
+                    // print("Active Players: \(dump(playerProfiles))")
                 case .failure(let error):
                     switch error {
                     case .serviceUnavailable:
@@ -66,7 +66,7 @@ struct LobbyView : View {
             case .success:
                 timer.upstream.connect().cancel()
                 currentView = .lobby
-                print("Successfully left \(gameCode)")
+                // print("Successfully left \(gameCode)")
             case .failure(let error):
                 switch error {
                 case .serviceUnavailable:
@@ -88,7 +88,7 @@ struct LobbyView : View {
                 case .success:
                     playerProfiles = playerProfiles.filter(){p in p.playerId == pid}
                     timer.upstream.connect().cancel()
-                    print("Removed \(pid) --> Remaining Players: \(dump(playerProfiles))")
+                    // print("Removed \(pid) --> Remaining Players: \(dump(playerProfiles))")
                 case .failure(let error):
                     switch error {
                     case .serviceUnavailable:
@@ -110,12 +110,12 @@ struct LobbyView : View {
                     switch result {
                     case .success(let gsr):
                         if gsr.started {
-                            print("LET THE GAMES BEGIN")
+                            // print("LET THE GAMES BEGIN")
                             playerCount = playerProfiles.count
                             timer.upstream.connect().cancel()
                             currentView = .arena
                         } else {
-                            print("Still waiting for the game to start ...")
+                            // print("Still waiting for the game to start ...")
                         }
                     case .failure(let error):
                         switch error {
@@ -142,7 +142,7 @@ struct LobbyView : View {
                         playerCount = playerProfiles.count
                         timer.upstream.connect().cancel()
                         currentView = .arena
-                        print("THE GAME HAS BEEN STARTED")
+                        // print("THE GAME HAS BEEN STARTED")
                     case .failure(let error):
                         switch error {
                             case .serviceUnavailable:
@@ -171,7 +171,7 @@ struct LobbyView : View {
                                     .contextMenu {
                                         if selfSelect || isHost {
                                             Button(role: .destructive) {
-                                                print("\(deviceUUID) VS \(profile.playerId)")
+                                                // print("\(deviceUUID) VS \(profile.playerId)")
                                                 Task {
                                                     await selfSelect ? leaveGame() : eject(profile.playerId)
                                                 }
@@ -206,7 +206,7 @@ struct LobbyView : View {
                     }
                     .background(Color.black)
                     .refreshable {
-                        print("Loading All Player Profiles ...")
+                        // print("Loading All Player Profiles ...")
                         await loadAllPlayerProfiles()
                     }
                     .toolbar {

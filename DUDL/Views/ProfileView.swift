@@ -36,13 +36,13 @@ struct ProfileView : View {
     func updateProfile() async {
         let c = playerColor.resolve(in: env)
         shouldShowContent = false
-        print("Attempting to Update Player Profile \"\(nickname)\" in \(gameCode) : \(c.description) ...")
+        // print("Attempting to Update Player Profile \"\(nickname)\" in \(gameCode) : \(c.description) ...")
         await restController.updatePlayerProfile(code: gameCode, nickname: nickname, rgba: RGBA(r: c.red, g: c.green, b: c.blue, a: c.opacity)) { result in
             wasSubmitted = true
             switch result {
             case .success(let uppr):
                 currentView = .lobby
-                print("Updated \(uppr.playerId)'s Profile")
+                // print("Updated \(uppr.playerId)'s Profile")
             case .failure(let error):
                 switch error {
                 case .serviceUnavailable:
@@ -61,7 +61,7 @@ struct ProfileView : View {
             switch result {
             case .success:
                 currentView = .home
-                print("Successfully left \(gameCode)")
+                // print("Successfully left \(gameCode)")
             case .failure(let error):
                 switch error {
                 case .serviceUnavailable:

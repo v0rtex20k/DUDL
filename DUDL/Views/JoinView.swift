@@ -48,13 +48,13 @@ struct JoinView : View {
     
     func joinWrapper(_ code: String) {
         if isValidGameCode(code) {
-            print("Attempting to join Game \"\(code)\"...")
+            // print("Attempting to join Game \"\(code)\"...")
             shouldShowContent = false
             Task {
                 await joinGame()
             }
         } else {
-            print("Ignoring invalid game code \(code)")
+            // print("Ignoring invalid game code \(code)")
         }
     }
     
@@ -64,7 +64,7 @@ struct JoinView : View {
             case .success(let jgr):
                 currentView = jgr.existingPlayer ? .lobby : .profile
                 shouldShowContent = false
-                print("Joined Game \(jgr.playerId)")
+                // print("Joined Game \(jgr.playerId)")
             case .failure(let error):
                 switch error {
                     case .serviceUnavailable:
