@@ -194,7 +194,7 @@ struct EndView : View {
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .overlay(alignment: .bottom) {
-                    GlyphController(nGlyphs: glyphs.count, gidx: originalIndex(currGlyphID))
+                    GlyphCon(nGlyphs: glyphs.count, gidx: originalIndex(currGlyphID))
                         .offset(y: -15)
                 }
             }

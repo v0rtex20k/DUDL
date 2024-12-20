@@ -10,7 +10,6 @@
 		57369D172B70ACA200918CF5 /* ProfileCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57369D162B70ACA200918CF5 /* ProfileCardView.swift */; };
 		576F15C42B963BEB00058DE1 /* DrawingUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576F15C32B963BEB00058DE1 /* DrawingUtils.swift */; };
 		576F15C62B963F9900058DE1 /* Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576F15C52B963F9900058DE1 /* Poster.swift */; };
-		577815132C251B6500A91FB0 /* GlyphController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577815122C251B6500A91FB0 /* GlyphController.swift */; };
 		579714C32B82CB3B007F5CB5 /* StateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C22B82CB3B007F5CB5 /* StateMachine.swift */; };
 		579714C52B82CFCF007F5CB5 /* InitialPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C42B82CFCF007F5CB5 /* InitialPromptView.swift */; };
 		579714C82B82D052007F5CB5 /* DrawFromPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579714C72B82D052007F5CB5 /* DrawFromPromptView.swift */; };
@@ -38,6 +37,7 @@
 		57CE50EC2B6EA0230071E806 /* LobbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57CE50EB2B6EA0230071E806 /* LobbyView.swift */; };
 		57D2873D2B732E2D00FE2280 /* BlackDraggableZStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D2873C2B732E2D00FE2280 /* BlackDraggableZStack.swift */; };
 		57D287402B73318100FE2280 /* RestfulGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D2873F2B73318100FE2280 /* RestfulGroup.swift */; };
+		57D9F0A62D15F76B00BD9ACE /* GlyphCon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D9F0A52D15F76B00BD9ACE /* GlyphCon.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,7 +61,6 @@
 		57369D162B70ACA200918CF5 /* ProfileCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCardView.swift; sourceTree = "<group>"; };
 		576F15C32B963BEB00058DE1 /* DrawingUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingUtils.swift; sourceTree = "<group>"; };
 		576F15C52B963F9900058DE1 /* Poster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Poster.swift; sourceTree = "<group>"; };
-		577815122C251B6500A91FB0 /* GlyphController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GlyphController.swift; path = "../../../../../Downloads/Infinite Carousel/Infinite Carousel/View/GlyphController.swift"; sourceTree = "<group>"; };
 		579714C22B82CB3B007F5CB5 /* StateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateMachine.swift; sourceTree = "<group>"; };
 		579714C42B82CFCF007F5CB5 /* InitialPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialPromptView.swift; sourceTree = "<group>"; };
 		579714C72B82D052007F5CB5 /* DrawFromPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawFromPromptView.swift; sourceTree = "<group>"; };
@@ -94,6 +93,7 @@
 		57CE50EB2B6EA0230071E806 /* LobbyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LobbyView.swift; sourceTree = "<group>"; };
 		57D2873C2B732E2D00FE2280 /* BlackDraggableZStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlackDraggableZStack.swift; sourceTree = "<group>"; };
 		57D2873F2B73318100FE2280 /* RestfulGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestfulGroup.swift; sourceTree = "<group>"; };
+		57D9F0A52D15F76B00BD9ACE /* GlyphCon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlyphCon.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,9 +124,9 @@
 		577814FF2C22965200A91FB0 /* End */ = {
 			isa = PBXGroup;
 			children = (
-				577815122C251B6500A91FB0 /* GlyphController.swift */,
 				57A01ED62BF131C100C347E3 /* EndView.swift */,
 				57BEFCD92CD9A98200D483E1 /* RoundedRectangleWithGrid.swift */,
+				57D9F0A52D15F76B00BD9ACE /* GlyphCon.swift */,
 			);
 			path = End;
 			sourceTree = "<group>";
@@ -381,6 +381,7 @@
 				576F15C42B963BEB00058DE1 /* DrawingUtils.swift in Sources */,
 				57CE50EC2B6EA0230071E806 /* LobbyView.swift in Sources */,
 				57B6E7A72B961FB700A19258 /* DudlCanvas.swift in Sources */,
+				57D9F0A62D15F76B00BD9ACE /* GlyphCon.swift in Sources */,
 				57C3AC312B65BF180058AE5F /* Scribble.swift in Sources */,
 				57C3AC052B65B2FB0058AE5F /* DUDLApp.swift in Sources */,
 				57C3AC3C2B668F970058AE5F /* CreateView.swift in Sources */,
@@ -390,7 +391,6 @@
 				57D287402B73318100FE2280 /* RestfulGroup.swift in Sources */,
 				579714CA2B82D05D007F5CB5 /* PromptFromDrawingView.swift in Sources */,
 				57C3AC482B68340C0058AE5F /* Errors.swift in Sources */,
-				577815132C251B6500A91FB0 /* GlyphController.swift in Sources */,
 				576F15C62B963F9900058DE1 /* Poster.swift in Sources */,
 				579714C32B82CB3B007F5CB5 /* StateMachine.swift in Sources */,
 				57C3AC542B68BE620058AE5F /* JoinView.swift in Sources */,
