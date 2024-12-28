@@ -14,9 +14,10 @@ collection: GameCollection = GameCollection()
 
 dudl_blueprint = Blueprint("dudl", __name__, url_prefix='/', description="DUDL REST Endpoints")
 
-@dudl_blueprint.route("/")
-def home():
-    return "<h1>Your local DÜDL server is up and running!</h1>"
+@dudl_blueprint.route("")
+class Home(MethodView):
+    def get(self):
+        return "<h1>Your local DÜDL server is up and running!</h1>", status.HTTP_200_OK
 
 
 @dudl_blueprint.route('debug')

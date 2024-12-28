@@ -1,5 +1,6 @@
 import pathlib
 import socket
+import psutil
 import configargparse
 from typing import Any, Dict
 from logging import DEBUG, INFO
@@ -44,7 +45,10 @@ def load_runtime_environment() -> Dict[str, Any]:
 
 def get_ip_address()-> str:
     try: 
-        return socket.gethostbyname(socket.gethostname())
+        addrs = psutil.net_if_addrs()
+        for addr in addrs['en0']:
+            if addr.family == socket.AF_INET:
+                return addr.broadcast
     except:
         return "127.0.0.1"
 
