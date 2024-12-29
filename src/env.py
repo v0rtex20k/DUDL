@@ -48,7 +48,7 @@ def get_ip_address()-> str:
         addrs = psutil.net_if_addrs()
         for addr in addrs['en0']:
             if addr.family == socket.AF_INET:
-                return addr.broadcast
+                return addr.address
     except:
         return "127.0.0.1"
 
