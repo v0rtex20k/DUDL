@@ -5,9 +5,9 @@ from flask_api import status
 from flask import current_app
 from typing import Any, Dict, List, Optional, Set
 
-from src.models.game import Game
-from src.utils import log_and_abort
-from src.models.playerprofile import PlayerProfile
+from dudl.models.game import Game
+from dudl.utils import log_and_abort
+from dudl.models.playerprofile import PlayerProfile
 
 
 class GameCollection:

@@ -6,9 +6,9 @@ from flask.views import MethodView
 from flask_smorest import Api, Blueprint
 from flask import current_app, request
 
-from src.utils import abort_if_missing, log_and_abort
-from src.models.playerprofile import PlayerProfile
-from src.models.gamecollection import GameCollection
+from dudl.utils import abort_if_missing, log_and_abort
+from dudl.models.playerprofile import PlayerProfile
+from dudl.models.gamecollection import GameCollection
 
 collection: GameCollection = GameCollection()
 

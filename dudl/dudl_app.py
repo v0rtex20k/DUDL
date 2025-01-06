@@ -10,7 +10,9 @@ from flask import Flask, current_app
 from typing import Any, Callable, Dict
 from flask.logging import create_logger
 from flask_smorest import Blueprint, Api
-from src.env import load_runtime_environment
+
+from dudl.env import load_runtime_environment
+
 
 def setup_logging(default_level=logging.INFO):
     logging.basicConfig(level=default_level)
@@ -57,7 +59,7 @@ def override_config_with_runtime_env(runtime_env: Dict[str, Any]):
             current_app.config[new_name] = runtime_val
 
 
-def auto_register_blueprints(api: Api, blueprint_dir: str = "src.blueprints"):
+def auto_register_blueprints(api: Api, blueprint_dir: str = "dudl.blueprints"):
     """ Utility function to register all Flask blueprints. This allows us to
     delay blueprint imports, which in turn allows us to push the app context to
     enable proper logging statements.
@@ -89,7 +91,7 @@ def auto_register_blueprints(api: Api, blueprint_dir: str = "src.blueprints"):
 def build_app(runtime_env: Dict[str, Any]):
     app = Flask(__name__)
 
-    env : str = runtime_env.get("ENV", "src.env.ProductionEnvironment")
+    env : str = runtime_env.get("ENV", "dudl.env.ProductionEnvironment")
     try:
         app.config.from_object(env)
     except ModuleNotFoundError as e:

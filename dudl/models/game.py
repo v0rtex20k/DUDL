@@ -4,8 +4,8 @@ from flask_api import status
 from flask import current_app
 from typing import Any, List, Dict, Optional
 
-from src.utils import log_and_abort
-from src.models.playerprofile import PlayerProfile
+from dudl.utils import log_and_abort
+from dudl.models.playerprofile import PlayerProfile
 
 class Game:
     def __init__(self, code: str) -> None:
