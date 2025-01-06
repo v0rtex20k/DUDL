@@ -1,2 +1,0 @@
-[console_scripts]
-start-dudl = src.dudl_app:start_server
